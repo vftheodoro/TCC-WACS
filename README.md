@@ -1,5 +1,5 @@
 # Projeto de TCC - Cadeira de Rodas Automaizada
-Este repositório contém os meus arquivos de desenvolvimento e projeto e do meu grupo para nosso TCC. Professor **[Ramon Trigo](https://github.com/ramtrigodev)** da Etec de Registro.
+Este repositório contém os meus arquivos de desenvolvimento e projeto e do meu grupo para nosso TCC.<br> Professor **[Ramon Trigo](https://github.com/ramtrigodev)** da Etec de Registro.
 
 <div align="left">  
 <h2>Tecnologias Utilizadas:</h2>
