@@ -1,5 +1,5 @@
 {
-  "name": "appcadeiraderodas",
+  "name": "appwacs",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -10,12 +10,13 @@
   },
   "dependencies": {
     "@expo/metro-runtime": "~4.0.1",
-    "axios": "^1.8.4",
     "expo": "~52.0.40",
     "expo-status-bar": "~2.0.1",
+    "mysql2": "^3.14.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-native": "0.76.7",
+    "react-native": "^0.76.7",
+    "react-native-usb-serialport": "^3.0.0",
     "react-native-web": "~0.19.13"
   },
   "devDependencies": {
