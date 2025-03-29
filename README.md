@@ -1,6 +1,8 @@
 # Projeto de TCC - WACS – Wheelchair Automation Control System
 
-![Logo da Wacs](WACS LOGO.jpg)
+<div align="center">
+  <img src="WACS LOGO.jpg" alt="Logo do Projeto" width="200">
+</div>
 
 Este repositório contém o desenvolvimento do nosso projeto de TCC na Etec de Registro. Nosso objetivo é criar uma cadeira de rodas automatizada e de baixo custo para melhorar a mobilidade e a segurança de pessoas com deficiência.
 
