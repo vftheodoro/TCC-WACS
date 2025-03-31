@@ -1,0 +1,733 @@
+:root {
+    --azul-principal: #0056b3;
+    --preto: #2c2c2c;
+    --cinza-claro: #f5f5f5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    line-height: 1.6;
+    color: var(--preto);
+}
+
+/* Header */
+header {
+    background: var(--preto);
+    padding: 1rem 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+}
+
+.logo {
+    height: 50px;
+}
+
+.menu li {
+    display: inline-block;
+    margin-left: 2rem;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.menu a:hover {
+    opacity: 0.8;
+}
+
+/* Conteúdo Principal */
+main {
+    margin-top: 80px;
+    padding: 2rem 5%;
+}
+
+/* Banner */
+.banner {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('../imagens/placeholder-banner.jpg');
+    background-size: cover;
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    border-radius: 10px;
+}
+
+.banner h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Cards */
+.grid {
+    display: grid;
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.diferenciais.grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.card {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    text-align: center;
+    transition: transform 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+
+
+/* Formulário */
+form {
+    max-width: 600px;
+    margin: 2rem auto;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+button {
+    background: var(--azul-principal);
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: opacity 0.3s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--preto);
+        padding: 1rem;
+        text-align: center;
+    }
+
+    .menu li {
+        display: block;
+        margin: 1rem 0;
+    }
+
+    .menu-mobile {
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+    }
+
+    .banner h1 {
+        font-size: 1.8rem;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+/* Estilos Específicos para Página do Projeto */
+.detalhes-projeto h2 {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--azul-principal);
+}
+
+.video-demo {
+    margin: 4rem 0;
+    text-align: center;
+}
+
+.video-placeholder {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.video-placeholder img {
+    width: 100%;
+    height: auto;
+}
+
+/* Melhorias Gerais */
+h2, h3 {
+    color: var(--preto);
+    margin-bottom: 1.5rem;
+}
+
+footer {
+    background: var(--preto);
+    color: white;
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+}
+
+/* Efeito de Reveal */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s ease-out;
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+@media (max-width: 480px) {
+    .banner {
+        height: 50vh;
+        padding: 0 1rem;
+    }
+    
+    .banner h1 {
+        font-size: 1.4rem;
+    }
+    
+    .card {
+        padding: 1rem;
+    }
+    
+    .membro img {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+@media (min-width: 1200px) {
+    main {
+        max-width: 1200px;
+        margin: 80px auto 0;
+    }
+}
+/* Estilos Específicos para Equipe */
+.equipe-section {
+    padding: 4rem 5%;
+    background: #f9f9f9;
+}
+
+.membro-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+    transition: transform 0.1s cubic-bezier(0.4,0,0.2,1);
+}
+
+.membro-card:hover {
+    transform: translateY(-5px);
+}
+
+.membro-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 1.5rem;
+    border: 3px solid var(--azul-principal);
+}
+
+.membro-titles {
+    margin-bottom: 1.5rem;
+}
+
+.membro-cargo {
+    color: var(--azul-principal);
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.membro-nome {
+    color: var(--preto);
+    font-size: 1.5rem;
+    margin-bottom: 0.25rem;
+}
+
+.membro-formacao {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.membro-bio {
+    color: #444;
+    line-height: 1.6;
+    padding-top: 1rem;
+    border-top: 2px solid #eee;
+}
+
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .contato-section {
+        grid-template-columns: 1fr;
+    }
+    
+    .membro-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .membro-avatar {
+        width: 100px;
+        height: 100px;
+    }
+}
+/* Estilos para o cabeçalho atualizado */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.project-info h1 {
+    color: var(--azul-principal);
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+.team-name {
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 300;
+    margin: 0;
+}
+
+/* Ajuste no menu */
+nav {
+    display: flex;
+    align-items: center;
+}
+footer {
+    background: var(--preto);
+    color: white;
+    text-align: center;
+    padding: 1.5rem;
+    margin-top: 4rem;
+    font-size: 0.9rem;
+}
+
+footer p {
+    margin: 0;
+    padding: 0.5rem;
+}
+
+/* Estilos IA */
+.projeto-ia {
+    padding: 4rem 5%;
+}
+
+.ia-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.ia-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s;
+}
+
+.ia-card:hover {
+    transform: translateY(-5px);
+}
+
+.ia-card img {
+    width: 80px;
+    margin-bottom: 1.5rem;
+}
+
+.ia-features li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+}
+
+/* Estilos Loja */
+.produtos-grid {
+    display: grid;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.produto-card {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 2rem;
+    align-items: center;
+    padding: 2rem;
+    background: white;
+    border-radius: 15px;
+}
+
+.produto-card img {
+    width: 100%;
+    border-radius: 10px;
+}
+
+.produto-preco {
+    color: var(--azul-principal);
+    font-size: 1.4rem;
+    margin: 1rem 0;
+}
+
+.cta-comprar {
+    background: var(--preto);
+    color: white;
+    padding: 0.8rem 2rem;
+    border-radius: 25px;
+    transition: all 0.3s;
+}
+
+.cta-comprar:hover {
+    background: var(--azul-principal);
+}
+
+.servicos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.servico-card {
+    padding: 1.5rem;
+    background: var(--cinza-claro);
+    border-radius: 10px;
+}
+
+/* Simulador IA */
+.simulador-ia {
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.demo-btn {
+    background: var(--azul-principal);
+    color: white;
+    margin: 0.5rem 0;
+    padding: 0.8rem;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.simulador-visual {
+    background: #f8f9fa;
+    border-radius: 15px;
+    min-height: 300px;
+}
+
+
+/* Estilos Atualizados para Contato */
+.contato-section {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 6rem 0;
+}
+
+.contato-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.contato-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.section-subtitle {
+    color: #6c757d;
+    font-size: 1.1rem;
+    margin-top: 1rem;
+}
+
+.contato-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.08);
+    padding: 3rem;
+}
+
+.modern-form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.input-group.floating {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.input-group.floating input,
+.input-group.floating textarea {
+    width: 100%;
+    padding: 1rem 0;
+    border: none;
+    border-bottom: 2px solid #dee2e6;
+    font-size: 1rem;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.input-group.floating label {
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    pointer-events: none;
+    color: #6c757d;
+    transition: all 0.3s ease;
+}
+
+.input-group.floating .underline {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--azul-principal);
+    transition: all 0.3s ease;
+}
+
+.input-group.floating input:focus,
+.input-group.floating textarea:focus,
+.input-group.floating input:valid,
+.input-group.floating textarea:valid {
+    border-bottom-color: transparent;
+}
+
+.input-group.floating input:focus ~ .underline,
+.input-group.floating textarea:focus ~ .underline,
+.input-group.floating input:valid ~ .underline,
+.input-group.floating textarea:valid ~ .underline {
+    width: 100%;
+}
+
+.input-group.floating input:focus ~ label,
+.input-group.floating textarea:focus ~ label,
+.input-group.floating input:valid ~ label,
+.input-group.floating textarea:valid ~ label {
+    top: -1.2rem;
+    font-size: 0.85rem;
+    color: var(--azul-principal);
+}
+
+/* Cards de Contato */
+.contact-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    transition: transform 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.contact-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-icon.whatsapp { background: #25D366; }
+.card-icon.email { background: #EA4335; }
+.card-icon.location { background: #4285F4; }
+
+.card-content h3 {
+    color: var(--preto);
+    margin-bottom: 0.5rem;
+}
+
+.cta-link {
+    color: var(--azul-principal);
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    margin-top: 0.5rem;
+    position: relative;
+}
+
+.cta-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--azul-principal);
+    transition: width 0.3s ease;
+}
+
+.cta-link:hover::after {
+    width: 100%;
+}
+
+/* Botão Enviar Atualizado */
+.send-button {
+    align-self: flex-start;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: linear-gradient(135deg, var(--azul-principal) 0%, #003f88 100%);
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.send-icon {
+    width: 24px;
+    height: 24px;
+    position: relative;
+}
+
+.paper-plane {
+    position: absolute;
+    left: -100%;
+    transition: left 0.3s ease;
+}
+
+.send-button:hover .paper-plane {
+    left: 0;
+}
+
+/* Social Links Atualizado */
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    margin-top: 3rem;
+}
+
+.social-icon {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: white;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .contato-grid {
+        grid-template-columns: 1fr;
+        padding: 2rem;
+    }
+    
+    .contact-card {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 576px) {
+    .contato-container {
+        padding: 0 1rem;
+    }
+    
+    .send-button {
+        width: 100%;
+        justify-content: center;
+    }
+}
+/* Animação Reveal Padrão */
+.reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.5, 0, 0, 1);
+}
+
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Delay para Elementos em Sequência */
+.reveal:nth-child(2) { transition-delay: 0.2s; }
+.reveal:nth-child(3) { transition-delay: 0.4s; }
+.reveal:nth-child(4) { transition-delay: 0.6s; }
+
+/* Hover Effects Consistentes */
+.card, .produto-card, .ia-card {
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.card:hover, .produto-card:hover, .ia-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+/* Melhoria de Performance */
+.reveal {
+    will-change: transform, opacity;
+}
+
+/* Ajuste para Mobile */
+@media (max-width: 768px) {
+    .card, .produto-card {
+        transform: none !important;
+    }
+}
