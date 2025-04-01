@@ -1,6 +1,0 @@
-speechrecognition==3.10.0
-pyaudio==0.2.14
-pyttsx3==2.90
-transformers==4.30.2
-torch==2.0.1
-pipwin==0.5.2
