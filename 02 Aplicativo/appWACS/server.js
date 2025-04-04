@@ -8,7 +8,7 @@ app.use(express.json());
 
 // 1. Configure sua porta serial
 const arduinoPort = new SerialPort({
-  path: 'COM3', // Altere para sua porta
+  path: 'COM5', // Altere para sua porta
   baudRate: 9600,
   autoOpen: false
 });

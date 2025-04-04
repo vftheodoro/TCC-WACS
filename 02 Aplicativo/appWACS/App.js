@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Slider from '@react-native-community/slider';
 import {
   SafeAreaView,
   View,
@@ -10,50 +11,77 @@ import {
 } from 'react-native';
 
 const COMMANDS = {
-  F: { label: 'Frente', color: '#4CAF50' },
-  B: { label: 'Trás', color: '#FF9800' },
-  E: { label: 'Esquerda', color: '#2196F3' },
-  D: { label: 'Direita', color: '#2196F3' },
-  S: { label: 'Parar', color: '#f44336' },
+  F: { label: 'Frente', color: '#2ecc71', icon: '↑' },
+  B: { label: 'Trás', color: '#e67e22', icon: '↓' },
+  E: { label: 'Esquerda', color: '#3498db', icon: '←' },
+  D: { label: 'Direita', color: '#3498db', icon: '→' },
+  S: { label: 'Parar', color: '#e74c3c', icon: '⏹' },
 };
 
 export default function App() {
   const [connected, setConnected] = useState(false);
-  const [lastCommand, setLastCommand] = useState('Nenhum');
   const [commandLog, setCommandLog] = useState([]);
+  const [speed, setSpeed] = useState(50); // 0-100%
+  const [lastCommandKey, setLastCommandKey] = useState(null);
+
+  const calculateActualSpeed = (percentage) => 
+    Math.round(60 + (percentage / 100) * (255 - 60));
+
+  useEffect(() => {
+    if (connected && lastCommandKey) {
+      const debounceTimer = setTimeout(() => {
+        sendCommand(lastCommandKey);
+      }, 300);
+      return () => clearTimeout(debounceTimer);
+    }
+  }, [speed, lastCommandKey]);
 
   const sendCommand = async (command) => {
     if (!connected) return;
     
     try {
       Vibration.vibrate(50);
-      // Simulação de chamada API
+      const actualSpeed = calculateActualSpeed(speed);
       await fetch('http://localhost:3000/send-command', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ command }),
+        body: JSON.stringify({ command: command + actualSpeed }),
       });
 
       const newLog = {
         id: Date.now().toString(),
+        commandKey: command,
         command: COMMANDS[command].label,
         timestamp: new Date().toLocaleTimeString(),
+        speedPercentage: speed,
+        speedValue: actualSpeed,
       };
 
-      // Correção na atualização do estado
       setCommandLog(prevLogs => [newLog, ...prevLogs.slice(0, 4)]);
-      setLastCommand(COMMANDS[command].label);
+      setLastCommandKey(command);
     } catch (error) {
       console.log('Erro de comunicação');
     }
   };
 
-  const ControlButton = ({ command, color }) => (
+  const ControlButton = ({ command, style, size = 80 }) => (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: color }]}
+      style={[
+        styles.controlButton,
+        { 
+          backgroundColor: COMMANDS[command].color,
+          width: size,
+          height: size,
+          borderRadius: size/2,
+          borderWidth: 2,
+          borderColor: 'rgba(255,255,255,0.3)',
+          ...style,
+        },
+      ]}
       onPress={() => sendCommand(command)}
       disabled={!connected}
     >
+      <Text style={styles.buttonIcon}>{COMMANDS[command].icon}</Text>
       <Text style={styles.buttonText}>{COMMANDS[command].label}</Text>
     </TouchableOpacity>
   );
@@ -61,50 +89,61 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Controle do Robô</Text>
+        <Text style={styles.title}>ROBOT CONTROL</Text>
         <TouchableOpacity
           style={[styles.connectButton, connected && styles.connectedButton]}
           onPress={() => setConnected(!connected)}
         >
           <Text style={styles.buttonText}>
-            {connected ? 'Desconectar' : 'Conectar'}
+            {connected ? '● CONECTADO' : 'CONECTAR'}
           </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={styles.statusSection}>
-        <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Status:</Text>
-          <Text style={[styles.statusValue, connected && styles.connectedStatus]}>
-            {connected ? 'Conectado' : 'Desconectado'}
+      <View style={styles.controlContainer}>
+        <View style={styles.dPad}>
+          <ControlButton command="F" style={{ top: 0, left: 110 }} />
+          <ControlButton command="E" style={{ top: 110, left: 0 }} />
+          <ControlButton command="D" style={{ top: 110, right: 0 }} />
+          <ControlButton command="B" style={{ bottom: 0, left: 110 }} />
+          
+          <TouchableOpacity
+            style={styles.stopButton}
+            onPress={() => sendCommand('S')}
+            disabled={!connected}
+          >
+            <Text style={[styles.buttonIcon, { fontSize: 32 }]}>{COMMANDS.S.icon}</Text>
+            <Text style={styles.buttonText}>{COMMANDS.S.label}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View style={styles.speedContainer}>
+          <Text style={styles.speedLabel}>
+            VELOCIDADE: {speed}% ({calculateActualSpeed(speed)})
           </Text>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={100}
+            step={1}
+            value={speed}
+            minimumTrackTintColor="#3498db"
+            maximumTrackTintColor="#555"
+            thumbTintColor="#3498db"
+            onValueChange={(value) => setSpeed(Math.round(value))}
+          />
         </View>
-      </View>
-
-      <View style={styles.controlSection}>
-        <ControlButton command="F" color="#4CAF50" />
-        
-        <View style={styles.horizontalControls}>
-          <ControlButton command="E" color="#2196F3" />
-          <ControlButton command="D" color="#2196F3" />
-        </View>
-
-        <ControlButton command="B" color="#FF9800" />
-        <ControlButton command="S" color="#f44336" />
       </View>
 
       <View style={styles.logSection}>
-        <Text style={styles.logTitle}>Últimos Comandos</Text>
-        <ScrollView 
-          style={styles.logScroll}
-          contentContainerStyle={{ flexGrow: 1 }}
-        >
+        <Text style={styles.logTitle}>HISTÓRICO DE COMANDOS</Text>
+        <ScrollView style={styles.logScroll}>
           {commandLog.map((log) => (
             <View key={log.id} style={styles.logItem}>
-              <View style={styles.logHeader}>
-                <Text style={styles.logType}>{log.command}</Text>
-                <Text style={styles.logTimestamp}>{log.timestamp}</Text>
-              </View>
+              <Text style={styles.logText}>
+                [{log.timestamp}] {log.command} ({log.commandKey}) -{' '}
+                {log.speedPercentage}% ({log.speedValue})
+              </Text>
             </View>
           ))}
         </ScrollView>
@@ -116,106 +155,129 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#1a1a1a',
     padding: 20,
-    backgroundColor: '#f0f0f0',
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 30,
   },
   title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    flex: 1,
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#fff',
+    textShadowColor: 'rgba(255,255,255,0.1)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
   },
   connectButton: {
-    backgroundColor: '#2196F3',
-    padding: 12,
-    borderRadius: 8,
-    minWidth: 120,
-    alignItems: 'center',
+    backgroundColor: '#2ecc71',
+    paddingVertical: 12,
+    paddingHorizontal: 25,
+    borderRadius: 25,
+    elevation: 5,
+    shadowColor: '#2ecc71',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
   },
   connectedButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#e74c3c',
+    shadowColor: '#e74c3c',
   },
-  statusSection: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 20,
-    elevation: 2,
-  },
-  infoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  infoLabel: {
-    fontSize: 16,
-    color: '#666',
-    width: '40%',
-  },
-  statusValue: {
-    fontSize: 16,
-    color: '#f44336',
-    fontWeight: 'bold',
-  },
-  connectedStatus: {
-    color: '#4CAF50',
-  },
-  controlSection: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  button: {
-    padding: 15,
-    margin: 10,
-    borderRadius: 10,
-    width: 200,
-    alignItems: 'center',
-    elevation: 3,
-  },
-  horizontalControls: {
-    flexDirection: 'row',
+  controlContainer: {
+    flex: 1,
     justifyContent: 'center',
-    width: '100%',
+    alignItems: 'center',
   },
-  buttonText: {
-    color: 'white',
+  dPad: {
+    position: 'relative',
+    width: 300,
+    height: 300,
+    marginBottom: 30,
+  },
+  controlButton: {
+    position: 'absolute',
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+  },
+  stopButton: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#e74c3c',
+    position: 'absolute',
+    top: 100,
+    left: 100,
+    zIndex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    elevation: 10,
+    borderWidth: 2,
+    borderColor: 'rgba(255,255,255,0.3)',
+  },
+  speedContainer: {
+    backgroundColor: '#2c2c2c',
+    width: '100%',
+    padding: 20,
+    borderRadius: 15,
+  },
+  speedLabel: {
+    color: '#fff',
     fontSize: 16,
+    marginBottom: 10,
     fontWeight: '600',
   },
+  slider: {
+    height: 10,
+    borderRadius: 5,
+  },
   logSection: {
-    flex: 1,
-    backgroundColor: '#fff',
-    borderRadius: 10,
+    height: 150,
+    backgroundColor: '#2c2c2c',
+    borderRadius: 15,
     padding: 15,
-    elevation: 2,
   },
   logTitle: {
-    fontWeight: 'bold',
+    color: '#7f8c8d',
+    fontWeight: '700',
     marginBottom: 10,
   },
   logItem: {
-    backgroundColor: '#f8f8f8',
-    padding: 12,
-    marginVertical: 5,
+    backgroundColor: '#3c3c3c',
+    padding: 10,
+    marginVertical: 3,
     borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#4a4a4a',
   },
-  logHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  logType: {
-    fontWeight: 'bold',
-    color: '#666',
-  },
-  logTimestamp: {
-    color: '#999',
+  logText: {
+    color: '#bdc3c7',
     fontSize: 12,
+    fontFamily: 'Courier New',
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: '700',
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+    marginTop: 4,
+  },
+  buttonIcon: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0,0,0,0.2)',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
   },
 });
