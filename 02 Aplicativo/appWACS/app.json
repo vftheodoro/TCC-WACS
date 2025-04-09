@@ -1,14 +1,15 @@
 {
   "expo": {
-    "name": "appWACS",
+    "name": "WACS",
     "slug": "appWACS",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/wacs-logo.jpg",
+    "description": "Sistema de mobilidade automatizada para PCDs",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/wacs-logo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,10 +20,19 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.VTheodoro.appWACS"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "6c081337-7aa6-46af-a35a-64cb6a0e54a8"
+      }
+    },
+    "plugins": [
+      "react-native-ble-manager"
+    ]
   }
 }
