@@ -1,9 +1,72 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, PermissionsAndroid, Platform } from 'react-native';
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from 'react-native-maps';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, PermissionsAndroid, Platform, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import IconFA from 'react-native-vector-icons/FontAwesome5';
 import Geolocation from 'react-native-geolocation-service';
+
+// Componente de mapa simulado
+const SimulatedMap = ({ location, accessiblePlaces, selectedRoute }) => {
+  return (
+    <View style={styles.mapContainer}>
+      <Image 
+        source={require('../assets/map-placeholder.jpg')} // Você pode usar qualquer imagem de mapa genérico
+        style={styles.mapImage}
+        resizeMode="cover"
+      />
+      
+      {/* Simulação de marcadores */}
+      {accessiblePlaces.map(place => (
+        <View 
+          key={place.id} 
+          style={[
+            styles.simulatedMarker,
+            { 
+              left: `${((place.coordinate.longitude + 46.65) * 100)}%`,
+              top: `${((place.coordinate.latitude + 23.55) * 100)}%`
+            }
+          ]}
+        >
+          <IconFA 
+            name={place.type === 'restaurant' ? 'utensils' : 
+                  place.type === 'shopping' ? 'shopping-bag' : 
+                  place.type === 'leisure' ? 'tree' : 'bus'}
+            size={12} 
+            color="#fff" 
+          />
+        </View>
+      ))}
+      
+      {/* Simulação da localização do usuário */}
+      {location && (
+        <View style={[
+          styles.userLocation,
+          { 
+            left: `${((location.longitude + 46.65) * 100)}%`,
+            top: `${((location.latitude + 23.55) * 100)}%`
+          }
+        ]} />
+      )}
+      
+      {/* Simulação da rota selecionada */}
+      {selectedRoute && (
+        <View style={styles.simulatedRouteContainer}>
+          {selectedRoute.map((point, index) => (
+            <View 
+              key={index}
+              style={[
+                styles.simulatedRoutePoint,
+                { 
+                  left: `${((point.longitude + 46.65) * 100)}%`,
+                  top: `${((point.latitude + 23.55) * 100)}%`
+                }
+              ]}
+            />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
 
 const MapsScreen = () => {
   const [location, setLocation] = useState(null);
@@ -100,7 +163,6 @@ const MapsScreen = () => {
   useEffect(() => {
     const initApp = async () => {
       try {
-        // Verifica se a API do Google Maps está disponível
         const hasPermission = await requestLocationPermission();
         
         if (!hasPermission) {
@@ -110,20 +172,11 @@ const MapsScreen = () => {
         }
 
         try {
-          Geolocation.getCurrentPosition(
-            (position) => {
-              setLocation({
-                latitude: position.coords.latitude,
-                longitude: position.coords.longitude,
-              });
-            },
-            (error) => {
-              console.log('Erro na geolocalização:', error.code, error.message);
-              setMapAvailable(false);
-              setErrorMsg(`Localização indisponível: ${error.message}`);
-            },
-            { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
+          // Simulando localização fixa (Centro de São Paulo) já que não temos API
+          setLocation({
+            latitude: -23.5505,
+            longitude: -46.6333,
+          });
         } catch (error) {
           console.log('Erro ao acessar geolocalização:', error);
           setMapAvailable(false);
@@ -134,7 +187,6 @@ const MapsScreen = () => {
         setMapAvailable(false);
         setErrorMsg('Não foi possível inicializar os serviços de mapa');
       } finally {
-        // Carrega os dados dos lugares acessíveis de qualquer forma
         setTimeout(() => {
           setAccessiblePlaces(mockAccessiblePlaces);
           setIsLoading(false);
@@ -157,7 +209,6 @@ const MapsScreen = () => {
   };
 
   const showRoute = (placeId) => {
-    // Aqui seria implementada a lógica para buscar rota acessível na API
     setSelectedRoute(mockAccessibleRoute);
   };
 
@@ -206,60 +257,13 @@ const MapsScreen = () => {
     }
 
     return (
-      <View style={styles.mapContainer}>
-        {location ? (
-          <MapView
-            provider={PROVIDER_GOOGLE}
-            style={styles.map}
-            initialRegion={{
-              latitude: location.latitude,
-              longitude: location.longitude,
-              latitudeDelta: 0.015,
-              longitudeDelta: 0.0121,
-            }}
-            showsUserLocation
-            showsMyLocationButton
-            customMapStyle={mapStyle}
-          >
-            {accessiblePlaces.map(place => (
-              <Marker
-                key={place.id}
-                coordinate={place.coordinate}
-                title={place.title}
-                description={place.description}
-                onPress={() => showRoute(place.id)}
-              >
-                <View style={styles.markerContainer}>
-                  <View style={styles.marker}>
-                    <IconFA 
-                      name={place.type === 'restaurant' ? 'utensils' : 
-                            place.type === 'shopping' ? 'shopping-bag' : 
-                            place.type === 'leisure' ? 'tree' : 'bus'}
-                      size={16} 
-                      color="#fff" />
-                  </View>
-                </View>
-              </Marker>
-            ))}
-
-            {/* Rota acessível */}
-            {selectedRoute && (
-              <Polyline
-                coordinates={selectedRoute}
-                strokeWidth={4}
-                strokeColor="#00f2fe"
-                lineDashPattern={[1, 3]}
-              />
-            )}
-          </MapView>
-        ) : (
-          <View style={[styles.mapPlaceholder, styles.centered]}>
-            <ActivityIndicator size="large" color="#00f2fe" />
-            <Text style={styles.loadingText}>Obtendo localização...</Text>
-          </View>
-        )}
-
-        {/* Botões de controle */}
+      <View>
+        <SimulatedMap 
+          location={location}
+          accessiblePlaces={accessiblePlaces}
+          selectedRoute={selectedRoute}
+        />
+        
         <View style={styles.mapControls}>
           <TouchableOpacity style={styles.controlButton}>
             <Icon name="my-location" size={24} color="#fff" />
@@ -285,7 +289,6 @@ const MapsScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>NAVEGAÇÃO</Text>
       
-      {/* Filtros de acessibilidade */}
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
         <TouchableOpacity 
           style={[styles.filterButton, selectedFilter === 'all' && styles.filterActive]}
@@ -318,10 +321,8 @@ const MapsScreen = () => {
         </TouchableOpacity>
       </ScrollView>
 
-      {/* Área do Mapa (com tratamento de falha) */}
       {renderMapArea()}
 
-      {/* Lista de locais acessíveis próximos */}
       <View style={styles.placesListContainer}>
         <Text style={styles.sectionTitle}>Locais Acessíveis Próximos</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
@@ -362,106 +363,6 @@ const MapsScreen = () => {
     </View>
   );
 };
-
-// Estilo customizado para o mapa no tema escuro
-const mapStyle = [
-  {
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#1d2c4d"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#8ec3b9"
-      }
-    ]
-  },
-  {
-    "elementType": "labels.text.stroke",
-    "stylers": [
-      {
-        "color": "#1a3646"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.country",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#4b6878"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.land_parcel",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#64779e"
-      }
-    ]
-  },
-  {
-    "featureType": "administrative.province",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#4b6878"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#304a7d"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "geometry.stroke",
-    "stylers": [
-      {
-        "color": "#1f2835"
-      }
-    ]
-  },
-  {
-    "featureType": "road",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#98a5be"
-      }
-    ]
-  },
-  {
-    "featureType": "transit",
-    "elementType": "labels.text.fill",
-    "stylers": [
-      {
-        "color": "#98a5be"
-      }
-    ]
-  },
-  {
-    "featureType": "water",
-    "elementType": "geometry",
-    "stylers": [
-      {
-        "color": "#0e1626"
-      }
-    ]
-  }
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -510,6 +411,50 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     overflow: 'hidden',
     marginBottom: 15,
+    backgroundColor: '#1a1f27',
+    borderWidth: 1,
+    borderColor: '#2a2e35',
+    position: 'relative'
+  },
+  mapImage: {
+    width: '100%',
+    height: '100%',
+    opacity: 0.7
+  },
+  simulatedMarker: {
+    position: 'absolute',
+    backgroundColor: '#00f2fe',
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#fff',
+    transform: [{ translateX: -12 }, { translateY: -12 }]
+  },
+  userLocation: {
+    position: 'absolute',
+    backgroundColor: '#00f2fe',
+    width: 16,
+    height: 16,
+    borderRadius: 8,
+    borderWidth: 2,
+    borderColor: '#fff',
+    transform: [{ translateX: -8 }, { translateY: -8 }]
+  },
+  simulatedRouteContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
+  simulatedRoutePoint: {
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 242, 254, 0.5)',
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    transform: [{ translateX: -4 }, { translateY: -4 }]
   },
   mapPlaceholder: {
     height: 300,
@@ -544,9 +489,6 @@ const styles = StyleSheet.create({
     color: '#0a0e14',
     fontWeight: '600',
   },
-  map: {
-    ...StyleSheet.absoluteFillObject,
-  },
   mapControls: {
     position: 'absolute',
     right: 15,
@@ -565,19 +507,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-  },
-  markerContainer: {
-    alignItems: 'center',
-  },
-  marker: {
-    backgroundColor: '#00f2fe',
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#fff',
   },
   sectionTitle: {
     color: '#fff',
