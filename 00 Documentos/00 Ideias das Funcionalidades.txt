@@ -1,5 +1,0 @@
-Funcionalidades da Cadeira de Rodas:
-
-- Controle Via Celular
-- Comandos de Voz
-- Sistema Anti-Colisão

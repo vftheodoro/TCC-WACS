@@ -1,7 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import Slider from '@react-native-community/slider';
+import React, { useState, useEffect, useRef } from 'react';
 import {
-  SafeAreaView,
   View,
   Text,
   TouchableOpacity,
@@ -9,53 +7,150 @@ import {
   ScrollView,
   Vibration,
   Modal,
+  Animated,
+  Easing,
+  SafeAreaView
 } from 'react-native';
+import Slider from '@react-native-community/slider'; // Correct import for Slider
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const COMMANDS = {
-  F: { color: '#00f2fe', icon: '↑' },
-  B: { color: '#00f2fe', icon: '↓' },
-  E: { color: '#00f2fe', icon: '←' },
-  D: { color: '#00f2fe', icon: '→' },
-  S: { label: 'Parar', color: '#ff4444', icon: '⏹' },
+  F: { color: '#00f2fe', icon: 'arrow-up-bold', label: 'Frente' },
+  B: { color: '#00f2fe', icon: 'arrow-down-bold', label: 'Ré' },
+  E: { color: '#00f2fe', icon: 'arrow-left-bold', label: 'Esquerda' },
+  D: { color: '#00f2fe', icon: 'arrow-right-bold', label: 'Direita' },
+  S: { color: '#ff4444', icon: 'stop', label: 'Parar' },
+  L: { color: '#ffcc00', icon: 'lightbulb-on', label: 'Farol' },
+  Z: { color: '#ff9900', icon: 'alarm', label: 'Buzina' },
+  X: { color: '#ff4444', icon: 'alert-octagon', label: 'Emergência' }
 };
 
-// Potência mínima de 25%
 const MIN_POWER = 25;
+const MAX_POWER = 100;
+const REVERSE_MAX = 60;
 
 const ControlScreen = () => {
   const [connected, setConnected] = useState(false);
   const [commandLog, setCommandLog] = useState([]);
   const [speed, setSpeed] = useState(MIN_POWER);
-  const [lastCommandKey, setLastCommandKey] = useState(null);
-  const [manualSpeed, setManualSpeed] = useState(true);
+  const [lastCommand, setLastCommand] = useState(null);
   const [showConnectionModal, setShowConnectionModal] = useState(false);
+  const [distance, setDistance] = useState(null);
+  const [alert, setAlert] = useState(null);
+  const [battery, setBattery] = useState(0);
+  const [headlight, setHeadlight] = useState(false);
+  const [buzzer, setBuzzer] = useState(false);
+  const [usageTime, setUsageTime] = useState(0);
+  const [reverseMode, setReverseMode] = useState(false);
+  const [emergency, setEmergency] = useState(false);
+  
+  const flashAnim = useRef(new Animated.Value(0)).current;
+  const socketRef = useRef(null);
 
-  // Verificar status de conexão ao iniciar
   useEffect(() => {
-    if (!connected) {
-      setShowConnectionModal(true);
-    }
+    // Connect to WebSocket
+    const ws = new WebSocket('ws://localhost:8081');
+    socketRef.current = ws;
+
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+      setConnected(true);
+    };
+
+    ws.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      
+      if (data.type === 'ALERT') {
+        handleAlert(data.message);
+      } else {
+        updateSystemStatus(data);
+      }
+    };
+
+    ws.onerror = (e) => {
+      console.log('WebSocket error:', e.message);
+      setConnected(false);
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+      setConnected(false);
+      handleAlert('DISCONNECTED');
+    };
+
+    return () => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+      }
+    };
   }, []);
 
-  const calculateActualSpeed = (percentage) => 
-    Math.round((percentage / 100) * 255);
-
-  useEffect(() => {
-    if (connected && lastCommandKey) {
-      const debounceTimer = setTimeout(() => {
-        sendCommand(lastCommandKey);
-      }, 300);
-      return () => clearTimeout(debounceTimer);
+  const updateSystemStatus = (data) => {
+    if (data.distance !== undefined) setDistance(data.distance);
+    if (data.battery !== undefined) setBattery(data.battery);
+    if (data.headlight !== undefined) setHeadlight(data.headlight);
+    if (data.buzzer !== undefined) setBuzzer(data.buzzer);
+    if (data.usageTime !== undefined) setUsageTime(data.usageTime);
+    if (data.connected !== undefined) setConnected(data.connected);
+    if (data.lastCommand !== undefined) setLastCommand(data.lastCommand);
+    if (data.emergency !== undefined) setEmergency(data.emergency);
+    
+    // Detect reverse mode from last command
+    if (data.lastCommand && data.lastCommand.startsWith('B')) {
+      setReverseMode(true);
+    } else if (data.lastCommand) {
+      setReverseMode(false);
     }
-  }, [speed, lastCommandKey]);
-
-  const connectChair = () => {
-    // Simula a conexão com a cadeira
-    setConnected(true);
-    setShowConnectionModal(false);
   };
 
-  const sendCommand = async (command) => {
+  const handleAlert = (alertType) => {
+    let alertMessage = '';
+    let vibrationPattern = [500];
+    
+    switch(alertType) {
+      case 'OBSTACLE':
+        alertMessage = 'OBSTÁCULO PRÓXIMO!';
+        vibrationPattern = [500, 200, 500];
+        break;
+      case 'LOW_BATTERY':
+        alertMessage = 'BATERIA FRACA!';
+        vibrationPattern = [1000, 500];
+        break;
+      case 'DISCONNECTED':
+        alertMessage = 'CONEXÃO PERDIDA!';
+        vibrationPattern = [100, 100, 100, 500];
+        break;
+      case 'EMERGENCY':
+        alertMessage = 'MODO EMERGÊNCIA ATIVADO!';
+        vibrationPattern = [200, 100, 200, 100, 200];
+        break;
+      default:
+        alertMessage = 'ALERTA: ' + alertType;
+    }
+    
+    setAlert(alertMessage);
+    Vibration.vibrate(vibrationPattern);
+    
+    // Flash animation
+    Animated.sequence([
+      Animated.timing(flashAnim, {
+        toValue: 1,
+        duration: 200,
+        easing: Easing.linear,
+        useNativeDriver: true
+      }),
+      Animated.timing(flashAnim, {
+        toValue: 0,
+        duration: 200,
+        easing: Easing.linear,
+        useNativeDriver: true
+      })
+    ]).start();
+    
+    setTimeout(() => setAlert(null), 5000);
+  };
+
+  const sendCommand = (command) => {
     if (!connected) {
       setShowConnectionModal(true);
       return;
@@ -63,75 +158,181 @@ const ControlScreen = () => {
     
     try {
       Vibration.vibrate(50);
-      const actualSpeed = calculateActualSpeed(speed);
-      const newLog = {
-        id: Date.now().toString(),
-        commandKey: command,
-        command: COMMANDS[command].label || command,
-        timestamp: new Date().toLocaleTimeString(),
-        speedPercentage: speed,
-      };
-
-      setCommandLog(prevLogs => [newLog, ...prevLogs.slice(0, 4)]);
-      setLastCommandKey(command);
+      
+      // Calculate actual speed (25-100% maps to 60-255 PWM)
+      let actualSpeed = Math.round(60 + (speed / 100) * (255 - 60));
+      
+      // Limit speed in reverse mode
+      if (command === 'B') {
+        const maxReversePWM = Math.round(60 + (REVERSE_MAX / 100) * (255 - 60));
+        actualSpeed = Math.min(actualSpeed, maxReversePWM);
+      }
+      
+      // Send command through WebSocket
+      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+        socketRef.current.send(JSON.stringify({
+          type: 'COMMAND',
+          command: command + actualSpeed  // Exemplo: "F150" ou "B80"
+        }));
+        
+        const newLog = {
+          id: Date.now().toString(),
+          commandKey: command,
+          command: COMMANDS[command]?.label || command,
+          timestamp: new Date().toLocaleTimeString(),
+          speedPercentage: speed,
+          speedValue: actualSpeed,
+        };
+        
+        setCommandLog(prev => [newLog, ...prev.slice(0, 4)]);
+        setLastCommand(command);
+        
+        if (command === 'X') {
+          setEmergency(prev => !prev);
+        }
+        
+        if (command === 'L') {
+          setHeadlight(prev => !prev);
+        }
+      } else {
+        throw new Error('WebSocket not connected');
+      }
     } catch (error) {
-      console.log('Erro de comunicação');
+      console.log('Communication error:', error);
+      handleAlert('COMMUNICATION_ERROR');
     }
   };
 
-  const ControlButton = ({ command, style, size = 80 }) => (
+  const connectDevice = () => {
+    // Attempt to reconnect WebSocket if needed
+    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
+      const ws = new WebSocket('ws://localhost:8080');
+      socketRef.current = ws;
+      
+      ws.onopen = () => {
+        console.log('WebSocket reconnected');
+        setConnected(true);
+        setShowConnectionModal(false);
+        sendCommand('S'); // Send stop command on connect
+      };
+      
+      ws.onmessage = (e) => {
+        const data = JSON.parse(e.data);
+        
+        if (data.type === 'ALERT') {
+          handleAlert(data.message);
+        } else {
+          updateSystemStatus(data);
+        }
+      };
+      
+      ws.onerror = (e) => {
+        console.log('WebSocket error:', e.message);
+        setConnected(false);
+        handleAlert('CONNECTION_ERROR');
+      };
+      
+      ws.onclose = () => {
+        console.log('WebSocket disconnected');
+        setConnected(false);
+        handleAlert('DISCONNECTED');
+      };
+    } else {
+      setConnected(true);
+      setShowConnectionModal(false);
+      sendCommand('S'); // Send stop command on connect
+    }
+  };
+
+  const disconnectDevice = () => {
+    sendCommand('S'); // Send stop command on disconnect
+    
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      socketRef.current.close();
+    }
+    
+    setConnected(false);
+    setShowConnectionModal(false);
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
+
+  const ControlButton = ({ command, size = 80, style }) => (
     <TouchableOpacity
       style={[
         styles.controlButton,
-        { 
-          backgroundColor: connected ? '#141a24' : '#0d1218',
+        {
           width: size,
           height: size,
-          borderRadius: size/2,
-          borderWidth: 2,
-          borderColor: connected ? COMMANDS[command].color : '#333',
+          borderRadius: size / 2,
+          backgroundColor: connected ? '#141a24' : '#0d1218',
+          borderColor: connected 
+            ? (lastCommand === command ? COMMANDS[command].color : '#333') 
+            : '#333',
           ...style,
         },
       ]}
       onPress={() => sendCommand(command)}
-      disabled={!connected}
+      disabled={!connected || emergency}
     >
-      <Text style={[
-        styles.buttonIcon, 
-        { color: connected ? COMMANDS[command].color : '#333' }
-      ]}>
-        {COMMANDS[command].icon}
-      </Text>
+      <Icon 
+        name={COMMANDS[command].icon} 
+        size={size * 0.5} 
+        color={connected 
+          ? (lastCommand === command ? COMMANDS[command].color : '#555') 
+          : '#333'} 
+      />
     </TouchableOpacity>
   );
 
   const ConnectionModal = () => (
     <Modal
-      transparent={true}
+      transparent
       visible={showConnectionModal}
       animationType="fade"
       onRequestClose={() => setShowConnectionModal(false)}
     >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>Dispositivo Desconectado</Text>
+          <Text style={styles.modalTitle}>
+            {connected ? 'Gerenciar Conexão' : 'Dispositivo Desconectado'}
+          </Text>
+          
+          <View style={styles.statusIndicator}>
+            <View style={[
+              styles.statusLed,
+              { backgroundColor: connected ? '#00f2fe' : '#ff4444' }
+            ]} />
+            <Text style={styles.statusText}>
+              {connected ? 'Conectado' : 'Desconectado'}
+            </Text>
+          </View>
+          
           <Text style={styles.modalText}>
-            A cadeira de rodas não está conectada. Deseja estabelecer conexão?
+            {connected
+              ? 'Deseja desconectar da cadeira de rodas?'
+              : 'A cadeira de rodas não está conectada. Deseja estabelecer conexão?'}
           </Text>
           
           <View style={styles.modalButtons}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.modalButton, styles.modalButtonCancel]}
               onPress={() => setShowConnectionModal(false)}
             >
               <Text style={styles.modalButtonText}>Cancelar</Text>
             </TouchableOpacity>
             
-            <TouchableOpacity 
-              style={[styles.modalButton, styles.modalButtonConnect]}
-              onPress={connectChair}
+            <TouchableOpacity
+              style={[styles.modalButton, styles.modalButtonAction]}
+              onPress={connected ? disconnectDevice : connectDevice}
             >
-              <Text style={[styles.modalButtonText, {color: '#141a24'}]}>Conectar</Text>
+              <Text style={[styles.modalButtonText, { color: '#141a24' }]}>
+                {connected ? 'Desconectar' : 'Conectar'}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -141,38 +342,72 @@ const ControlScreen = () => {
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        <ConnectionModal />
+      <ScrollView style={styles.container}>
+        {/* Alert Banner */}
+        {alert && (
+          <Animated.View style={[
+            styles.alertBox,
+            { opacity: flashAnim.interpolate({
+              inputRange: [0, 1],
+              outputRange: [1, 0.3]
+            })}
+          ]}>
+            <Text style={styles.alertText}>{alert}</Text>
+          </Animated.View>
+        )}
         
-        {/* Seção de Status */}
+        {/* Status Panel */}
         <View style={styles.statusPanel}>
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>Status</Text>
-            <Text style={[styles.statusValue, { color: connected ? '#00f2fe' : '#ff4444' }]}>
-              {connected ? 'CONECTADO' : 'DESCONECTADO'}
-            </Text>
+            <View style={styles.statusRow}>
+              <View style={[
+                styles.connectionLed,
+                { backgroundColor: connected ? '#00f2fe' : '#ff4444' }
+              ]} />
+              <Text style={[
+                styles.statusValue,
+                { color: connected ? '#00f2fe' : '#ff4444' }
+              ]}>
+                {connected ? 'CONECTADO' : 'DESCONECTADO'}
+              </Text>
+            </View>
           </View>
           
           <View style={styles.statusItem}>
             <Text style={styles.statusLabel}>Bateria</Text>
-            <Text style={[styles.statusValue, { color: connected ? 'white' : '#333' }]}>
-              85% 🔋
-            </Text>
+            <View style={styles.statusRow}>
+              <Icon 
+                name="battery" 
+                size={20} 
+                color={
+                  battery > 30 ? '#00f2fe' : 
+                  battery > 15 ? '#ffcc00' : '#ff4444'
+                } 
+              />
+              <Text style={[
+                styles.statusValue,
+                { 
+                  color: battery > 30 ? 'white' : 
+                        battery > 15 ? '#ffcc00' : '#ff4444'
+                }
+              ]}>
+                {battery}%
+              </Text>
+            </View>
           </View>
-
+          
           <View style={styles.statusItem}>
-            <Text style={styles.statusLabel}>Potência</Text>
-            <Text style={[styles.statusValue, { color: connected ? 'white' : '#333' }]}>
-              {speed}%
+            <Text style={styles.statusLabel}>Uso</Text>
+            <Text style={styles.statusValue}>
+              {formatTime(usageTime)}
             </Text>
           </View>
         </View>
-
-        {/* Seção de Controle */}
+        
+        {/* Control Section */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: connected ? '#00f2fe' : '#333' }]}>
-            🧭 Controle Direcional
-          </Text>
+          <Text style={styles.sectionTitle}>🧭 Controle Direcional</Text>
           
           <View style={styles.controlContainer}>
             <View style={styles.dPad}>
@@ -190,14 +425,13 @@ const ControlScreen = () => {
                   }
                 ]}
                 onPress={() => sendCommand('S')}
-                disabled={!connected}
+                disabled={!connected || emergency}
               >
-                <Text style={[
-                  styles.buttonIcon, 
-                  { fontSize: 32, color: connected ? '#ff4444' : '#333' }
-                ]}>
-                  {COMMANDS.S.icon}
-                </Text>
+                <Icon 
+                  name={COMMANDS.S.icon} 
+                  size={32} 
+                  color={connected ? '#ff4444' : '#333'} 
+                />
                 <Text style={[
                   styles.buttonText, 
                   { color: connected ? '#ff4444' : '#333' }
@@ -207,135 +441,163 @@ const ControlScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
-
+          
+          {/* Speed Control */}
           <View style={styles.speedContainer}>
-            <View style={styles.speedTypeToggle}>
-              <TouchableOpacity
-                style={[
-                  styles.speedTypeButton,
-                  manualSpeed && styles.speedTypeActive,
-                  !connected && styles.disabled
-                ]}
-                onPress={() => connected && setManualSpeed(true)}
-                disabled={!connected}
-              >
-                <Text style={[
-                  styles.speedTypeText,
-                  manualSpeed && styles.speedTypeTextActive,
-                  !connected && styles.disabledText
-                ]}>
-                  Manual
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[
-                  styles.speedTypeButton,
-                  !manualSpeed && styles.speedTypeActive,
-                  !connected && styles.disabled
-                ]}
-                onPress={() => connected && setManualSpeed(false)}
-                disabled={!connected}
-              >
-                <Text style={[
-                  styles.speedTypeText,
-                  !manualSpeed && styles.speedTypeTextActive,
-                  !connected && styles.disabledText
-                ]}>
-                  Automático
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            <Text style={[styles.speedLabel, { color: connected ? '#8899a6' : '#333' }]}>
+            <Text style={styles.speedLabel}>
               Potência: {speed}%
+              {reverseMode && ` (Limitado a ${REVERSE_MAX}% em Ré)`}
             </Text>
-
-            {manualSpeed && (
-              <Slider
-                style={styles.slider}
-                minimumValue={MIN_POWER}
-                maximumValue={100}
-                step={1}
-                value={speed}
-                minimumTrackTintColor={connected ? "#00f2fe" : "#333"}
-                maximumTrackTintColor={connected ? "#1e2833" : "#0d1218"}
-                thumbTintColor={connected ? "#00f2fe" : "#333"}
-                onValueChange={(value) => setSpeed(Math.round(value))}
-                disabled={!connected}
-              />
-            )}
+            
+            <Slider
+              style={styles.slider}
+              minimumValue={MIN_POWER}
+              maximumValue={reverseMode ? REVERSE_MAX : MAX_POWER}
+              step={1}
+              value={speed}
+              minimumTrackTintColor={connected ? "#00f2fe" : "#333"}
+              maximumTrackTintColor={connected ? "#1e2833" : "#0d1218"}
+              thumbTintColor={connected ? "#00f2fe" : "#333"}
+              onValueChange={setSpeed}
+              disabled={!connected || emergency}
+            />
           </View>
         </View>
-
-        {/* Seção de Ajustes Rápidos */}
+        
+        {/* Quick Actions */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: connected ? '#00f2fe' : '#333' }]}>
-            ⚡ Ajustes Rápidos
-          </Text>
+          <Text style={styles.sectionTitle}>⚡ Ajustes Rápidos</Text>
+          
           <View style={styles.quickActions}>
-            <TouchableOpacity 
-              style={[styles.quickButton, !connected && styles.disabled]}
-              disabled={!connected}
+            <TouchableOpacity
+              style={[
+                styles.quickButton,
+                !connected && styles.disabled,
+                headlight && styles.quickButtonActive
+              ]}
+              onPress={() => sendCommand('L')}
+              disabled={!connected || emergency}
             >
-              <Text style={[styles.quickButtonText, !connected && styles.disabledText]}>
-                🔦 Farol
+              <Icon 
+                name={headlight ? 'lightbulb-on' : 'lightbulb-outline'} 
+                size={24} 
+                color={
+                  connected 
+                    ? (headlight ? '#ffcc00' : '#00f2fe') 
+                    : '#333'
+                } 
+              />
+              <Text style={[
+                styles.quickButtonText,
+                { color: connected ? (headlight ? '#ffcc00' : '#00f2fe') : '#333' }
+              ]}>
+                Farol
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.quickButton, !connected && styles.disabled]}
-              disabled={!connected}
+            
+            <TouchableOpacity
+              style={[
+                styles.quickButton,
+                !connected && styles.disabled
+              ]}
+              onPress={() => sendCommand('Z')}
+              disabled={!connected || emergency}
             >
-              <Text style={[styles.quickButtonText, !connected && styles.disabledText]}>
-                📢 Buzina
+              <Icon 
+                name="alarm" 
+                size={24} 
+                color={connected ? '#ff9900' : '#333'} 
+              />
+              <Text style={[
+                styles.quickButtonText,
+                { color: connected ? '#ff9900' : '#333' }
+              ]}>
+                Buzina
               </Text>
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={[styles.quickButton, !connected && styles.disabled]}
+            
+            <TouchableOpacity
+              style={[
+                styles.quickButton,
+                !connected && styles.disabled,
+                styles.emergencyButton,
+                emergency && styles.emergencyButtonActive
+              ]}
+              onPress={() => sendCommand('X')}
               disabled={!connected}
             >
-              <Text style={[styles.quickButtonText, !connected && styles.disabledText]}>
-                🔄 Reversão
+              <Icon 
+                name="alert-octagon" 
+                size={24} 
+                color={emergency ? 'white' : '#141a24'} 
+              />
+              <Text style={[
+                styles.quickButtonText,
+                { color: emergency ? 'white' : '#141a24' }
+              ]}>
+                Emergência
               </Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        {/* Seção de Histórico */}
+        
+        {/* Distance Indicator (only visible in reverse mode) */}
+        {reverseMode && distance !== null && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>📏 Sensor de Distância</Text>
+            <View style={[
+              styles.distanceIndicator,
+              { backgroundColor: distance < 30 ? '#ff4444' : '#00f2fe' }
+            ]}>
+              <Text style={styles.distanceText}>
+                {distance.toFixed(1)} cm
+              </Text>
+              {distance < 30 && (
+                <Text style={styles.distanceWarning}>OBSTÁCULO PRÓXIMO!</Text>
+              )}
+            </View>
+          </View>
+        )}
+        
+        {/* Command Log */}
         <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: connected ? '#00f2fe' : '#333' }]}>
-            🔁 Histórico de Comandos
-          </Text>
-          <ScrollView style={styles.logScroll}>
-            {commandLog.map((log) => (
-              <View key={log.id} style={[styles.logItem, !connected && styles.logItemDisabled]}>
-                <Text style={[styles.logText, !connected && styles.disabledText]}>
-                  [{log.timestamp}] {log.command} ({log.commandKey}) - {log.speedPercentage}%
+          <Text style={styles.sectionTitle}>🔁 Histórico de Comandos</Text>
+          
+          {commandLog.length > 0 ? (
+            commandLog.map((log) => (
+              <View key={log.id} style={styles.logItem}>
+                <Text style={styles.logText}>
+                  [{log.timestamp}] {log.command} - {log.speedPercentage}%
                 </Text>
               </View>
-            ))}
-            {commandLog.length === 0 && (
-              <View style={[styles.logItem, !connected && styles.logItemDisabled]}>
-                <Text style={[styles.logText, !connected && styles.disabledText]}>
-                  Nenhum comando registrado
-                </Text>
-              </View>
-            )}
-          </ScrollView>
+            ))
+          ) : (
+            <View style={styles.logItem}>
+              <Text style={styles.logText}>Nenhum comando registrado</Text>
+            </View>
+          )}
         </View>
-
-        {/* Espaço adicional para garantir que tudo fique visível com scroll */}
-        <View style={styles.bottomPadding} />
       </ScrollView>
-
-      {/* Botão flutuante para reconectar caso necessário */}
-      {!connected && (
-        <TouchableOpacity
-          style={styles.floatingConnectButton}
-          onPress={() => setShowConnectionModal(true)}
-        >
-          <Text style={styles.floatingConnectText}>📶 Conectar</Text>
-        </TouchableOpacity>
-      )}
+      
+      {/* Connection Button */}
+      <TouchableOpacity
+        style={[
+          styles.floatingButton,
+          connected ? styles.floatingDisconnect : styles.floatingConnect
+        ]}
+        onPress={() => setShowConnectionModal(true)}
+      >
+        <Icon 
+          name={connected ? 'link-off' : 'link'} 
+          size={20} 
+          color="#141a24" 
+        />
+        <Text style={styles.floatingButtonText}>
+          {connected ? 'Desconectar' : 'Conectar'}
+        </Text>
+      </TouchableOpacity>
+      
+      <ConnectionModal />
     </SafeAreaView>
   );
 };
@@ -347,19 +609,28 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#0a0e14',
-  },
-  contentContainer: {
     padding: 10,
+  },
+  alertBox: {
+    backgroundColor: '#ff4444',
+    padding: 15,
+    borderRadius: 8,
+    margin: 10,
+    alignItems: 'center',
+  },
+  alertText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
   section: {
     backgroundColor: '#141a24',
     borderRadius: 10,
     padding: 20,
     marginVertical: 10,
-    marginHorizontal: 5,
   },
   sectionTitle: {
+    color: '#00f2fe',
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 15,
@@ -368,14 +639,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#141a24',
     borderRadius: 10,
     padding: 20,
-    marginTop: 10,
     marginBottom: 10,
-    marginHorizontal: 5,
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   statusItem: {
     alignItems: 'center',
+    flex: 1,
   },
   statusLabel: {
     color: '#8899a6',
@@ -383,8 +653,19 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   statusValue: {
+    color: 'white',
     fontSize: 14,
     fontWeight: '700',
+  },
+  statusRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+  },
+  connectionLed: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
   },
   controlContainer: {
     alignItems: 'center',
@@ -400,9 +681,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 2,
+    shadowColor: '#00f2fe',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.4,
     shadowRadius: 4,
+    elevation: 4,
   },
   stopButton: {
     width: 100,
@@ -416,33 +700,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 2,
   },
+  buttonText: {
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 4,
+  },
   speedContainer: {
     width: '100%',
     marginTop: 15,
   },
-  speedTypeToggle: {
-    flexDirection: 'row',
-    marginBottom: 15,
-  },
-  speedTypeButton: {
-    flex: 1,
-    backgroundColor: '#1e2833',
-    padding: 10,
-    alignItems: 'center',
-    margin: 3,
-    borderRadius: 5,
-  },
-  speedTypeActive: {
-    backgroundColor: '#00f2fe',
-  },
-  speedTypeText: {
-    color: '#8899a6',
-    fontWeight: '600',
-  },
-  speedTypeTextActive: {
-    color: '#141a24',
-  },
   speedLabel: {
+    color: '#8899a6',
     fontSize: 14,
     marginBottom: 10,
   },
@@ -453,7 +721,7 @@ const styles = StyleSheet.create({
   quickActions: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 15,
+    gap: 10,
   },
   quickButton: {
     flex: 1,
@@ -461,13 +729,40 @@ const styles = StyleSheet.create({
     padding: 14,
     borderRadius: 8,
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#1e2833',
+  },
+  quickButtonActive: {
+    borderColor: '#ffcc00',
   },
   quickButtonText: {
-    color: '#00f2fe',
+    marginTop: 5,
     fontWeight: '600',
+    fontSize: 12,
   },
-  logScroll: {
-    maxHeight: 120,
+  emergencyButton: {
+    backgroundColor: '#ff4444',
+  },
+  emergencyButtonActive: {
+    backgroundColor: '#141a24',
+    borderColor: '#ff4444',
+    borderWidth: 2,
+  },
+  distanceIndicator: {
+    padding: 15,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  distanceText: {
+    color: '#141a24',
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
+  distanceWarning: {
+    color: '#141a24',
+    fontWeight: 'bold',
+    marginTop: 5,
   },
   logItem: {
     backgroundColor: '#1e2833',
@@ -475,28 +770,36 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     borderRadius: 8,
   },
-  logItemDisabled: {
-    backgroundColor: '#0d1218',
-  },
   logText: {
     color: '#8899a6',
     fontSize: 12,
   },
-  buttonIcon: {
-    fontSize: 24,
+  floatingButton: {
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 30,
+    shadowColor: '#00f2fe',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  floatingConnect: {
+    backgroundColor: '#00f2fe',
+  },
+  floatingDisconnect: {
+    backgroundColor: '#ff4444',
+  },
+  floatingButtonText: {
+    color: '#141a24',
     fontWeight: 'bold',
-  },
-  buttonText: {
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 4,
-  },
-  disabled: {
-    backgroundColor: '#0d1218',
-    borderColor: '#333',
-  },
-  disabledText: {
-    color: '#333',
+    fontSize: 16,
+    marginLeft: 8,
   },
   modalOverlay: {
     flex: 1,
@@ -527,6 +830,22 @@ const styles = StyleSheet.create({
     marginBottom: 25,
     lineHeight: 24,
   },
+  statusIndicator: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  statusLed: {
+    width: 15,
+    height: 15,
+    borderRadius: 7.5,
+    marginRight: 10,
+  },
+  statusText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
   modalButtons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -544,7 +863,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#8899a6',
   },
-  modalButtonConnect: {
+  modalButtonAction: {
     backgroundColor: '#00f2fe',
   },
   modalButtonText: {
@@ -552,27 +871,8 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 16,
   },
-  floatingConnectButton: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    backgroundColor: '#00f2fe',
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    borderRadius: 30,
-    shadowColor: '#00f2fe',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 5,
-    elevation: 5,
-  },
-  floatingConnectText: {
-    color: '#141a24',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  bottomPadding: {
-    height: 80, // Espaço adicional no final para garantir que todo o conteúdo fique visível
+  disabled: {
+    opacity: 0.5,
   },
 });
 
