@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard, Image, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform, Image, ActivityIndicator } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -17,15 +18,11 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
     setError('');
     
-    // Simulação de chamada API
+    // Simulação de login
     setTimeout(() => {
       setLoading(false);
-      navigation.navigate('Main');
+      navigation.navigate('Pairing');
     }, 1500);
-  };
-
-  const handleForgotPassword = () => {
-    navigation.navigate('ForgotPassword');
   };
 
   return (
@@ -33,80 +30,95 @@ const LoginScreen = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.innerContainer}>
-          {/* Logo */}
-          <Image 
-            source={require('../assets/wacs-logo.jpg')} // Substitua pelo seu logo
-            style={styles.logo}
-            resizeMode="contain"
+      <View style={styles.innerContainer}>
+        <Image 
+          source={require('../assets/logo.jpg')}
+          style={styles.logo}
+          resizeMode="contain"
+        />
+        
+        <Text style={styles.title}>WACS</Text>
+        <Text style={styles.subtitle}>Controle de Acessibilidade</Text>
+        
+        <View style={styles.formContainer}>
+          {error ? <Text style={styles.errorText}>{error}</Text> : null}
+          
+          <Text style={styles.label}>Email</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="seu@email.com"
+            placeholderTextColor="#666"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            keyboardType="email-address"
           />
           
-          <Text style={styles.title}>WACS</Text>
-          <Text style={styles.subtitle}>Controle de Acesso</Text>
-          
-          <View style={styles.formContainer}>
-            {error ? <Text style={styles.errorText}>{error}</Text> : null}
-            
-            <Text style={styles.label}>Email</Text>
+          <Text style={styles.label}>Senha</Text>
+          <View style={styles.passwordContainer}>
             <TextInput
-              style={styles.input}
-              placeholder="seu@email.com"
+              style={styles.passwordInput}
+              placeholder="Digite sua senha"
               placeholderTextColor="#666"
-              value={email}
-              onChangeText={setEmail}
-              autoCapitalize="none"
-              keyboardType="email-address"
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={setPassword}
             />
-            
-            <Text style={styles.label}>Senha</Text>
-            <View style={styles.passwordContainer}>
-              <TextInput
-                style={styles.passwordInput}
-                placeholder="Digite sua senha"
-                placeholderTextColor="#666"
-                secureTextEntry={!showPassword}
-                value={password}
-                onChangeText={setPassword}
+            <TouchableOpacity 
+              style={styles.showPasswordButton}
+              onPress={() => setShowPassword(!showPassword)}
+            >
+              <Icon 
+                name={showPassword ? 'eye-off' : 'eye'} 
+                size={20} 
+                color="#00f2fe" 
               />
-              <TouchableOpacity 
-                style={styles.showPasswordButton}
-                onPress={() => setShowPassword(!showPassword)}
-              >
-                <Text style={styles.showPasswordText}>
-                  {showPassword ? 'Ocultar' : 'Mostrar'}
-                </Text>
+            </TouchableOpacity>
+          </View>
+          
+          <TouchableOpacity 
+            style={[styles.button, loading && styles.buttonDisabled]} 
+            onPress={handleLogin}
+            disabled={loading}
+          >
+            {loading ? (
+              <ActivityIndicator color="#0a0e14" />
+            ) : (
+              <Text style={styles.buttonText}>ACESSAR</Text>
+            )}
+          </TouchableOpacity>
+          
+          <View style={styles.footerLinks}>
+            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+              <Text style={styles.linkText}>Criar conta</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+              <Text style={styles.linkText}>Esqueci minha senha</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <View style={styles.socialLogin}>
+            <Text style={styles.socialText}>Ou entre com</Text>
+            <View style={styles.socialIcons}>
+              <TouchableOpacity style={styles.socialButton}>
+                <Icon name="google" size={24} color="#DB4437" />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.socialButton}>
+                <Icon name="facebook" size={24} color="#4267B2" />
               </TouchableOpacity>
             </View>
-            
-            <TouchableOpacity 
-              style={styles.forgotPasswordButton}
-              onPress={handleForgotPassword}
-            >
-              <Text style={styles.forgotPasswordText}>Esqueceu sua senha?</Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={[styles.button, loading && styles.buttonDisabled]} 
-              onPress={handleLogin}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#0a0e14" />
-              ) : (
-                <Text style={styles.buttonText}>ACESSAR</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-          
-          <View style={styles.footer}>
-            <Text style={styles.footerText}>Não tem uma conta?</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-              <Text style={styles.footerLink}>Cadastre-se</Text>
-            </TouchableOpacity>
           </View>
         </View>
-      </TouchableWithoutFeedback>
+        
+        <View style={styles.termsContainer}>
+          <Text style={styles.termsText}>
+            Ao continuar, você concorda com nossos{' '}
+            <Text style={styles.termsLink}>Termos de Serviço</Text> e{' '}
+            <Text style={styles.termsLink}>Política de Privacidade</Text>
+          </Text>
+        </View>
+      </View>
     </KeyboardAvoidingView>
   );
 };
@@ -186,19 +198,6 @@ const styles = StyleSheet.create({
   showPasswordButton: {
     padding: 15,
   },
-  showPasswordText: {
-    color: '#00f2fe',
-    fontSize: 14,
-    fontWeight: '600',
-  },
-  forgotPasswordButton: {
-    alignSelf: 'flex-end',
-    marginBottom: 25,
-  },
-  forgotPasswordText: {
-    color: '#00f2fe',
-    fontSize: 14,
-  },
   button: {
     backgroundColor: '#00f2fe',
     borderRadius: 12,
@@ -224,19 +223,46 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 15,
   },
-  footer: {
+  footerLinks: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 15,
+  },
+  linkText: {
+    color: '#00f2fe',
+    fontSize: 14,
+  },
+  socialLogin: {
+    marginTop: 30,
+    alignItems: 'center',
+  },
+  socialText: {
+    color: '#7a828a',
+    marginBottom: 15,
+  },
+  socialIcons: {
     flexDirection: 'row',
     justifyContent: 'center',
+    gap: 20,
+  },
+  socialButton: {
+    backgroundColor: '#14181d',
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
   },
-  footerText: {
+  termsContainer: {
+    paddingHorizontal: 20,
+  },
+  termsText: {
     color: '#7a828a',
-    marginRight: 5,
+    fontSize: 12,
+    textAlign: 'center',
   },
-  footerLink: {
+  termsLink: {
     color: '#00f2fe',
-    fontWeight: '600',
   },
 });
 

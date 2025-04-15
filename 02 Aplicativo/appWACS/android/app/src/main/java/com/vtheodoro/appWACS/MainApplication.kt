@@ -1,4 +1,4 @@
-package com.anonymous.appWACS
+package com.vtheodoro.appWACS
 
 import android.app.Application
 import android.content.res.Configuration

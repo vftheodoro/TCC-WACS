@@ -9,9 +9,10 @@ import {
   Modal,
   Animated,
   Easing,
-  SafeAreaView
+  SafeAreaView,
+  Alert
 } from 'react-native';
-import Slider from '@react-native-community/slider'; // Correct import for Slider
+import Slider from '@react-native-community/slider';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const COMMANDS = {
@@ -37,7 +38,7 @@ const ControlScreen = () => {
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [distance, setDistance] = useState(null);
   const [alert, setAlert] = useState(null);
-  const [battery, setBattery] = useState(0);
+  const [battery, setBattery] = useState(75);
   const [headlight, setHeadlight] = useState(false);
   const [buzzer, setBuzzer] = useState(false);
   const [usageTime, setUsageTime] = useState(0);
@@ -47,61 +48,17 @@ const ControlScreen = () => {
   const flashAnim = useRef(new Animated.Value(0)).current;
   const socketRef = useRef(null);
 
+  // Simulação de conexão Bluetooth
   useEffect(() => {
-    // Connect to WebSocket
-    const ws = new WebSocket('ws://localhost:8081');
-    socketRef.current = ws;
-
-    ws.onopen = () => {
-      console.log('WebSocket connected');
+    // Em uma implementação real, aqui seria a conexão com o dispositivo Bluetooth
+    const timer = setTimeout(() => {
       setConnected(true);
-    };
+      setBattery(85);
+      setUsageTime(1250);
+    }, 2000);
 
-    ws.onmessage = (e) => {
-      const data = JSON.parse(e.data);
-      
-      if (data.type === 'ALERT') {
-        handleAlert(data.message);
-      } else {
-        updateSystemStatus(data);
-      }
-    };
-
-    ws.onerror = (e) => {
-      console.log('WebSocket error:', e.message);
-      setConnected(false);
-    };
-
-    ws.onclose = () => {
-      console.log('WebSocket disconnected');
-      setConnected(false);
-      handleAlert('DISCONNECTED');
-    };
-
-    return () => {
-      if (ws && ws.readyState === WebSocket.OPEN) {
-        ws.close();
-      }
-    };
+    return () => clearTimeout(timer);
   }, []);
-
-  const updateSystemStatus = (data) => {
-    if (data.distance !== undefined) setDistance(data.distance);
-    if (data.battery !== undefined) setBattery(data.battery);
-    if (data.headlight !== undefined) setHeadlight(data.headlight);
-    if (data.buzzer !== undefined) setBuzzer(data.buzzer);
-    if (data.usageTime !== undefined) setUsageTime(data.usageTime);
-    if (data.connected !== undefined) setConnected(data.connected);
-    if (data.lastCommand !== undefined) setLastCommand(data.lastCommand);
-    if (data.emergency !== undefined) setEmergency(data.emergency);
-    
-    // Detect reverse mode from last command
-    if (data.lastCommand && data.lastCommand.startsWith('B')) {
-      setReverseMode(true);
-    } else if (data.lastCommand) {
-      setReverseMode(false);
-    }
-  };
 
   const handleAlert = (alertType) => {
     let alertMessage = '';
@@ -159,100 +116,60 @@ const ControlScreen = () => {
     try {
       Vibration.vibrate(50);
       
-      // Calculate actual speed (25-100% maps to 60-255 PWM)
-      let actualSpeed = Math.round(60 + (speed / 100) * (255 - 60));
+      // Simulação de envio de comando
+      console.log(`Comando enviado: ${command} com velocidade ${speed}%`);
       
-      // Limit speed in reverse mode
-      if (command === 'B') {
-        const maxReversePWM = Math.round(60 + (REVERSE_MAX / 100) * (255 - 60));
-        actualSpeed = Math.min(actualSpeed, maxReversePWM);
+      const newLog = {
+        id: Date.now().toString(),
+        commandKey: command,
+        command: COMMANDS[command]?.label || command,
+        timestamp: new Date().toLocaleTimeString(),
+        speedPercentage: speed,
+      };
+      
+      setCommandLog(prev => [newLog, ...prev.slice(0, 4)]);
+      setLastCommand(command);
+      
+      if (command === 'X') {
+        const newEmergencyState = !emergency;
+        setEmergency(newEmergencyState);
+        if (newEmergencyState) {
+          handleAlert('EMERGENCY');
+        }
       }
       
-      // Send command through WebSocket
-      if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-        socketRef.current.send(JSON.stringify({
-          type: 'COMMAND',
-          command: command + actualSpeed  // Exemplo: "F150" ou "B80"
-        }));
-        
-        const newLog = {
-          id: Date.now().toString(),
-          commandKey: command,
-          command: COMMANDS[command]?.label || command,
-          timestamp: new Date().toLocaleTimeString(),
-          speedPercentage: speed,
-          speedValue: actualSpeed,
-        };
-        
-        setCommandLog(prev => [newLog, ...prev.slice(0, 4)]);
-        setLastCommand(command);
-        
-        if (command === 'X') {
-          setEmergency(prev => !prev);
-        }
-        
-        if (command === 'L') {
-          setHeadlight(prev => !prev);
-        }
-      } else {
-        throw new Error('WebSocket not connected');
+      if (command === 'L') {
+        setHeadlight(prev => !prev);
+      }
+
+      if (command === 'B') {
+        setReverseMode(true);
+        setDistance(Math.floor(Math.random() * 100) + 1);
+      } else if (command !== 'S') {
+        setReverseMode(false);
+      }
+
+      if (command === 'Z') {
+        setBuzzer(true);
+        setTimeout(() => setBuzzer(false), 1000);
       }
     } catch (error) {
-      console.log('Communication error:', error);
+      console.log('Erro de comunicação:', error);
       handleAlert('COMMUNICATION_ERROR');
     }
   };
 
   const connectDevice = () => {
-    // Attempt to reconnect WebSocket if needed
-    if (!socketRef.current || socketRef.current.readyState !== WebSocket.OPEN) {
-      const ws = new WebSocket('ws://localhost:8080');
-      socketRef.current = ws;
-      
-      ws.onopen = () => {
-        console.log('WebSocket reconnected');
-        setConnected(true);
-        setShowConnectionModal(false);
-        sendCommand('S'); // Send stop command on connect
-      };
-      
-      ws.onmessage = (e) => {
-        const data = JSON.parse(e.data);
-        
-        if (data.type === 'ALERT') {
-          handleAlert(data.message);
-        } else {
-          updateSystemStatus(data);
-        }
-      };
-      
-      ws.onerror = (e) => {
-        console.log('WebSocket error:', e.message);
-        setConnected(false);
-        handleAlert('CONNECTION_ERROR');
-      };
-      
-      ws.onclose = () => {
-        console.log('WebSocket disconnected');
-        setConnected(false);
-        handleAlert('DISCONNECTED');
-      };
-    } else {
-      setConnected(true);
-      setShowConnectionModal(false);
-      sendCommand('S'); // Send stop command on connect
-    }
+    setConnected(true);
+    setShowConnectionModal(false);
+    sendCommand('S'); // Envia comando de parada ao conectar
+    Alert.alert('Conectado', 'Dispositivo conectado com sucesso!');
   };
 
   const disconnectDevice = () => {
-    sendCommand('S'); // Send stop command on disconnect
-    
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.close();
-    }
-    
     setConnected(false);
     setShowConnectionModal(false);
+    Alert.alert('Desconectado', 'Dispositivo desconectado com sucesso!');
   };
 
   const formatTime = (seconds) => {
@@ -378,7 +295,7 @@ const ControlScreen = () => {
             <Text style={styles.statusLabel}>Bateria</Text>
             <View style={styles.statusRow}>
               <Icon 
-                name="battery" 
+                name={battery > 30 ? "battery" : battery > 15 ? "battery-50" : "battery-alert"} 
                 size={20} 
                 color={
                   battery > 30 ? '#00f2fe' : 

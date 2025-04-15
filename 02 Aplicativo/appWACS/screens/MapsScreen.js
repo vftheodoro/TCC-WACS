@@ -1,393 +1,508 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, ActivityIndicator, PermissionsAndroid, Platform, Image } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import IconFA from 'react-native-vector-icons/FontAwesome5';
-import Geolocation from 'react-native-geolocation-service';
 
-// Componente de mapa simulado
-const SimulatedMap = ({ location, accessiblePlaces, selectedRoute }) => {
-  return (
-    <View style={styles.mapContainer}>
-      <Image 
-        source={require('../assets/map-placeholder.jpg')} // Você pode usar qualquer imagem de mapa genérico
-        style={styles.mapImage}
-        resizeMode="cover"
-      />
-      
-      {/* Simulação de marcadores */}
-      {accessiblePlaces.map(place => (
-        <View 
-          key={place.id} 
-          style={[
-            styles.simulatedMarker,
-            { 
-              left: `${((place.coordinate.longitude + 46.65) * 100)}%`,
-              top: `${((place.coordinate.latitude + 23.55) * 100)}%`
-            }
-          ]}
-        >
-          <IconFA 
-            name={place.type === 'restaurant' ? 'utensils' : 
-                  place.type === 'shopping' ? 'shopping-bag' : 
-                  place.type === 'leisure' ? 'tree' : 'bus'}
-            size={12} 
-            color="#fff" 
-          />
-        </View>
-      ))}
-      
-      {/* Simulação da localização do usuário */}
-      {location && (
-        <View style={[
-          styles.userLocation,
-          { 
-            left: `${((location.longitude + 46.65) * 100)}%`,
-            top: `${((location.latitude + 23.55) * 100)}%`
-          }
-        ]} />
-      )}
-      
-      {/* Simulação da rota selecionada */}
-      {selectedRoute && (
-        <View style={styles.simulatedRouteContainer}>
-          {selectedRoute.map((point, index) => (
-            <View 
-              key={index}
-              style={[
-                styles.simulatedRoutePoint,
-                { 
-                  left: `${((point.longitude + 46.65) * 100)}%`,
-                  top: `${((point.latitude + 23.55) * 100)}%`
-                }
-              ]}
-            />
-          ))}
-        </View>
-      )}
-    </View>
-  );
-};
+const { width, height } = Dimensions.get('window');
 
-const MapsScreen = () => {
-  const [location, setLocation] = useState(null);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+const ASPECT_RATIO = width / height;
+const LATITUDE = -23.5505;
+const LONGITUDE = -46.6333;
+const LATITUDE_DELTA = 0.0922;
+const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+
+const MapScreen = () => {
+  const [region, setRegion] = useState({
+    latitude: LATITUDE,
+    longitude: LONGITUDE,
+    latitudeDelta: LATITUDE_DELTA,
+    longitudeDelta: LONGITUDE_DELTA,
+  });
   const [selectedFilter, setSelectedFilter] = useState('all');
-  const [accessiblePlaces, setAccessiblePlaces] = useState([]);
-  const [selectedRoute, setSelectedRoute] = useState(null);
-  const [mapAvailable, setMapAvailable] = useState(true);
+  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [userLocation, setUserLocation] = useState({
+    latitude: LATITUDE,
+    longitude: LONGITUDE,
+  });
 
-  // Pontos de acessibilidade mockados (simulando dados do Firebase)
-  const mockAccessiblePlaces = [
+  // Locais acessíveis mockados
+  const accessiblePlaces = [
     {
       id: '1',
-      title: 'Restaurante Acessível',
-      description: 'Rampas de acesso, banheiro adaptado',
-      coordinate: { latitude: -23.5505, longitude: -46.6333 },
+      title: 'Shopping Center',
+      type: 'shopping',
+      description: 'Elevadores e banheiros acessíveis em todos os andares',
+      latitude: -23.5570,
+      longitude: -46.6420,
       rating: 4.5,
-      type: 'restaurant',
-      features: ['ramp', 'bathroom', 'parking']
+      features: ['elevator', 'bathroom', 'parking'],
     },
     {
       id: '2',
-      title: 'Shopping Central',
-      description: 'Elevadores, banheiros adaptados em todos os andares',
-      coordinate: { latitude: -23.5570, longitude: -46.6420 },
-      rating: 5.0,
-      type: 'shopping',
-      features: ['elevator', 'bathroom', 'parking', 'braille']
+      title: 'Restaurante Acessível',
+      type: 'restaurant',
+      description: 'Rampas de acesso e cardápio em braile',
+      latitude: -23.5510,
+      longitude: -46.6350,
+      rating: 4.0,
+      features: ['ramp', 'braille'],
     },
     {
       id: '3',
       title: 'Parque Municipal',
-      description: 'Trilhas adaptadas, estacionamento reservado',
-      coordinate: { latitude: -23.5430, longitude: -46.6380 },
-      rating: 3.8,
-      type: 'leisure',
-      features: ['ramp', 'parking']
+      type: 'park',
+      description: 'Trilhas adaptadas e estacionamento reservado',
+      latitude: -23.5430,
+      longitude: -46.6380,
+      rating: 4.2,
+      features: ['ramp', 'parking'],
     },
-    {
-      id: '4',
-      title: 'Ponto de Ônibus Adaptado',
-      description: 'Piso tátil, rampa de acesso',
-      coordinate: { latitude: -23.5505, longitude: -46.6380 },
-      rating: 4.0,
-      type: 'transport',
-      features: ['tactile_paving', 'ramp']
-    }
   ];
 
-  // Rota acessível mockada
-  const mockAccessibleRoute = [
-    { latitude: -23.5605, longitude: -46.6333 },
-    { latitude: -23.5585, longitude: -46.6350 },
-    { latitude: -23.5570, longitude: -46.6380 },
-    { latitude: -23.5540, longitude: -46.6400 },
-    { latitude: -23.5505, longitude: -46.6380 }
-  ];
+  const filteredPlaces = selectedFilter === 'all' 
+    ? accessiblePlaces 
+    : accessiblePlaces.filter(place => place.features.includes(selectedFilter));
 
-  const requestLocationPermission = async () => {
-    if (Platform.OS === 'ios') {
-      try {
-        const auth = await Geolocation.requestAuthorization('whenInUse');
-        if (auth === 'granted') {
-          return true;
-        }
-        return false;
-      } catch (error) {
-        console.log('Erro ao solicitar permissão de localização (iOS)', error);
-        return false;
-      }
-    }
-
-    if (Platform.OS === 'android') {
-      try {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-          {
-            title: "Permissão de Localização",
-            message: "Este app precisa acessar sua localização para mostrar rotas acessíveis.",
-            buttonNeutral: "Pergunte-me depois",
-            buttonNegative: "Cancelar",
-            buttonPositive: "OK"
-          }
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } catch (err) {
-        console.warn('Erro ao solicitar permissão de localização (Android)', err);
-        return false;
-      }
+  const getPlaceIcon = (type) => {
+    switch(type) {
+      case 'shopping': return 'shopping-bag';
+      case 'restaurant': return 'utensils';
+      case 'park': return 'tree';
+      default: return 'map-marker-alt';
     }
   };
 
-  useEffect(() => {
-    const initApp = async () => {
-      try {
-        const hasPermission = await requestLocationPermission();
-        
-        if (!hasPermission) {
-          console.log('Permissão de localização negada');
-          setMapAvailable(false);
-          setErrorMsg('Permissão de localização negada');
-        }
-
-        try {
-          // Simulando localização fixa (Centro de São Paulo) já que não temos API
-          setLocation({
-            latitude: -23.5505,
-            longitude: -46.6333,
-          });
-        } catch (error) {
-          console.log('Erro ao acessar geolocalização:', error);
-          setMapAvailable(false);
-          setErrorMsg('Serviço de localização indisponível');
-        }
-      } catch (error) {
-        console.log('Erro na inicialização:', error);
-        setMapAvailable(false);
-        setErrorMsg('Não foi possível inicializar os serviços de mapa');
-      } finally {
-        setTimeout(() => {
-          setAccessiblePlaces(mockAccessiblePlaces);
-          setIsLoading(false);
-        }, 1500);
-      }
-    };
-
-    initApp();
-  }, []);
-
-  const filterPlaces = (filter) => {
-    setSelectedFilter(filter);
-    if (filter === 'all') {
-      setAccessiblePlaces(mockAccessiblePlaces);
-    } else {
-      setAccessiblePlaces(
-        mockAccessiblePlaces.filter(place => place.features.includes(filter))
-      );
+  const getFeatureIcon = (feature) => {
+    switch(feature) {
+      case 'elevator': return 'elevator';
+      case 'bathroom': return 'restroom';
+      case 'parking': return 'parking';
+      case 'ramp': return 'wheelchair';
+      case 'braille': return 'braille';
+      default: return 'info-circle';
     }
   };
-
-  const showRoute = (placeId) => {
-    setSelectedRoute(mockAccessibleRoute);
-  };
-
-  const renderFeatureIcon = (feature) => {
-    switch (feature) {
-      case 'ramp':
-        return <IconFA name="wheelchair" size={14} color="#00f2fe" />;
-      case 'bathroom':
-        return <IconFA name="restroom" size={14} color="#00f2fe" />;
-      case 'parking':
-        return <IconFA name="parking" size={14} color="#00f2fe" />;
-      case 'elevator':
-        return <Icon name="elevator" size={14} color="#00f2fe" />;
-      case 'tactile_paving':
-        return <Icon name="texture" size={14} color="#00f2fe" />;
-      case 'braille':
-        return <IconFA name="braille" size={14} color="#00f2fe" />;
-      default:
-        return null;
-    }
-  };
-
-  const renderMapArea = () => {
-    if (isLoading) {
-      return (
-        <View style={[styles.mapPlaceholder, styles.centered]}>
-          <ActivityIndicator size="large" color="#00f2fe" />
-          <Text style={styles.loadingText}>Carregando mapa de acessibilidade...</Text>
-        </View>
-      );
-    }
-
-    if (!mapAvailable) {
-      return (
-        <View style={[styles.mapPlaceholder, styles.centered]}>
-          <Icon name="map-off" size={48} color="#00f2fe" />
-          <Text style={styles.mapUnavailableTitle}>Mapa Temporariamente Indisponível</Text>
-          <Text style={styles.mapUnavailableText}>
-            {errorMsg || "Não foi possível carregar o mapa. Verifique sua conexão com a internet ou permissões de localização."}
-          </Text>
-          <TouchableOpacity style={styles.retryButton}>
-            <Text style={styles.retryButtonText}>Tentar Novamente</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-
-    return (
-      <View>
-        <SimulatedMap 
-          location={location}
-          accessiblePlaces={accessiblePlaces}
-          selectedRoute={selectedRoute}
-        />
-        
-        <View style={styles.mapControls}>
-          <TouchableOpacity style={styles.controlButton}>
-            <Icon name="my-location" size={24} color="#fff" />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.controlButton}>
-            <Icon name="add-location" size={24} color="#fff" />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  if (isLoading) {
-    return (
-      <View style={[styles.container, styles.centered]}>
-        <ActivityIndicator size="large" color="#00f2fe" />
-        <Text style={styles.loadingText}>Carregando informações de acessibilidade...</Text>
-      </View>
-    );
-  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>NAVEGAÇÃO</Text>
-      
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filtersContainer}>
+      {/* Mapa */}
+      <MapView
+        provider={PROVIDER_GOOGLE}
+        style={styles.map}
+        region={region}
+        customMapStyle={mapStyle} // Estilo escuro para o mapa
+      >
+        {/* Marcador da localização do usuário */}
+        <Marker
+          coordinate={userLocation}
+          title="Sua localização"
+          description="Você está aqui"
+        >
+          <View style={styles.userMarker}>
+            <Icon name="account" size={20} color="#00f2fe" />
+          </View>
+        </Marker>
+
+        {/* Marcadores dos locais acessíveis */}
+        {filteredPlaces.map(place => (
+          <Marker
+            key={place.id}
+            coordinate={{
+              latitude: place.latitude,
+              longitude: place.longitude,
+            }}
+            title={place.title}
+            description={place.description}
+            onPress={() => setSelectedPlace(place)}
+          >
+            <View style={[
+              styles.placeMarker,
+              selectedPlace?.id === place.id && styles.selectedPlaceMarker
+            ]}>
+              <IconFA 
+                name={getPlaceIcon(place.type)} 
+                size={16} 
+                color="white" 
+              />
+            </View>
+          </Marker>
+        ))}
+      </MapView>
+
+      {/* Controles do mapa */}
+      <View style={styles.mapControls}>
+        <TouchableOpacity style={styles.controlButton}>
+          <Icon name="crosshairs-gps" size={24} color="#00f2fe" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.controlButton}>
+          <Icon name="magnify-plus" size={24} color="#00f2fe" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.controlButton}>
+          <Icon name="magnify-minus" size={24} color="#00f2fe" />
+        </TouchableOpacity>
+      </View>
+
+      {/* Filtros */}
+      <ScrollView 
+        horizontal 
+        showsHorizontalScrollIndicator={false} 
+        style={styles.filtersContainer}
+        contentContainerStyle={styles.filtersContent}
+      >
         <TouchableOpacity 
-          style={[styles.filterButton, selectedFilter === 'all' && styles.filterActive]}
-          onPress={() => filterPlaces('all')}>
+          style={[
+            styles.filterButton,
+            selectedFilter === 'all' && styles.filterActive
+          ]}
+          onPress={() => setSelectedFilter('all')}
+        >
           <Text style={styles.filterText}>Todos</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity 
-          style={[styles.filterButton, selectedFilter === 'ramp' && styles.filterActive]}
-          onPress={() => filterPlaces('ramp')}>
-          <IconFA name="wheelchair" size={16} color="#fff" />
+          style={[
+            styles.filterButton,
+            selectedFilter === 'ramp' && styles.filterActive
+          ]}
+          onPress={() => setSelectedFilter('ramp')}
+        >
+          <IconFA name="wheelchair" size={16} color="white" />
           <Text style={styles.filterText}>Rampas</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity 
-          style={[styles.filterButton, selectedFilter === 'bathroom' && styles.filterActive]}
-          onPress={() => filterPlaces('bathroom')}>
-          <IconFA name="restroom" size={16} color="#fff" />
+          style={[
+            styles.filterButton,
+            selectedFilter === 'elevator' && styles.filterActive
+          ]}
+          onPress={() => setSelectedFilter('elevator')}
+        >
+          <Icon name="elevator" size={16} color="white" />
+          <Text style={styles.filterText}>Elevadores</Text>
+        </TouchableOpacity>
+        
+        <TouchableOpacity 
+          style={[
+            styles.filterButton,
+            selectedFilter === 'bathroom' && styles.filterActive
+          ]}
+          onPress={() => setSelectedFilter('bathroom')}
+        >
+          <IconFA name="restroom" size={16} color="white" />
           <Text style={styles.filterText}>Banheiros</Text>
         </TouchableOpacity>
+        
         <TouchableOpacity 
-          style={[styles.filterButton, selectedFilter === 'parking' && styles.filterActive]}
-          onPress={() => filterPlaces('parking')}>
-          <IconFA name="parking" size={16} color="#fff" />
+          style={[
+            styles.filterButton,
+            selectedFilter === 'parking' && styles.filterActive
+          ]}
+          onPress={() => setSelectedFilter('parking')}
+        >
+          <IconFA name="parking" size={16} color="white" />
           <Text style={styles.filterText}>Estacionamento</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.filterButton, selectedFilter === 'tactile_paving' && styles.filterActive]}
-          onPress={() => filterPlaces('tactile_paving')}>
-          <Icon name="texture" size={16} color="#fff" />
-          <Text style={styles.filterText}>Piso Tátil</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      {renderMapArea()}
-
-      <View style={styles.placesListContainer}>
-        <Text style={styles.sectionTitle}>Locais Acessíveis Próximos</Text>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {accessiblePlaces.map(place => (
-            <TouchableOpacity 
-              key={place.id} 
-              style={styles.placeCard}
-              onPress={() => showRoute(place.id)}
-            >
-              <View style={styles.placeIconContainer}>
+      {/* Detalhes do local selecionado */}
+      {selectedPlace && (
+        <View style={styles.placeDetails}>
+          <View style={styles.placeHeader}>
+            <View style={styles.placeIcon}>
+              <IconFA 
+                name={getPlaceIcon(selectedPlace.type)} 
+                size={20} 
+                color="white" 
+              />
+            </View>
+            <Text style={styles.placeTitle}>{selectedPlace.title}</Text>
+            <View style={styles.placeRating}>
+              <Icon name="star" size={16} color="#FFD700" />
+              <Text style={styles.ratingText}>{selectedPlace.rating}</Text>
+            </View>
+          </View>
+          
+          <Text style={styles.placeDescription}>{selectedPlace.description}</Text>
+          
+          <View style={styles.featuresContainer}>
+            {selectedPlace.features.map((feature, index) => (
+              <View key={index} style={styles.featureBadge}>
                 <IconFA 
-                  name={place.type === 'restaurant' ? 'utensils' : 
-                        place.type === 'shopping' ? 'shopping-bag' : 
-                        place.type === 'leisure' ? 'tree' : 'bus'}
-                  size={20} 
-                  color="#fff" />
+                  name={getFeatureIcon(feature)} 
+                  size={14} 
+                  color="#00f2fe" 
+                />
+                <Text style={styles.featureText}>
+                  {feature === 'elevator' && 'Elevador'}
+                  {feature === 'bathroom' && 'Banheiro Acessível'}
+                  {feature === 'parking' && 'Estacionamento'}
+                  {feature === 'ramp' && 'Rampa'}
+                  {feature === 'braille' && 'Braile'}
+                </Text>
               </View>
-              <Text style={styles.placeTitle} numberOfLines={1}>{place.title}</Text>
-              <View style={styles.ratingContainer}>
-                <IconFA name="star" solid size={12} color="#FFD700" />
-                <Text style={styles.ratingText}>{place.rating.toFixed(1)}</Text>
-              </View>
-              <View style={styles.featuresContainer}>
-                {place.features.map((feature, index) => (
-                  <View key={index} style={styles.featureIcon}>
-                    {renderFeatureIcon(feature)}
-                  </View>
-                ))}
-              </View>
-              <View style={styles.routeButton}>
-                <IconFA name="route" size={12} color="#fff" />
-                <Text style={styles.routeButtonText}>Rota</Text>
-              </View>
+            ))}
+          </View>
+          
+          <View style={styles.actionsContainer}>
+            <TouchableOpacity style={styles.actionButton}>
+              <Icon name="directions" size={20} color="#00f2fe" />
+              <Text style={styles.actionText}>Rotas</Text>
             </TouchableOpacity>
-          ))}
-        </ScrollView>
-      </View>
+            
+            <TouchableOpacity style={styles.actionButton}>
+              <Icon name="thumb-up" size={20} color="#00f2fe" />
+              <Text style={styles.actionText}>Avaliar</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={styles.actionButton}>
+              <Icon name="share-variant" size={20} color="#00f2fe" />
+              <Text style={styles.actionText}>Compartilhar</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+
+      {/* Lista de locais próximos */}
+      {!selectedPlace && (
+        <View style={styles.placesListContainer}>
+          <Text style={styles.sectionTitle}>Locais Acessíveis Próximos</Text>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.placesListContent}
+          >
+            {filteredPlaces.map(place => (
+              <TouchableOpacity 
+                key={place.id}
+                style={styles.placeCard}
+                onPress={() => setSelectedPlace(place)}
+              >
+                <View style={styles.placeCardIcon}>
+                  <IconFA 
+                    name={getPlaceIcon(place.type)} 
+                    size={20} 
+                    color="white" 
+                  />
+                </View>
+                <Text style={styles.placeCardTitle}>{place.title}</Text>
+                <View style={styles.placeCardRating}>
+                  <Icon name="star" size={14} color="#FFD700" />
+                  <Text style={styles.placeCardRatingText}>{place.rating}</Text>
+                </View>
+                <View style={styles.placeCardFeatures}>
+                  {place.features.slice(0, 3).map((feature, index) => (
+                    <IconFA 
+                      key={index}
+                      name={getFeatureIcon(feature)} 
+                      size={12} 
+                      color="#00f2fe" 
+                      style={styles.placeCardFeatureIcon}
+                    />
+                  ))}
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 };
+
+// Estilo escuro para o mapa
+const mapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#242f3e"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.locality",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#263c3f"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#6b9a76"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#38414e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#212a37"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9ca5b3"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#746855"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry.stroke",
+    "stylers": [
+      {
+        "color": "#1f2835"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#f3d19c"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#2f3948"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#d59563"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#515c6d"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#17263c"
+      }
+    ]
+  }
+];
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#0a0e14',
-    padding: 20
   },
-  centered: {
-    justifyContent: 'center',
+  map: {
+    width: '100%',
+    height: '60%',
+  },
+  mapControls: {
+    position: 'absolute',
+    top: 20,
+    right: 15,
+    backgroundColor: 'rgba(10, 14, 20, 0.8)',
+    borderRadius: 20,
+    padding: 8,
+  },
+  controlButton: {
+    padding: 8,
     alignItems: 'center',
   },
-  title: {
-    color: '#00f2fe',
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 20
-  },
-  loadingText: {
-    color: '#fff',
-    marginTop: 10,
-    fontSize: 16
-  },
   filtersContainer: {
-    flexDirection: 'row',
-    marginBottom: 15,
+    position: 'absolute',
+    top: 70,
+    left: 0,
+    right: 0,
+    paddingHorizontal: 15,
+  },
+  filtersContent: {
+    paddingBottom: 10,
   },
   filterButton: {
     backgroundColor: '#1c2331',
@@ -402,189 +517,176 @@ const styles = StyleSheet.create({
     backgroundColor: '#00a8ff',
   },
   filterText: {
-    color: '#fff',
+    color: 'white',
     fontWeight: '500',
     marginLeft: 5,
   },
-  mapContainer: {
-    height: 300,
-    borderRadius: 15,
-    overflow: 'hidden',
-    marginBottom: 15,
-    backgroundColor: '#1a1f27',
-    borderWidth: 1,
-    borderColor: '#2a2e35',
-    position: 'relative'
-  },
-  mapImage: {
-    width: '100%',
-    height: '100%',
-    opacity: 0.7
-  },
-  simulatedMarker: {
-    position: 'absolute',
-    backgroundColor: '#00f2fe',
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+  userMarker: {
+    backgroundColor: '#0a0e14',
+    padding: 5,
+    borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#fff',
-    transform: [{ translateX: -12 }, { translateY: -12 }]
+    borderColor: '#00f2fe',
   },
-  userLocation: {
-    position: 'absolute',
+  placeMarker: {
     backgroundColor: '#00f2fe',
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    padding: 8,
+    borderRadius: 20,
     borderWidth: 2,
-    borderColor: '#fff',
-    transform: [{ translateX: -8 }, { translateY: -8 }]
+    borderColor: '#0a0e14',
   },
-  simulatedRouteContainer: {
+  selectedPlaceMarker: {
+    backgroundColor: '#ffcc00',
+    borderColor: '#0a0e14',
+    transform: [{ scale: 1.2 }],
+  },
+  placeDetails: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
-  },
-  simulatedRoutePoint: {
-    position: 'absolute',
-    backgroundColor: 'rgba(0, 242, 254, 0.5)',
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    transform: [{ translateX: -4 }, { translateY: -4 }]
-  },
-  mapPlaceholder: {
-    height: 300,
-    borderRadius: 15,
-    backgroundColor: '#1c2331',
-    marginBottom: 15,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#141a24',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     padding: 20,
+    borderWidth: 1,
+    borderColor: '#1e2833',
   },
-  mapUnavailableTitle: {
-    color: '#00f2fe',
-    fontSize: 18,
-    fontWeight: '600',
-    marginTop: 15,
-    marginBottom: 10,
-  },
-  mapUnavailableText: {
-    color: '#fff',
-    textAlign: 'center',
-    fontSize: 14,
-    lineHeight: 20,
-    opacity: 0.8,
-    maxWidth: '80%',
-  },
-  retryButton: {
-    backgroundColor: '#00f2fe',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
-    borderRadius: 20,
-    marginTop: 15,
-  },
-  retryButtonText: {
-    color: '#0a0e14',
-    fontWeight: '600',
-  },
-  mapControls: {
-    position: 'absolute',
-    right: 15,
-    bottom: 15,
-  },
-  controlButton: {
-    backgroundColor: 'rgba(10, 14, 20, 0.8)',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  sectionTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 15,
-  },
-  placesListContainer: {
-    marginTop: 10,
-  },
-  placeCard: {
-    backgroundColor: '#1c2331',
-    borderRadius: 15,
-    padding: 15,
-    width: 150,
-    marginRight: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  placeIconContainer: {
-    backgroundColor: '#273349',
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  placeTitle: {
-    color: '#fff',
-    fontWeight: '600',
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  ratingContainer: {
+  placeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
   },
+  placeIcon: {
+    backgroundColor: '#1e2833',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  placeTitle: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    flex: 1,
+  },
+  placeRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   ratingText: {
-    color: '#fff',
+    color: 'white',
     marginLeft: 5,
-    fontSize: 12,
+  },
+  placeDescription: {
+    color: '#7a828a',
+    fontSize: 14,
+    marginBottom: 15,
+    lineHeight: 20,
   },
   featuresContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginBottom: 10,
+    marginBottom: 15,
   },
-  featureIcon: {
-    backgroundColor: 'rgba(0, 242, 254, 0.2)',
-    borderRadius: 12,
-    width: 24,
-    height: 24,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 5,
-    marginBottom: 5,
-  },
-  routeButton: {
-    backgroundColor: '#00f2fe',
-    borderRadius: 12,
+  featureBadge: {
+    backgroundColor: 'rgba(0, 242, 254, 0.1)',
+    borderRadius: 15,
     paddingVertical: 5,
     paddingHorizontal: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
+    marginRight: 10,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: 'rgba(0, 242, 254, 0.3)',
   },
-  routeButtonText: {
-    color: '#fff',
-    fontWeight: '500',
+  featureText: {
+    color: '#00f2fe',
     fontSize: 12,
     marginLeft: 5,
-  }
+  },
+  actionsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginTop: 10,
+  },
+  actionButton: {
+    alignItems: 'center',
+  },
+  actionText: {
+    color: '#00f2fe',
+    fontSize: 12,
+    marginTop: 5,
+  },
+  placesListContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#141a24',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 15,
+    borderWidth: 1,
+    borderColor: '#1e2833',
+  },
+  sectionTitle: {
+    color: '#00f2fe',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 15,
+  },
+  placesListContent: {
+    paddingBottom: 10,
+  },
+  placeCard: {
+    width: 150,
+    backgroundColor: '#1a1f27',
+    borderRadius: 15,
+    padding: 15,
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: '#1e2833',
+  },
+  placeCardIcon: {
+    backgroundColor: '#1e2833',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  placeCardTitle: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: '600',
+    marginBottom: 10,
+  },
+  placeCardRating: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  placeCardRatingText: {
+    color: 'white',
+    marginLeft: 5,
+    fontSize: 12,
+  },
+  placeCardFeatures: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  placeCardFeatureIcon: {
+    backgroundColor: 'rgba(0, 242, 254, 0.1)',
+    borderRadius: 12,
+    padding: 5,
+    marginRight: 5,
+    marginBottom: 5,
+  },
 });
 
-export default MapsScreen;
+export default MapScreen;

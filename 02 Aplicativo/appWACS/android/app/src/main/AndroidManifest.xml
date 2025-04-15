@@ -4,8 +4,6 @@
   <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
   <uses-permission android:name="android.permission.VIBRATE"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-  <uses-permission android:name="android.permission.USB_PERMISSION" />
-  <uses-permission android:name="android.permission.INTERNET" />
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -26,8 +24,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="com.anonymous.appWACS"/>
-        <data android:scheme="exp+appwacs"/>
+        <data android:scheme="com.vtheodoro.appWACS"/>
       </intent-filter>
     </activity>
   </application>
