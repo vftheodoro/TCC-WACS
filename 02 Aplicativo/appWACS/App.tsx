@@ -2,19 +2,19 @@ import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { Ionicons } from '@expo/vector-icons';
 
 // Telas
 import LoginScreen from './screens/LoginScreen';
-import RegisterScreen from '././screens/RegisterScreen';
-import ForgotPasswordScreen from '././screens/ForgotPasswordScreen';
+import RegisterScreen from './screens/RegisterScreen';
+import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import ControlScreen from './screens/ControlScreen';
-import MapsScreen from '././screens/MapsScreen';
-import HistoryScreen from '././screens/HistoryScreen';
-import SupportScreen from '././screens/SupportScreen';
-import SettingsScreen from '././screens/SettingsScreen';
-import DeviceInfoScreen from '././screens/DeviceInfoScreen';
-import PairingScreen from '././screens/PairingScreen';
+import MapsScreen from './screens/MapsScreen';
+import HistoryScreen from './screens/HistoryScreen';
+import SupportScreen from './screens/SupportScreen';
+import SettingsScreen from './screens/SettingsScreen';
+import DeviceInfoScreen from './screens/DeviceInfoScreen';
+import PairingScreen from './screens/PairingScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -25,14 +25,25 @@ const MainTabs = () => {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
+
           switch(route.name) {
-            case 'Controle': iconName = 'gamepad'; break;
-            case 'Mapas': iconName = 'map'; break;
-            case 'Histórico': iconName = 'history'; break;
-            case 'Suporte': iconName = 'help-circle'; break;
-            case 'Config': iconName = 'cog'; break;
+            case 'Controle': 
+              iconName = focused ? 'game-controller' : 'game-controller-outline';
+              break;
+            case 'Mapas': 
+              iconName = focused ? 'map' : 'map-outline';
+              break;
+            case 'Histórico': 
+              iconName = focused ? 'time' : 'time-outline';
+              break;
+            case 'Suporte': 
+              iconName = focused ? 'help-circle' : 'help-circle-outline';
+              break;
+            case 'Config': 
+              iconName = focused ? 'settings' : 'settings-outline';
+              break;
           }
-          return <Icon name={iconName} size={28} color={color} />;
+          return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#00f2fe',
         tabBarInactiveTintColor: '#555',
