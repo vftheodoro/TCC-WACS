@@ -777,5 +777,5 @@ Permitir que o mapa continue acessível offline para que os usuários possam vis
 
 Com essas ideias e funcionalidades, o aplicativo WACS será ainda mais útil para as pessoas com deficiência, proporcionando uma navegação mais inclusiva, precisa e colaborativa. A integração das APIs do Google e a adição de funcionalidades de votação e gamificação tornarão o mapa mais interativo e dinâmico para os usuários.
 
-mande o codigo 100% completo para mim */
+quemande o codigo 100% completo para mim */
 

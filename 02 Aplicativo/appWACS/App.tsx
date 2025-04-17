@@ -4,15 +4,14 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-// Telas
+// Screens
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
 import ForgotPasswordScreen from './screens/ForgotPasswordScreen';
 import ControlScreen from './screens/ControlScreen';
 import MapsScreen from './screens/MapsScreen';
 import HistoryScreen from './screens/HistoryScreen';
-import SupportScreen from './screens/SupportScreen';
-import SettingsScreen from './screens/SettingsScreen';
+import AccountScreen from './screens/AccountScreen';
 import DeviceInfoScreen from './screens/DeviceInfoScreen';
 import PairingScreen from './screens/PairingScreen';
 
@@ -24,25 +23,25 @@ const MainTabs = () => {
     <Tab.Navigator
       screenOptions={({ route }) => ({
         tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
+          let iconName: keyof typeof Ionicons.glyphMap;
 
-          switch(route.name) {
-            case 'Controle': 
-              iconName = focused ? 'game-controller' : 'game-controller-outline';
+          switch (route.name) {
+            case 'Controle':
+              iconName = focused ? 'game-controller-outline' : 'game-controller-outline';
               break;
-            case 'Mapas': 
+            case 'Mapas':
               iconName = focused ? 'map' : 'map-outline';
               break;
-            case 'Histórico': 
+            case 'Histórico':
               iconName = focused ? 'time' : 'time-outline';
               break;
-            case 'Suporte': 
-              iconName = focused ? 'help-circle' : 'help-circle-outline';
+            case 'Conta':
+              iconName = focused ? 'person' : 'person-outline';
               break;
-            case 'Config': 
-              iconName = focused ? 'settings' : 'settings-outline';
-              break;
+            default:
+              iconName = 'help-circle-outline';
           }
+
           return <Ionicons name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#00f2fe',
@@ -50,16 +49,15 @@ const MainTabs = () => {
         tabBarStyle: {
           backgroundColor: '#0a0e14',
           borderTopWidth: 1,
-          borderTopColor: '#1a1f27'
+          borderTopColor: '#1a1f27',
         },
-        headerShown: false
+        headerShown: false,
       })}
     >
       <Tab.Screen name="Controle" component={ControlScreen} />
       <Tab.Screen name="Mapas" component={MapsScreen} />
       <Tab.Screen name="Histórico" component={HistoryScreen} />
-      <Tab.Screen name="Suporte" component={SupportScreen} />
-      <Tab.Screen name="Config" component={SettingsScreen} />
+      <Tab.Screen name="Conta" component={AccountScreen} />
     </Tab.Navigator>
   );
 };
