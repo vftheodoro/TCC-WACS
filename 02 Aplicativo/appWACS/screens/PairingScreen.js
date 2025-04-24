@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator, Alert, RefreshControl, Vibration } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Image, ActivityIndicator, Alert, RefreshControl, Vibration, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTheme } from '../theme';
+import { BluetoothService } from '../services';
 
 const PairingScreen = ({ navigation }) => {
+  const { theme } = useTheme();
   const [devices, setDevices] = useState([]);
   const [isScanning, setIsScanning] = useState(false);
   const [isConnecting, setIsConnecting] = useState(false);
@@ -11,17 +14,92 @@ const PairingScreen = ({ navigation }) => {
   const [error, setError] = useState('');
   const [refreshing, setRefreshing] = useState(false);
   const [showInstructions, setShowInstructions] = useState(false);
+  const [bluetoothEnabled, setBluetoothEnabled] = useState(false);
 
-  // Check for initial connection prompt
+  // Inicializar o serviço Bluetooth
   useEffect(() => {
-    const checkFirstLaunch = async () => {
-      const firstLaunch = await AsyncStorage.getItem('@firstLaunch');
-      if (firstLaunch === null) {
-        AsyncStorage.setItem('@firstLaunch', 'false');
-        showConnectionPrompt();
+    const initBluetooth = async () => {
+      try {
+        await BluetoothService.start();
+        setBluetoothEnabled(true);
+        
+        const checkFirstLaunch = async () => {
+          const firstLaunch = await AsyncStorage.getItem('@firstLaunch');
+          if (firstLaunch === null) {
+            AsyncStorage.setItem('@firstLaunch', 'false');
+            showConnectionPrompt();
+          }
+        };
+        checkFirstLaunch();
+      } catch (error) {
+        console.error('Erro ao inicializar Bluetooth:', error);
+        setBluetoothEnabled(false);
+        setError('Bluetooth não está disponível. Por favor, verifique se o Bluetooth está ativado.');
       }
     };
-    checkFirstLaunch();
+    
+    initBluetooth();
+    
+    // Configurar listener para eventos Bluetooth
+    const removeListener = BluetoothService.addListener((event, data) => {
+      switch (event) {
+        case 'deviceFound':
+          setDevices(prevDevices => {
+            // Verificar se o dispositivo já existe na lista
+            const exists = prevDevices.some(d => d.id === data.id);
+            if (!exists) {
+              return [...prevDevices, {
+                id: data.id,
+                name: data.name || 'Dispositivo Desconhecido',
+                signal: data.rssi > -60 ? 'strong' : data.rssi > -80 ? 'medium' : 'weak',
+                strength: data.rssi
+              }];
+            }
+            return prevDevices;
+          });
+          break;
+        case 'scanStart':
+          setIsScanning(true);
+          break;
+        case 'scanStop':
+          setIsScanning(false);
+          setRefreshing(false);
+          break;
+        case 'connecting':
+          setIsConnecting(true);
+          break;
+        case 'connected':
+          setIsConnecting(false);
+          setConnectedDevice({
+            id: data.id,
+            name: data.name || 'Dispositivo Conectado',
+            signal: 'strong'
+          });
+          Vibration.vibrate(100);
+          Alert.alert(
+            'Conectado!',
+            `Conexão estabelecida com ${data.name || 'dispositivo'}`,
+            [{ text: 'OK', onPress: () => navigation.navigate('Main') }]
+          );
+          break;
+        case 'disconnected':
+          setConnectedDevice(null);
+          break;
+        case 'error':
+          setIsScanning(false);
+          setIsConnecting(false);
+          setRefreshing(false);
+          setError(data.message || 'Ocorreu um erro na conexão Bluetooth');
+          break;
+      }
+    });
+    
+    return () => {
+      removeListener();
+      if (isScanning) {
+        BluetoothService.stopScan();
+      }
+    };
   }, []);
 
   const showConnectionPrompt = () => {
@@ -42,38 +120,49 @@ const PairingScreen = ({ navigation }) => {
     );
   };
 
-  // Load previously connected device
+  // Verificar dispositivo conectado anteriormente
   useEffect(() => {
     const loadConnectedDevice = async () => {
-      const savedDevice = await AsyncStorage.getItem('@connectedDevice');
-      if (savedDevice) {
-        setConnectedDevice(JSON.parse(savedDevice));
+      try {
+        const device = await BluetoothService.loadSavedDevice();
+        if (device) {
+          setConnectedDevice({
+            id: device.id,
+            name: device.name || 'Dispositivo Conectado',
+            signal: 'strong'
+          });
+        }
+      } catch (error) {
+        console.error('Erro ao carregar dispositivo salvo:', error);
       }
     };
-    loadConnectedDevice();
-  }, []);
-
-  // Simulate Bluetooth scanning
-  useEffect(() => {
-    if (isScanning) {
-      const timer = setTimeout(() => {
-        setDevices([
-          { id: '1', name: 'WACS-Controller-01', signal: 'strong', strength: -40 },
-          { id: '2', name: 'WACS-Controller-02', signal: 'medium', strength: -65 },
-          { id: '3', name: 'HC-05', signal: 'weak', strength: -85 },
-        ]);
-        setIsScanning(false);
-        setRefreshing(false);
-      }, 2000);
-      
-      return () => clearTimeout(timer);
+    
+    if (bluetoothEnabled) {
+      loadConnectedDevice();
     }
-  }, [isScanning]);
+  }, [bluetoothEnabled]);
 
-  const startScan = () => {
+  const startScan = async () => {
+    if (!bluetoothEnabled) {
+      try {
+        await BluetoothService.start();
+        setBluetoothEnabled(true);
+      } catch (error) {
+        setError('Bluetooth não está disponível. Por favor, verifique se o Bluetooth está ativado.');
+        return;
+      }
+    }
+    
     setError('');
-    setIsScanning(true);
     setDevices([]);
+    
+    try {
+      await BluetoothService.startScan();
+    } catch (error) {
+      setError('Erro ao iniciar busca: ' + (error.message || 'Erro desconhecido'));
+      setIsScanning(false);
+      setRefreshing(false);
+    }
   };
 
   const onRefresh = () => {
@@ -85,34 +174,13 @@ const PairingScreen = ({ navigation }) => {
     setIsConnecting(true);
     setError('');
     
-    // Simulate connection with 30% chance of failure
-    const willFail = Math.random() < 0.3;
-    
-    setTimeout(async () => {
+    try {
+      await BluetoothService.connectToDevice(device);
+      // O resto é tratado pelo listener de eventos
+    } catch (error) {
       setIsConnecting(false);
-      
-      if (!willFail && device.name.startsWith('WACS')) {
-        setConnectedDevice(device);
-        await AsyncStorage.setItem('@connectedDevice', JSON.stringify(device));
-        Vibration.vibrate(100);
-        
-        // Show success message
-        Alert.alert(
-          'Conectado!',
-          `Conexão estabelecida com ${device.name}`,
-          [
-            { 
-              text: 'OK', 
-              onPress: () => navigation.navigate('Main') 
-            }
-          ]
-        );
-      } else {
-        setError(willFail 
-          ? 'Falha na conexão. Tente novamente.' 
-          : 'Falha ao conectar. Dispositivo não compatível.');
-      }
-    }, 1500);
+      setError('Falha na conexão: ' + (error.message || 'Erro desconhecido'));
+    }
   };
 
   const getSignalStrengthText = (strength) => {
@@ -129,7 +197,7 @@ const PairingScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <ScrollView 
         contentContainerStyle={styles.scrollContainer}
         refreshControl={

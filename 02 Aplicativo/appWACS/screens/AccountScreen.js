@@ -13,12 +13,14 @@ import {
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { useTheme } from '../theme';
 
 const AccountScreen = () => {
   const navigation = useNavigation();
   const isFocused = useIsFocused();
+  const { theme, toggleTheme } = useTheme();
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(theme.name === 'dark');
   const [fontSize, setFontSize] = useState('medium');
   const [priorityAccessibility, setPriorityAccessibility] = useState('wheelchair');
   const [notifications, setNotifications] = useState({
@@ -49,6 +51,8 @@ const AccountScreen = () => {
   // Carrega preferências salvas
   useEffect(() => {
     if (isFocused) {
+      // Sincronizar o estado darkMode com o tema atual
+      setDarkMode(theme.name === 'dark');
       const loadPreferences = async () => {
         try {
           const savedPreferences = await AsyncStorage.getItem('userPreferences');
@@ -177,12 +181,14 @@ const AccountScreen = () => {
 
   const handleAccessibilityChange = (type) => {
     setPriorityAccessibility(type);
-    markAsChanged();
+    // Alterna o modo escuro
   };
 
-  const handleDarkModeChange = (value) => {
-    setDarkMode(value);
-    markAsChanged();
+  const handleDarkModeToggle = () => {
+    const newDarkMode = !darkMode;
+    setDarkMode(newDarkMode);
+    toggleTheme(); // Alterna o tema global
+    setHasUnsavedChanges(true);
   };
 
   const navigateToSupport = () => {
@@ -209,7 +215,7 @@ const AccountScreen = () => {
   const progressPercentage = (userData.points / userData.nextLevelPoints) * 100;
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Seção: Perfil */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>🧾 Informações da Conta</Text>
@@ -218,7 +224,7 @@ const AccountScreen = () => {
             source={{ uri: 'https://siga.cps.sp.gov.br/image/CQ5DH79QE3WBJDBFH6HIF7LL6Y8Z4C25-04-2023_12i07i50.TMB.JPG' }}
             style={styles.profileImage} 
           />
-          <Text style={styles.userName}>{userData.name}</Text>
+          <Text style={[styles.userName, { color: theme.colors.text }]}>{userData.name}</Text>
         </View>
 
         <View style={styles.infoItem}>
@@ -292,7 +298,7 @@ const AccountScreen = () => {
           </View>
           <Switch
             value={darkMode}
-            onValueChange={handleDarkModeChange}
+            onValueChange={handleDarkModeToggle}
             trackColor={{ false: "#767577", true: "#00f2fe" }}
           />
         </View>
@@ -390,7 +396,7 @@ const AccountScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0e14',
+    backgroundColor: '#0a0e14', // Será substituído pelo tema
     padding: 15,
   },
   section: {
