@@ -1,0 +1,162 @@
+/* From Uiverse.io by IWhat1 - Adaptado para cores do WACS */ 
+.team-card-container {
+  height: 320px;
+  width: 240px;
+  color: white;
+  perspective: 800px;
+  margin: 0 auto;
+  font-family: var(--font-family);
+}
+
+.team-card {
+  width: 100%;
+  height: 100%;
+  background: var(--secondary-color);
+  border-radius: 1.5rem;
+  position: relative;
+  transition: transform 1500ms;
+  transform-style: preserve-3d;
+}
+
+.card-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 10%;
+  position: absolute;
+  width: 50%;
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  top: 0;
+  left: 25%; /* Centralizar */
+  border-top: none;
+  border-radius: 0 0 1rem 1rem;
+  box-shadow: 0px 0px 10px 3px rgba(0, 85, 179, 0.4);
+  z-index: 10;
+}
+
+.card-top-para {
+  font-size: 16px;
+  font-weight: bold;
+  color: var(--primary-color);
+}
+
+.team-card-container:hover > .team-card {
+  cursor: pointer;
+  transform: rotateY(180deg);
+}
+
+.team-front,
+.team-back {
+  height: 100%;
+  width: 100%;
+  border-radius: 1.5rem;
+  box-shadow: 0px 0px 10px 3px rgba(0, 85, 179, 0.2);
+  position: absolute;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.team-front {
+  background: linear-gradient(145deg, #ffffff, #e0eaff);
+  color: var(--text-color);
+}
+
+.team-back {
+  background: linear-gradient(145deg, var(--primary-color), #4A90E2);
+  color: white;
+  transform: rotateY(180deg);
+}
+
+.team-heading {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.team-role {
+  font-size: 14px;
+  font-weight: 500;
+  margin: 0;
+  opacity: 0.8;
+}
+
+.team-bio {
+  font-size: 13px;
+  text-align: center;
+  max-width: 100%;
+  margin: 0;
+}
+
+.team-icons {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  margin-top: 15px;
+}
+
+.team-icons svg {
+  transition: all 0.3s ease;
+}
+
+.team-icons svg:hover {
+  transform: scale(1.2);
+  filter: drop-shadow(0px 0px 5px rgba(255, 255, 255, 0.7));
+}
+
+.team-photo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary-color);
+}
+
+.team-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Adaptação para tema escuro */
+body.dark-theme .team-front {
+  background: linear-gradient(145deg, var(--dark-card), #1E293B);
+  color: var(--dark-text);
+}
+
+body.dark-theme .team-back {
+  background: linear-gradient(145deg, var(--dark-primary), #2c5282);
+}
+
+body.dark-theme .card-top {
+  border-color: var(--dark-primary);
+  box-shadow: 0px 0px 10px 3px rgba(74, 144, 226, 0.4);
+}
+
+body.dark-theme .card-top-para {
+  color: var(--dark-primary);
+}
+
+body.dark-theme .team-photo {
+  border-color: var(--dark-primary);
+}
+
+@media (max-width: 768px) {
+  .team-card-container {
+    height: 300px;
+    width: 220px;
+    margin-bottom: 20px;
+  }
+  
+  .team-photo {
+    width: 80px;
+    height: 80px;
+  }
+}

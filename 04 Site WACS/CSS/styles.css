@@ -10,11 +10,14 @@
     
     /* Dark Theme Colors */
     --dark-primary: #4A90E2;
-    --dark-secondary: #FFFFFF;
+    --dark-secondary: #0f172a;
     --dark-background: #121212;
-    --dark-text: #FFFFFF;
-    --dark-text-light: #CCCCCC;
-    --dark-accent: #1E1E1E;
+    --dark-text: #e2e8f0;
+    --dark-text-light: #94a3b8;
+    --dark-accent: #1E293B;
+    --dark-card: #1e1e2d;
+    --dark-hover: #3182ce;
+    --dark-border: #2d3748;
 
     /* Typography */
     --font-family: 'Inter', sans-serif;
@@ -71,6 +74,12 @@ body {
     z-index: 1000;
     padding: var(--spacing-sm) 0;
     transition: all 0.3s ease;
+}
+
+.navbar.scrolled {
+    padding: calc(var(--spacing-sm) * 0.7) 0;
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
 }
 
 .navbar .container {
@@ -391,15 +400,116 @@ body.dark-theme {
     --text-color: var(--dark-text);
     --text-light: var(--dark-text-light);
     --accent-color: var(--dark-accent);
+    --primary-color: var(--dark-primary);
+    --primary-hover: var(--dark-hover);
+    color-scheme: dark;
 }
 
+/* Navbar em modo escuro */
 body.dark-theme .navbar {
+    background-color: rgba(18, 18, 18, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.24);
+}
+
+body.dark-theme .navbar.scrolled {
+    background-color: rgba(15, 23, 42, 0.98);
+}
+
+body.dark-theme .nav-links a {
+    color: var(--dark-text);
+}
+
+body.dark-theme .nav-links a:hover {
+    color: var(--dark-primary);
+}
+
+/* Cards em modo escuro */
+body.dark-theme .card,
+body.dark-theme .faq-item,
+body.dark-theme .contact-form,
+body.dark-theme .feature-card,
+body.dark-theme .tech-card {
+    background-color: var(--dark-card);
+    color: var(--dark-text);
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+body.dark-theme .card::after {
+    background: linear-gradient(90deg, var(--dark-primary), #2c5282);
+}
+
+body.dark-theme .card i,
+body.dark-theme .feature-card i,
+body.dark-theme h2,
+body.dark-theme h3 {
+    color: var(--dark-primary);
+}
+
+/* Seções em modo escuro */
+body.dark-theme .visao-geral,
+body.dark-theme .galeria,
+body.dark-theme .contato,
+body.dark-theme .funcionalidades {
+    background-color: #161626;
+}
+
+body.dark-theme .equipe,
+body.dark-theme .tecnologias,
+body.dark-theme .sobre,
+body.dark-theme .faq {
     background-color: var(--dark-background);
 }
 
-body.dark-theme .card {
-    background-color: var(--dark-accent);
+/* Botões em modo escuro */
+body.dark-theme .btn.primary {
+    background-color: var(--dark-primary);
+    color: #fff;
+    border: none;
+}
+
+body.dark-theme .btn.secondary {
+    background-color: transparent;
+    color: var(--dark-primary);
+    border: 1px solid var(--dark-primary);
+}
+
+body.dark-theme .btn.primary:hover,
+body.dark-theme .btn.secondary:hover {
+    background-color: var(--dark-hover);
+    color: white;
+}
+
+/* Inputs em modo escuro */
+body.dark-theme input,
+body.dark-theme textarea,
+body.dark-theme select {
+    background-color: #252533;
+    border: 1px solid var(--dark-border);
     color: var(--dark-text);
+}
+
+body.dark-theme input:focus,
+body.dark-theme textarea:focus,
+body.dark-theme select:focus {
+    border-color: var(--dark-primary);
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.25);
+}
+
+/* Footer em modo escuro */
+body.dark-theme footer {
+    background-color: #0f172a;
+}
+
+body.dark-theme .footer-links a:hover {
+    color: var(--dark-primary);
+}
+
+/* Transição suave para o modo escuro */
+.theme-transition {
+    transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease;
 }
 
 /* Team Section */

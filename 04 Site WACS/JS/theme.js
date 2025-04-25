@@ -1,10 +1,10 @@
 /**
  * WACS - Gerenciador de tema claro/escuro
  * Permite alternar entre tema claro e escuro com animação suave
+ * Adaptado para o botão UIverse.io
  */
 document.addEventListener('DOMContentLoaded', () => {
     const themeSwitch = document.getElementById('theme-switch');
-    const themeIcon = themeSwitch.querySelector('i');
     const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
     
     // Verifica se há um tema salvo no localStorage
@@ -13,22 +13,19 @@ document.addEventListener('DOMContentLoaded', () => {
     // Aplica o tema baseado na preferência ou no localStorage
     if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
         document.body.classList.add('dark-theme');
-        themeIcon.classList.remove('fa-moon');
-        themeIcon.classList.add('fa-sun');
+        themeSwitch.checked = true;
     }
     
     // Função para alternar o tema
     function toggleTheme() {
-        const isDark = document.body.classList.toggle('dark-theme');
+        // Obtem o estado atual do checkbox
+        const isDark = themeSwitch.checked;
         
-        // Atualiza o ícone
         if (isDark) {
-            themeIcon.classList.remove('fa-moon');
-            themeIcon.classList.add('fa-sun');
+            document.body.classList.add('dark-theme');
             localStorage.setItem('theme', 'dark');
         } else {
-            themeIcon.classList.remove('fa-sun');
-            themeIcon.classList.add('fa-moon');
+            document.body.classList.remove('dark-theme');
             localStorage.setItem('theme', 'light');
         }
         
@@ -39,6 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
     
-    // Adiciona evento de clique ao botão
-    themeSwitch.addEventListener('click', toggleTheme);
+    // Adiciona evento de change ao checkbox
+    themeSwitch.addEventListener('change', toggleTheme);
 });
