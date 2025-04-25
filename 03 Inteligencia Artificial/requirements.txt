@@ -1,6 +1,11 @@
-speechrecognition==3.10.0
-pyaudio==0.2.14
+# requirements.txt
+speech_recognition==3.10.0
 pyttsx3==2.90
-transformers==4.30.2
-torch==2.0.1
-pipwin==0.5.2
+PyAudio==0.2.13
+opencv-python==4.8.0
+tensorflow==2.13.0
+SQLAlchemy==2.0.20
+fastapi==0.103.0
+uvicorn==0.23.2
+python-multipart==0.0.6
+numpy==1.24.3

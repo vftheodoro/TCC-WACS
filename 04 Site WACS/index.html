@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Wheelchair Automation Control System</title>
+    <link rel="stylesheet" href="CSS/styles.css">
+    <link rel="stylesheet" href="CSS/core.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <a href="#" class="logo">
+                <img src="imagens/logo.svg" alt="WACS Logo">
+            </a>
+            <button class="menu-toggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#visao-geral">Visão Geral</a></li>
+                <li><a href="#funcionalidades">Funcionalidades</a></li>
+                <li><a href="#tecnologias">Tecnologias</a></li>
+                <li><a href="#equipe">Equipe</a></li>
+                <li><a href="#contribua">Contribua</a></li>
+                <li><a href="#contato">Contato</a></li>
+            </ul>
+            <div class="theme-toggle">
+                <button id="theme-switch" aria-label="Toggle theme">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>WACS - Wheelchair Automation Control System</h1>
+                <p>Inovando na mobilidade acessível através da tecnologia</p>
+                <div class="cta-buttons">
+                    <a href="#teste-app" class="btn primary">Teste o App</a>
+                    <a href="#contribua" class="btn secondary">Contribua com locais acessíveis</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="imagens/hero-chair.png" alt="Cadeira de rodas automatizada WACS">
+            </div>
+        </div>
+    </section>
+
+    <!-- Visão Geral Section -->
+    <section id="visao-geral" class="visao-geral">
+        <div class="container">
+            <h2>Visão Geral</h2>
+            <div class="grid">
+                <div class="card">
+                    <i class="fas fa-wheelchair"></i>
+                    <h3>Mobilidade Autônoma</h3>
+                    <p>Controle total da cadeira de rodas através do seu smartphone</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-map-marked-alt"></i>
+                    <h3>Mapa Colaborativo</h3>
+                    <p>Compartilhe e descubra locais acessíveis em sua cidade</p>
+                </div>
+                <div class="card">
+                    <i class="fas fa-robot"></i>
+                    <h3>Assistente Virtual</h3>
+                    <p>Navegação inteligente e sugestões personalizadas</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Equipe Section -->
+    <section id="equipe" class="equipe">
+        <div class="container">
+            <h2>Nossa Equipe</h2>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="imagens/fotos perfil/imagem ramon.jpg" alt="Ramon Alves Trigo - Orientador">
+                    </div>
+                    <h3>Ramon Alves Trigo</h3>
+                    <p class="role">Orientador</p>
+                    <p class="bio">Professor orientador do projeto WACS, especialista em desenvolvimento de sistemas e inovação tecnológica.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="imagens/fotos perfil/pedro gpt.png" alt="Pedro Henrique Dias Santos - Desenvolvedor">
+                    </div>
+                    <h3>Pedro Henrique Dias Santos</h3>
+                    <p class="role">Desenvolvedor</p>
+                    <p class="bio">Responsável pelo desenvolvimento do aplicativo mobile e integração com hardware.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="imagens/fotos perfil/leaf gpt.png" alt="Luiz Alberto Iha Lima - Desenvolvedor">
+                    </div>
+                    <h3>Luiz Alberto Iha Lima</h3>
+                    <p class="role">Desenvolvedor</p>
+                    <p class="bio">Especialista em desenvolvimento de sistemas e integração de tecnologias.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="imagens/fotos perfil/theodoro gpt.png" alt="Victor Gabriel Ferreira Theodoro - Desenvolvedor">
+                    </div>
+                    <h3>Victor Gabriel Ferreira Theodoro</h3>
+                    <p class="role">Desenvolvedor</p>
+                    <p class="bio">Desenvolvedor full-stack com foco em soluções inovadoras e acessíveis.</p>
+                </div>
+                <div class="team-member">
+                    <div class="member-photo">
+                        <img src="imagens/fotos perfil/mario gpt.png" alt="Mario Armando Takahashi Martins Dias - Desenvolvedor">
+                    </div>
+                    <h3>Mario Armando Takahashi Martins Dias</h3>
+                    <p class="role">Desenvolvedor</p>
+                    <p class="bio">Especialista em desenvolvimento de sistemas e integração de tecnologias.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sobre o Projeto Section -->
+    <section id="sobre" class="sobre">
+        <div class="container">
+            <h2>Sobre o Projeto</h2>
+            <div class="sobre-content">
+                <div class="sobre-text">
+                    <p>O WACS (Wheelchair Automation Control System) é uma solução inovadora de mobilidade para pessoas com deficiência (PCDs) desenvolvida na Etec de Registro como projeto de TCC do curso de Desenvolvimento de Sistemas.</p>
+                    <p>Nossa missão é promover a inclusão e autonomia através da tecnologia, oferecendo uma cadeira de rodas automatizada controlada via smartphone e um aplicativo colaborativo de mapeamento urbano acessível.</p>
+                </div>
+                <div class="sobre-video">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <p>Vídeo demonstrativo em breve</p>
+                    </div>
+                </div>
+            </div>
+            <div class="timeline">
+                <h3>Linha do Tempo do Desenvolvimento</h3>
+                <div class="timeline-content">
+                    <div class="timeline-item">
+                        <div class="timeline-date">2023</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-info">
+                            <h4>Início do Projeto</h4>
+                            <p>Definição do escopo e planejamento inicial</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-info">
+                            <h4>Desenvolvimento</h4>
+                            <p>Implementação do hardware e software</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">2024</div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-info">
+                            <h4>Testes e Validação</h4>
+                            <p>Testes com usuários PCDs e ajustes</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Galeria Section -->
+    <section id="galeria" class="galeria">
+        <div class="container">
+            <h2>Galeria</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="imagens/cadeira.webp" alt="Cadeira de Rodas Automatizada">
+                    <div class="gallery-overlay">
+                        <h3>Cadeira de Rodas Automatizada</h3>
+                        <p>Protótipo em desenvolvimento</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="imagens/software.webp" alt="Interface do Aplicativo">
+                    <div class="gallery-overlay">
+                        <h3>Interface do Aplicativo</h3>
+                        <p>Design moderno e acessível</p>
+                    </div>
+                </div>
+                <div class="gallery-item">
+                    <img src="imagens/sensor.webp" alt="Sensores e Hardware">
+                    <div class="gallery-overlay">
+                        <h3>Sensores e Hardware</h3>
+                        <p>Componentes eletrônicos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="faq">
+        <div class="container">
+            <h2>Perguntas Frequentes</h2>
+            <div class="faq-grid">
+                <div class="faq-item">
+                    <h3>Como funciona o controle da cadeira?</h3>
+                    <p>O controle é feito através de um aplicativo mobile que se comunica com a cadeira via Bluetooth, permitindo movimentos precisos e seguros.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>O mapa colaborativo é gratuito?</h3>
+                    <p>Sim, o mapa colaborativo é totalmente gratuito e aberto para contribuições de todos os usuários.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Como posso contribuir com o projeto?</h3>
+                    <p>Você pode contribuir cadastrando locais acessíveis, avaliando estabelecimentos ou participando do desenvolvimento através do GitHub.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato Section -->
+    <section id="contato" class="contato">
+        <div class="container">
+            <h2>Contato</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <h3>Etec de Registro</h3>
+                    <p>Curso: Desenvolvimento de Sistemas</p>
+                    <p>Email: contato@wacs.com.br</p>
+                    <div class="social-links">
+                        <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form>
+                        <div class="form-group">
+                            <label for="name">Nome</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Mensagem</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn primary">Enviar Mensagem</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="imagens/logo.svg" alt="WACS Logo">
+                    <p>Wheelchair Automation Control System</p>
+                </div>
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#visao-geral">Visão Geral</a></li>
+                        <li><a href="#funcionalidades">Funcionalidades</a></li>
+                        <li><a href="#tecnologias">Tecnologias</a></li>
+                    </ul>
+                </div>
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <p>Etec de Registro</p>
+                    <p>Desenvolvimento de Sistemas</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="JS/main.js"></script>
+    <script defer src="JS/theme.js"></script>
+</body>
+</html>
