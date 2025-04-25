@@ -1,11 +1,12 @@
 :root {
     /* Color Scheme */
-    --primary-color: #0066CC; /* Azul WACS */
-    --secondary-color: #000000; /* Preto */
+    --primary-color: #0055b3; /* Azul WACS ajustado */
+    --primary-hover: #0066d6; /* Azul claro para hover */
+    --secondary-color: #111827; /* Preto com tom azulado */
     --background-color: #FFFFFF; /* Branco */
-    --text-color: #333333;
-    --text-light: #666666;
-    --accent-color: #E6F0FF;
+    --text-color: #1f2937;
+    --text-light: #4b5563;
+    --accent-color: #e0eaff;
     
     /* Dark Theme Colors */
     --dark-primary: #4A90E2;
@@ -37,6 +38,10 @@
     box-sizing: border-box;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 body {
     font-family: var(--font-family);
     font-size: var(--font-size-base);
@@ -44,6 +49,7 @@ body {
     color: var(--text-color);
     background-color: var(--background-color);
     transition: background-color 0.3s, color 0.3s;
+    overflow-x: hidden;
 }
 
 .container {
@@ -58,10 +64,13 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    background-color: var(--background-color);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     z-index: 1000;
     padding: var(--spacing-sm) 0;
+    transition: all 0.3s ease;
 }
 
 .navbar .container {
@@ -71,7 +80,12 @@ body {
 }
 
 .logo img {
-    height: 40px;
+    height: 42px;
+    transition: transform 0.3s ease;
+}
+
+.logo:hover img {
+    transform: scale(1.05);
 }
 
 .nav-links {
@@ -84,7 +98,24 @@ body {
     text-decoration: none;
     color: var(--text-color);
     font-weight: 500;
+    position: relative;
+    padding: 0.5rem 0;
     transition: color 0.3s;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: 0;
+    left: 0;
+    background-color: var(--primary-color);
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
 }
 
 .nav-links a:hover {
@@ -95,6 +126,21 @@ body {
 .hero {
     padding: var(--spacing-xl) 0;
     margin-top: 80px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -150px;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, var(--accent-color) 0%, rgba(230, 240, 255, 0) 70%);
+    z-index: -1;
+    opacity: 0.7;
+    border-radius: 50%;
 }
 
 .hero .container {
@@ -105,38 +151,68 @@ body {
 }
 
 .hero-content h1 {
-    font-size: var(--font-size-xl);
+    font-size: calc(var(--font-size-xl) * 1.2);
+    line-height: 1.2;
     margin-bottom: var(--spacing-md);
     color: var(--primary-color);
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--primary-color), #4A90E2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
 }
 
 .hero-content p {
     font-size: var(--font-size-lg);
     margin-bottom: var(--spacing-lg);
     color: var(--text-light);
+    max-width: 540px;
+    line-height: 1.6;
 }
 
 .cta-buttons {
     display: flex;
     gap: var(--spacing-sm);
+    flex-wrap: wrap;
 }
 
 .btn {
     padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: 4px;
+    border-radius: 8px;
     text-decoration: none;
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
     transition: all 0.3s;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .btn.primary {
     background-color: var(--primary-color);
     color: white;
+    border: none;
+}
+
+.btn.primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
 }
 
 .btn.secondary {
     background-color: var(--accent-color);
     color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.btn.secondary:hover {
+    background-color: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.15);
 }
 
 /* Visão Geral Section */
@@ -160,9 +236,27 @@ body {
 .card {
     background-color: var(--background-color);
     padding: var(--spacing-lg);
-    border-radius: 8px;
+    border-radius: 12px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), #4A90E2);
 }
 
 .card i {
@@ -220,18 +314,51 @@ footer {
 }
 
 /* Theme Toggle */
+.the.menu-toggle {
+    display: none;
+    border: none;
+    background: none;
+    cursor: pointer;
+    width: 30px;
+    height: 24px;
+    position: relative;
+    z-index: 1001;
+}
+
 .theme-toggle button {
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-color);
     font-size: 1.2rem;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.theme-toggle button:hover {
+    transform: rotate(15deg);
+    color: var(--primary-color);
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-links {
-        display: none;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 70%;
+        height: 100vh;
+        background-color: var(--background-color);
+        box-shadow: -2px 0 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: right 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .nav-links.active {
+        right: 0;
     }
     
     .menu-toggle {
