@@ -88,9 +88,33 @@ body {
     align-items: center;
 }
 
-.logo img {
+.logo img, .footer-logo img {
     height: 42px;
     transition: transform 0.3s ease;
+}
+
+.hero-image img {
+    height: 200px;
+    width: auto;
+    transition: transform 0.3s ease;
+}
+
+/* Logo versions */
+.logo-light {
+    display: none;
+}
+
+.logo-dark {
+    display: block;
+}
+
+/* Show light logo in light theme */
+body:not(.dark-theme) .logo-light {
+    display: block;
+}
+
+body:not(.dark-theme) .logo-dark {
+    display: none;
 }
 
 .logo:hover img {
@@ -187,6 +211,8 @@ body {
     margin-top: 80px;
     position: relative;
     overflow: hidden;
+    background-color: var(--background-color);
+    transition: background-color 0.3s ease;
 }
 
 .hero::before {
@@ -196,9 +222,9 @@ body {
     right: -150px;
     width: 600px;
     height: 600px;
-    background: radial-gradient(circle, var(--accent-color) 0%, rgba(230, 240, 255, 0) 70%);
+    background: radial-gradient(circle, var(--accent-color) 0%, transparent 70%);
     z-index: -1;
-    opacity: 0.7;
+    opacity: 0.3;
     border-radius: 50%;
 }
 
@@ -451,20 +477,35 @@ body.dark-theme {
     --text-light: var(--dark-text-light);
     --accent-color: var(--dark-accent);
     --primary-color: var(--dark-primary);
+    color: var(--dark-text);
     --primary-hover: var(--dark-hover);
     color-scheme: dark;
+}
+
+body.dark-theme .hero {
+    background-color: var(--dark-background);
+}
+
+body.dark-theme .hero::before {
+    background: radial-gradient(circle, var(--dark-accent) 0%, transparent 70%);
+    opacity: 0.1;
+}
+
+body.dark-theme .hero-content h1 {
+    background: linear-gradient(90deg, var(--dark-primary), #6ab0ff);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+body.dark-theme .hero-content p {
+    color: var(--dark-text-light);
 }
 
 /* Navbar em modo escuro */
 body.dark-theme .navbar {
     background-color: rgba(18, 18, 18, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.24);
-}
-
-body.dark-theme .navbar.scrolled {
-    background-color: rgba(15, 23, 42, 0.98);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
 }
 
 body.dark-theme .nav-links a {
@@ -496,6 +537,12 @@ body.dark-theme .feature-card i,
 body.dark-theme h2,
 body.dark-theme h3 {
     color: var(--dark-primary);
+}
+
+body.dark-theme p,
+body.dark-theme .card p,
+body.dark-theme .feature-card p {
+    color: var(--dark-text);
 }
 
 /* Seções em modo escuro */
