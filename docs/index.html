@@ -108,7 +108,24 @@
     </nav>
 
     <!-- Hero Section com gradiente -->
-    <section id="home" style="position: relative; min-height: 90vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(to bottom right, var(--color-primary, #005BFF), #002d80); padding-top: 80px;">
+    <section id="home" class="hero-section">
+        <style>
+            .hero-section {
+                position: relative;
+                min-height: 90vh;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                background: linear-gradient(to bottom right, var(--color-primary, #005BFF), #002d80);
+                padding-top: 80px;
+            }
+            
+            [data-theme="dark"] .hero-section,
+            body.dark-theme .hero-section {
+                background: linear-gradient(to bottom right, #001a3f, #000c1a);
+            }
+        </style>
         <!-- Fundo com padrão e efeitos -->
         <div style="position: absolute; inset: 0; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djJoLTJ2LTJoMnptMC00aDJ2MmgtMnYtMnptLTQgMGgydjJoLTJ2LTJ6bTIgNHYyaC0ydi0yaDJ6bS0yLTR2MmgtMnYtMmgyem0tNCAtNGgydjJoLTJ2LTJ6bTIgNHYyaC0ydi0yaDJ6bS0yIDR2MmgtMnYtMmgyem04LThoMnYyaC0ydi0yem0wIDJ2MmgtMnYtMmgyem0yIDJ2MmgtMnYtMmgyem0wIDJ2MmgtMnYtMmgyem0yIDJ2MmgtMnYtMmgyeiIvPjwvZz48L2c+PC9zdmc+'); opacity: 0.1;"></div>
         
@@ -134,8 +151,7 @@
 
         <div style="position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 1rem;">
             <div style="margin-bottom: 2rem; display: flex; justify-content: center; animation: fadeIn 0.8s ease-out;">
-                <img src="public/images/logo.png" alt="WACS Logo" class="logo-dark" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
-                <img src="public/images/logo-light.png" alt="WACS Logo" class="logo-light" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
+                <img src="public/images/logo.png" alt="WACS Logo" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
             </div>
             <h1 class="animate-fade-in" style="font-size: 3rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">
                 <span>WACS - Wheelchair Automation Control System</span>
