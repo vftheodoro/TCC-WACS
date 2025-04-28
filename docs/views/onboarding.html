@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WACS • Onboarding</title>
-    <link rel="stylesheet" href="CSS/core.css">
+    <link rel="stylesheet" href="../public/css/core.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -15,22 +15,22 @@
 <body class="onboarding-wrapper">
     <div class="carousel" id="carousel">
         <section class="slide" aria-label="Controle Bluetooth da cadeira">
-            <img src="imagens/onboarding/bluetooth.svg" alt="Ícone Bluetooth">
+            <img src="../public/images/onboarding/bluetooth.svg" alt="Ícone Bluetooth">
             <h2 style="font-size:var(--fs-lg)">Controle Bluetooth</h2>
             <p>Controle sua cadeira pelo celular de forma simples e segura.</p>
         </section>
         <section class="slide" aria-label="Mapa colaborativo de acessibilidade">
-            <img src="imagens/onboarding/map.svg" alt="Ícone Mapa">
+            <img src="../public/images/onboarding/map.svg" alt="Ícone Mapa">
             <h2 style="font-size:var(--fs-lg)">Mapa Colaborativo</h2>
             <p>Encontre e compartilhe locais acessíveis ao seu redor.</p>
         </section>
         <section class="slide" aria-label="Assistente virtual de rotas">
-            <img src="imagens/onboarding/assistant.svg" alt="Ícone Assistente">
+            <img src="../public/images/onboarding/assistant.svg" alt="Ícone Assistente">
             <h2 style="font-size:var(--fs-lg)">Assistente de Rotas</h2>
             <p>Navegação inteligente adaptada às suas necessidades.</p>
         </section>
         <section class="slide" aria-label="Sistema de gamificação">
-            <img src="imagens/onboarding/game.svg" alt="Ícone Gamificação">
+            <img src="../public/images/onboarding/game.svg" alt="Ícone Gamificação">
             <h2 style="font-size:var(--fs-lg)">Gamificação</h2>
             <p>Ganhe pontos e badges contribuindo com a comunidade.</p>
         </section>
@@ -38,7 +38,7 @@
     <div class="progress-dots" id="dots" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="1"></div>
     <button class="btn primary" id="btn-start" style="margin:1rem auto;display:block">Começar</button>
 
-    <script defer src="JS/theme.js"></script>
+    <script defer src="../public/js/theme.js"></script>
     <script>
         const slides=[...document.querySelectorAll('.slide')];
         const dots=document.getElementById('dots');

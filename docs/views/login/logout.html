@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saindo - WACS</title>
+    <link rel="stylesheet" href="../../public/css/styles.css">
+    <link rel="stylesheet" href="../../public/css/core.css">
+    <link rel="icon" href="../../public/images/logo-light.png" type="image/png">
+    <style>
+        .logout-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            padding: 1rem;
+        }
+        
+        .logo {
+            margin-bottom: 2rem;
+        }
+        
+        .logo img {
+            width: 80px;
+            height: auto;
+        }
+        
+        .message {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .message {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: var(--primary-color, #0055b3);
+            margin-bottom: 1.5rem;
+            animation: spin 1s linear infinite;
+        }
+        
+        body.dark-theme .spinner {
+            border-left-color: var(--dark-primary, #4A90E2);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="logout-container">
+        <div class="logo">
+            <img src="../../public/images/logo.png" alt="WACS Logo" class="logo-dark">
+            <img src="../../public/images/logo-light.png" alt="WACS Logo" class="logo-light">
+        </div>
+        <div class="spinner"></div>
+        <div class="message">Finalizando sua sessão...</div>
+    </div>
+
+    <!-- Script para Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="../../public/js/theme.js"></script>
+    <script>
+        // Configuração do Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwzZWs5rFSPz2Ua7BwT9H9LSViLqCTm_g",
+            authDomain: "wacs-project-97f52.firebaseapp.com",
+            projectId: "wacs-project-97f52",
+            storageBucket: "wacs-project-97f52.firebasestorage.app",
+            messagingSenderId: "94601587488",
+            appId: "1:94601587488:web:25f81176e4091126024545",
+            measurementId: "G-RCGN9LG5F1"
+        };
+
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        
+        // Efetuar logout
+        window.addEventListener('DOMContentLoaded', () => {
+            auth.signOut()
+                .then(() => {
+                    console.log('Logout realizado com sucesso');
+                    // Redirecionar para a página inicial após 1.5 segundos
+                    setTimeout(() => {
+                        window.location.href = '../../index.html';
+                    }, 1500);
+                })
+                .catch((error) => {
+                    console.error('Erro ao realizar logout:', error);
+                    // Redirecionar mesmo em caso de erro
+                    setTimeout(() => {
+                        window.location.href = '../../index.html';
+                    }, 1500);
+                });
+        });
+    </script>
+</body>
+</html> 

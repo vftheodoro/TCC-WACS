@@ -107,21 +107,85 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="container">
-            <div class="hero-content">
-                <h1>WACS - Wheelchair Automation Control System</h1>
-                <p>Inovando na mobilidade acessível através da tecnologia</p>
-                <div class="cta-buttons">
-                    <a href="#teste-app" class="btn primary">Teste o App</a>
-                    <a href="#contribua" class="btn secondary">Contribua com locais acessíveis</a>
+    <!-- Hero Section com gradiente -->
+    <section id="home" style="position: relative; min-height: 90vh; display: flex; align-items: center; justify-content: center; overflow: hidden; background: linear-gradient(to bottom right, var(--color-primary, #005BFF), #002d80); padding-top: 80px;">
+        <!-- Fundo com padrão e efeitos -->
+        <div style="position: absolute; inset: 0; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djJoLTJ2LTJoMnptMC00aDJ2MmgtMnYtMnptLTQgMGgydjJoLTJ2LTJ6bTIgNHYyaC0ydi0yaDJ6bS0yLTR2MmgtMnYtMmgyem0tNCAtNGgydjJoLTJ2LTJ6bTIgNHYyaC0ydi0yaDJ6bS0yIDR2MmgtMnYtMmgyem04LThoMnYyaC0ydi0yem0wIDJ2MmgtMnYtMmgyem0yIDJ2MmgtMnYtMmgyem0wIDJ2MmgtMnYtMmgyem0yIDJ2MmgtMnYtMmgyeiIvPjwvZz48L2c+PC9zdmc+'); opacity: 0.1;"></div>
+        
+        <!-- Formas animadas -->
+        <div style="position: absolute; inset: 0; overflow: hidden; z-index: 1;">
+            <div style="position: absolute; top: -10%; right: -5%; width: 300px; height: 300px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.1); filter: blur(50px); animation: pulse 8s ease-in-out infinite;"></div>
+            <div style="position: absolute; bottom: -15%; left: -10%; width: 400px; height: 400px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.1); filter: blur(50px); animation: pulse 8s ease-in-out infinite 2s;"></div>
+        </div>
+        
+        <style>
+            @keyframes pulse {
+                0%, 100% { transform: scale(1); opacity: 0.3; }
+                50% { transform: scale(1.1); opacity: 0.5; }
+            }
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in {
+                animation: fadeIn 1s ease-out forwards;
+            }
+        </style>
+
+        <div style="position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 1rem;">
+            <div style="margin-bottom: 2rem; display: flex; justify-content: center; animation: fadeIn 0.8s ease-out;">
+                <img src="public/images/logo.png" alt="WACS Logo" class="logo-dark" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
+                <img src="public/images/logo-light.png" alt="WACS Logo" class="logo-light" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
+            </div>
+            <h1 class="animate-fade-in" style="font-size: 3rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">
+                <span>WACS - Wheelchair Automation Control System</span>
+            </h1>
+            <p class="animate-fade-in" style="font-size: 1.25rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 2rem; line-height: 1.6; animation-delay: 0.2s;">
+                Inovando na mobilidade acessível através da tecnologia, oferecendo uma cadeira de rodas automatizada
+                com controle via smartphone e mapeamento colaborativo.
+            </p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; animation: fadeIn 1.4s ease-out;">
+                <a href="#teste-app" style="background-color: white; color: var(--color-primary, #005BFF); font-weight: 600; padding: 0.75rem 1.5rem; border-radius: var(--radius, 0.5rem); text-decoration: none; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                        <polyline points="10 17 15 12 10 7"></polyline>
+                        <line x1="15" y1="12" x2="3" y2="12"></line>
+                    </svg>
+                    Teste o App
+                </a>
+                <a href="#contribua" style="background-color: transparent; color: white; font-weight: 600; padding: 0.75rem 1.5rem; border-radius: var(--radius, 0.5rem); text-decoration: none; border: 2px solid rgba(255, 255, 255, 0.3); transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.5rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                        <circle cx="12" cy="10" r="3"></circle>
+                    </svg>
+                    Contribua com locais acessíveis
+                </a>
+            </div>
+
+            <!-- Cards flutuantes -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 3rem; animation: fadeIn 1.6s ease-out;">
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease;">
+                    <h3 style="color: white; font-size: 1.25rem; margin-bottom: 0.5rem;">Mobilidade Autônoma</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; margin-bottom: 0;">Controle total da cadeira de rodas através do seu smartphone</p>
+                </div>
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease;">
+                    <h3 style="color: white; font-size: 1.25rem; margin-bottom: 0.5rem;">Mapa Colaborativo</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; margin-bottom: 0;">Compartilhe e descubra locais acessíveis em sua cidade</p>
+                </div>
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease;">
+                    <h3 style="color: white; font-size: 1.25rem; margin-bottom: 0.5rem;">Assistente Virtual</h3>
+                    <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; margin-bottom: 0;">Navegação inteligente e sugestões personalizadas</p>
                 </div>
             </div>
-            <div class="hero-image">
-                <img src="public/images/logo.png" alt="Cadeira de rodas automatizada WACS" class="logo-dark">
-                <img src="public/images/logo-light.png" alt="Cadeira de rodas automatizada WACS" class="logo-light">
-            </div>
+        </div>
+
+        <!-- Efeito onda na parte inferior -->
+        <div style="position: absolute; bottom: 0; left: 0; width: 100%; overflow: hidden; line-height: 0;">
+            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" style="display: block; width: calc(100% + 1.3px); height: 70px; transform: rotate(180deg);">
+                <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" style="fill: var(--accent-color, #e0eaff);"></path>
+                <path d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" style="fill: var(--accent-color, #e0eaff);"></path>
+                <path d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" style="fill: var(--accent-color, #e0eaff);"></path>
+            </svg>
         </div>
     </section>
 

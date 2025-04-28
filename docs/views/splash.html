@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WACS • Splash</title>
-    <link rel="stylesheet" href="CSS/core.css">
+    <link rel="stylesheet" href="../public/css/core.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -14,15 +14,15 @@
     </style>
 </head>
 <body class="splash" aria-live="polite">
-    <img src="imagens/logo.png" class="animated-logo" alt="Logotipo WACS">
+    <img src="../public/images/logo.png" class="animated-logo" alt="Logotipo WACS">
     <p class="slogan">Mobilidade acessível ao seu alcance</p>
     <noscript>
-        <p>Redirecionando… <a href="login.html">Clique aqui se não for automaticamente</a></p>
+        <p>Redirecionando… <a href="login/login.html">Clique aqui se não for automaticamente</a></p>
     </noscript>
     <script>
-        setTimeout(()=>location.href='login.html',3000);
-        document.body.addEventListener('click',()=>location.href='login.html');
-        document.body.addEventListener('keydown',()=>location.href='login.html');
+        setTimeout(()=>location.href='login/login.html',3000);
+        document.body.addEventListener('click',()=>location.href='login/login.html');
+        document.body.addEventListener('keydown',()=>location.href='login/login.html');
     </script>
 </body>
 </html>

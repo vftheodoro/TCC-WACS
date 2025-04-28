@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - WACS</title>
+    <link rel="stylesheet" href="../public/css/styles.css">
+    <link rel="stylesheet" href="../public/css/core.css">
+    <link rel="stylesheet" href="../public/css/theme-switch.css">
+    <link rel="stylesheet" href="../public/css/navbar-modern.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="../public/images/logo-light.png" type="image/png">
+    <style>
+        .dashboard-container {
+            padding-top: 80px;
+            min-height: calc(100vh - 80px);
+            background: var(--background-color, #fff);
+        }
+        
+        body.dark-theme .dashboard-container {
+            background: var(--dark-background, #121212);
+        }
+        
+        .dashboard-header {
+            background: var(--accent-color, #e0eaff);
+            padding: 2rem 0;
+        }
+        
+        body.dark-theme .dashboard-header {
+            background: var(--dark-accent, #1E293B);
+        }
+        
+        .dashboard-header h1 {
+            color: var(--primary-color, #0055b3);
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        
+        body.dark-theme .dashboard-header h1 {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .dashboard-header p {
+            color: var(--text-light, #4b5563);
+        }
+        
+        body.dark-theme .dashboard-header p {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--background-color, #fff);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            transition: transform 0.3s ease;
+        }
+        
+        body.dark-theme .stat-card {
+            background: var(--dark-card, #1e1e2d);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-color, #e0eaff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 1rem;
+            color: var(--primary-color, #0055b3);
+            font-size: 1.5rem;
+        }
+        
+        body.dark-theme .stat-icon {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .stat-content h3 {
+            font-size: 0.9rem;
+            color: var(--text-light, #4b5563);
+            margin-bottom: 0.25rem;
+            font-weight: 500;
+        }
+        
+        body.dark-theme .stat-content h3 {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .stat-content p {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color, #1f2937);
+            margin: 0;
+        }
+        
+        body.dark-theme .stat-content p {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .dashboard-content {
+            padding: 2rem 0;
+        }
+        
+        .dashboard-section {
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .dashboard-section h2 {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .map-container {
+            height: 400px;
+            background: #f5f5f5;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-light, #4b5563);
+            font-size: 1.1rem;
+        }
+        
+        body.dark-theme .map-container {
+            background: var(--dark-card, #1e1e2d);
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .locations-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .location-card {
+            background: var(--background-color, #fff);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+        
+        body.dark-theme .location-card {
+            background: var(--dark-card, #1e1e2d);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .location-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .location-image {
+            height: 160px;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+        }
+        
+        body.dark-theme .location-image {
+            background: #2d3748;
+            color: #718096;
+        }
+        
+        .location-details {
+            padding: 1.5rem;
+        }
+        
+        .location-details h3 {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .location-details h3 {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .location-details p {
+            color: var(--text-light, #4b5563);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        body.dark-theme .location-details p {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .location-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+        
+        .location-rating i {
+            color: #fbbf24;
+            font-size: 0.9rem;
+            margin-right: 0.25rem;
+        }
+        
+        .location-rating span {
+            margin-left: 0.5rem;
+            color: var(--text-light, #4b5563);
+            font-size: 0.9rem;
+        }
+        
+        body.dark-theme .location-rating span {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .user-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        body.dark-theme .user-avatar {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .user-details h2 {
+            margin-bottom: 0.25rem;
+        }
+        
+        .user-details p {
+            color: var(--text-light, #4b5563);
+            margin: 0;
+        }
+        
+        body.dark-theme .user-details p {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .logout-btn {
+            background: transparent;
+            color: var(--primary-color, #0055b3);
+            border: 1px solid var(--primary-color, #0055b3);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: auto;
+        }
+        
+        body.dark-theme .logout-btn {
+            color: var(--dark-primary, #4A90E2);
+            border-color: var(--dark-primary, #4A90E2);
+        }
+        
+        .logout-btn:hover {
+            background: var(--primary-color, #0055b3);
+            color: white;
+        }
+        
+        body.dark-theme .logout-btn:hover {
+            background: var(--dark-primary, #4A90E2);
+            color: white;
+        }
+        
+        .add-location-btn {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary-color, #0055b3);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+        
+        body.dark-theme .add-location-btn {
+            background: var(--dark-primary, #4A90E2);
+        }
+        
+        .add-location-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .add-location-btn:hover {
+            background: var(--primary-hover, #0066d6);
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation (Adaptado do Site Base) -->
+    <nav class="navbar" id="main-nav">
+        <div class="container">
+            <div class="navbar-content">
+                <!-- Logo com nome -->
+                <a href="../index.html" class="logo">
+                    <img src="../public/images/logo.png" alt="WACS Logo" class="logo-dark">
+                    <img src="../public/images/logo-light.png" alt="WACS Logo" class="logo-light">
+                    <span class="logo-text">WACS</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                        <li><a href="#mapa">Mapa</a></li>
+                        <li><a href="#contribuir">Contribuir</a></li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="nav-actions">
+                    <div class="theme-toggle">
+                        <label class="switch">
+                            <span class="sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="#ffd43b"><circle r="5" cy="12" cx="12"></circle><path d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm13.66-5.66a1 1 0 0 1 -.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1 -.75.29zm-12.02 12.02a1 1 0 0 1 -.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1 -.7.24zm6.36-14.36a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm0 17a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm-5.66-14.66a1 1 0 0 1 -.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.29zm12.02 12.02a1 1 0 0 1 -.7-.29l-.66-.71a1 1 0 0 1 1.36-1.36l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.24z"></path></g></svg></span>
+                            <span class="moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path></svg></span>   
+                            <input type="checkbox" class="input" id="theme-switch" aria-label="Toggle theme">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <button id="logoutBtn" class="logout-btn">Sair</button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Panel -->
+            <div class="mobile-menu">
+                <ul class="nav-links-mobile">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+                    <li><a href="#mapa">Mapa</a></li>
+                    <li><a href="#contribuir">Contribuir</a></li>
+                </ul>
+                <button id="logoutBtnMobile" class="download-btn-mobile">Sair</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="dashboard-container">
+        <div class="dashboard-header">
+            <div class="container">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-details">
+                        <h2 id="userName">Carregando...</h2>
+                        <p id="userEmail">Carregando...</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-stats">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Locais Acessíveis</h3>
+                            <p>125</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Colaboradores</h3>
+                            <p>43</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Suas Contribuições</h3>
+                            <p>0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-content">
+            <div class="container">
+                <div class="dashboard-section">
+                    <h2>Mapa de Locais Acessíveis</h2>
+                    <div class="map-container">
+                        <p>O mapa será carregado aqui</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-section">
+                    <h2>Locais Recentes</h2>
+                    <div class="locations-list">
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-image"></i> Imagem do Local
+                            </div>
+                            <div class="location-details">
+                                <h3>Shopping Center Registro</h3>
+                                <p>Av. Clara Gianotti de Souza, 1500 - Registro, SP</p>
+                                <p>Rampa de acesso, elevadores, banheiros adaptados</p>
+                                <div class="location-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                    <span>4.5 (15 avaliações)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-image"></i> Imagem do Local
+                            </div>
+                            <div class="location-details">
+                                <h3>Parque Municipal</h3>
+                                <p>Rua dos Expedicionários, 340 - Registro, SP</p>
+                                <p>Caminhos acessíveis, área de descanso, banheiros adaptados</p>
+                                <div class="location-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <span>4.0 (8 avaliações)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="location-card">
+                            <div class="location-image">
+                                <i class="fas fa-image"></i> Imagem do Local
+                            </div>
+                            <div class="location-details">
+                                <h3>Terminal Rodoviário</h3>
+                                <p>Av. Prefeito Jonas Banks Leite, 300 - Registro, SP</p>
+                                <p>Elevadores, piso tátil, rampas de acesso</p>
+                                <div class="location-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <i class="far fa-star"></i>
+                                    <span>3.2 (10 avaliações)</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <a href="#" class="add-location-btn">
+                        <i class="fas fa-plus"></i> Adicionar Local Acessível
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="../public/js/theme.js"></script>
+    <script src="../public/js/navbar-modern.js"></script>
+    <script src="../public/js/firebase-dashboard.js"></script>
+</body>
+</html> 
