@@ -5,45 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WACS - Wheelchair Automation Control System</title>
     <link rel="stylesheet" href="public/css/styles.css">
+    <link rel="stylesheet" href="public/css/animations.css">
+    <link rel="stylesheet" href="public/css/navbar-modern.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="public/css/core.css">
     <link rel="stylesheet" href="public/css/theme-switch.css">
     <link rel="stylesheet" href="public/css/send-button.css">
     <link rel="stylesheet" href="public/css/team-cards.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="./public/images/logo-light.png" type="image/png">
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Navigation (Adaptado do Site Base) -->
+    <nav class="navbar" id="main-nav">
         <div class="container">
-            <a href="#" class="logo">
-                <img src="public/images/logo.png" alt="WACS Logo" class="logo-dark">
-                <img src="public/images/logo-light.png" alt="WACS Logo" class="logo-light">
-            </a>
-            <button class="menu-toggle" aria-label="Toggle menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#visao-geral">Visão Geral</a></li>
-                <li><a href="#funcionalidades">Funcionalidades</a></li>
-                <li><a href="#tecnologias">Tecnologias</a></li>
-                <li><a href="#equipe">Equipe</a></li>
-                <li><a href="#contribua">Contribua</a></li>
-                <li><a href="#contato">Contato</a></li>
-            </ul>
-            <div class="theme-toggle">
-                <label class="switch">
-                  <span class="sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="#ffd43b"><circle r="5" cy="12" cx="12"></circle><path d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm13.66-5.66a1 1 0 0 1 -.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1 -.75.29zm-12.02 12.02a1 1 0 0 1 -.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1 -.7.24zm6.36-14.36a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm0 17a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm-5.66-14.66a1 1 0 0 1 -.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.29zm12.02 12.02a1 1 0 0 1 -.7-.29l-.66-.71a1 1 0 0 1 1.36-1.36l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.24z"></path></g></svg></span>
-                  <span class="moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path></svg></span>   
-                  <input type="checkbox" class="input" id="theme-switch" aria-label="Toggle theme">
-                  <span class="slider"></span>
-                </label>
+            <div class="navbar-content">
+                <!-- Logo com nome -->
+                <a href="#" class="logo">
+                    <img src="public/images/logo.png" alt="WACS Logo" class="logo-dark">
+                    <img src="public/images/logo-light.png" alt="WACS Logo" class="logo-light">
+                    <span class="logo-text">WACS</span>
+                </a>
+
+                <!-- Desktop Menu -->
+                <div class="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="#home">Home</a></li>
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle">Projeto <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#visao-geral">Visão Geral</a></li>
+                                <li><a href="#sobre">Sobre</a></li>
+                                <li><a href="#tecnologias">Tecnologias</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="javascript:void(0)" class="dropdown-toggle">Funcionalidades <i class="fas fa-chevron-down"></i></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#funcionalidades">Controle Remoto</a></li>
+                                <li><a href="#funcionalidades">Mapeamento</a></li>
+                                <li><a href="#funcionalidades">Assistente Virtual</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#equipe">Equipe</a></li>
+                        <li><a href="#galeria">Galeria</a></li>
+                        <li><a href="#contribua">Contribua</a></li>
+                        <li><a href="#contato">Contato</a></li>
+                    </ul>
+                </div>
+
+                <!-- Actions -->
+                <div class="nav-actions">
+                    <div class="theme-toggle">
+                        <label class="switch">
+                            <span class="sun"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g fill="#ffd43b"><circle r="5" cy="12" cx="12"></circle><path d="m21 13h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm-17 0h-1a1 1 0 0 1 0-2h1a1 1 0 0 1 0 2zm13.66-5.66a1 1 0 0 1 -.66-.29 1 1 0 0 1 0-1.41l.71-.71a1 1 0 1 1 1.41 1.41l-.71.71a1 1 0 0 1 -.75.29zm-12.02 12.02a1 1 0 0 1 -.71-.29 1 1 0 0 1 0-1.41l.71-.66a1 1 0 0 1 1.41 1.41l-.71.71a1 1 0 0 1 -.7.24zm6.36-14.36a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm0 17a1 1 0 0 1 -1-1v-1a1 1 0 0 1 2 0v1a1 1 0 0 1 -1 1zm-5.66-14.66a1 1 0 0 1 -.7-.29l-.71-.71a1 1 0 0 1 1.41-1.41l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.29zm12.02 12.02a1 1 0 0 1 -.7-.29l-.66-.71a1 1 0 0 1 1.36-1.36l.71.71a1 1 0 0 1 0 1.41 1 1 0 0 1 -.71.24z"></path></g></svg></span>
+                            <span class="moon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512"><path d="m223.5 32c-123.5 0-223.5 100.3-223.5 224s100 224 223.5 224c60.6 0 115.5-24.2 155.8-63.4 5-4.9 6.3-12.5 3.1-18.7s-10.1-9.7-17-8.5c-9.8 1.7-19.8 2.6-30.1 2.6-96.9 0-175.5-78.8-175.5-176 0-65.8 36-123.1 89.3-153.3 6.1-3.5 9.2-10.5 7.7-17.3s-7.3-11.9-14.3-12.5c-6.3-.5-12.6-.8-19-.8z"></path></svg></span>   
+                            <input type="checkbox" class="input" id="theme-switch" aria-label="Toggle theme">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <a href="#github" class="download-btn">Download</a>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <!-- Mobile Menu Panel -->
+            <div class="mobile-menu">
+                <ul class="nav-links-mobile">
+                    <li><a href="#home">Home</a></li>
+                    <li class="mobile-dropdown">
+                        <a href="javascript:void(0)" class="mobile-dropdown-toggle">Projeto <i class="fas fa-chevron-down"></i></a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="#visao-geral">Visão Geral</a></li>
+                            <li><a href="#sobre">Sobre</a></li>
+                            <li><a href="#tecnologias">Tecnologias</a></li>
+                        </ul>
+                    </li>
+                    <li class="mobile-dropdown">
+                        <a href="javascript:void(0)" class="mobile-dropdown-toggle">Funcionalidades <i class="fas fa-chevron-down"></i></a>
+                        <ul class="mobile-dropdown-menu">
+                            <li><a href="#funcionalidades">Controle Remoto</a></li>
+                            <li><a href="#funcionalidades">Mapeamento</a></li>
+                            <li><a href="#funcionalidades">Assistente Virtual</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="#equipe">Equipe</a></li>
+                    <li><a href="#galeria">Galeria</a></li>
+                    <li><a href="#contribua">Contribua</a></li>
+                    <li><a href="#contato">Contato</a></li>
+                </ul>
+                <a href="#github" class="download-btn-mobile">Download</a>
             </div>
         </div>
     </nav>
@@ -525,5 +584,6 @@
 
     <script src="public/js/main.js"></script>
     <script defer src="public/js/theme.js"></script>
+    <script src="public/js/navbar-modern.js"></script>
 </body>
 </html>
