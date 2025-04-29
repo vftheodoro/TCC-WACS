@@ -558,7 +558,8 @@ body.dark-theme .feature p {
 
 /* Footer */
 footer {
-    background-color: var(--secondary-color);
+    background-color: var(--secondary-color, #444a54);
+    background-color: #515969;
     color: white;
     padding: var(--spacing-xl) 0 var(--spacing-sm);
 }
@@ -799,7 +800,7 @@ body.dark-theme select:focus {
 
 /* Footer em modo escuro */
 body.dark-theme footer {
-    background-color: #0f172a;
+    background-color: #1E2433;
 }
 
 body.dark-theme .footer-links a:hover {
