@@ -511,6 +511,32 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="../public/js/theme.js"></script>
     <script src="../public/js/navbar-modern.js"></script>
+    <script src="../public/js/env-config.js"></script>
     <script src="../public/js/firebase-dashboard.js"></script>
+    
+    <!-- Google Maps Script (carregado dinamicamente com a API key do env-config.js) -->
+    <script>
+        // Função para carregar a API do Google Maps com a chave das variáveis de ambiente
+        function loadGoogleMapsScript() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${window.ENV.GOOGLE_MAPS_API_KEY}&libraries=places&callback=initMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+        
+        // Aguardar o carregamento das variáveis de ambiente antes de carregar o Google Maps
+        if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY) {
+            loadGoogleMapsScript();
+        } else {
+            window.addEventListener('DOMContentLoaded', function() {
+                if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY) {
+                    loadGoogleMapsScript();
+                } else {
+                    console.error('Google Maps API key não encontrada nas variáveis de ambiente');
+                }
+            });
+        }
+    </script>
 </body>
 </html> 

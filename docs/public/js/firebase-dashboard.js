@@ -1,12 +1,12 @@
 // Configuração do Firebase
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY,
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.FIREBASE_PROJECT_ID,
-  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.FIREBASE_APP_ID,
-  measurementId: process.env.FIREBASE_MEASUREMENT_ID
+  apiKey: window.ENV.FIREBASE_API_KEY,
+  authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+  projectId: window.ENV.FIREBASE_PROJECT_ID,
+  storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+  appId: window.ENV.FIREBASE_APP_ID,
+  measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
 };
 
 // Inicializar Firebase
@@ -107,19 +107,228 @@ function updateUIWithUserData(user) {
   }
 }
 
-// Inicializar Google Maps (placeholder)
+// Inicializar Google Maps
 function initMap() {
   if (mapContainer) {
+    // Criar o elemento para o mapa
     mapContainer.innerHTML = '<div id="map" style="width: 100%; height: 100%;"></div>';
     
-    // Placeholder para inicialização futura do Google Maps
+    // Coordenadas iniciais (centro do Brasil)
+    const initialLocation = { lat: -15.77972, lng: -47.92972 };
+
+    try {
+      // Criar o mapa
+      const map = new google.maps.Map(document.getElementById("map"), {
+        zoom: 5,
+        center: initialLocation,
+        mapTypeControl: true,
+        streetViewControl: false,
+        fullscreenControl: true,
+        zoomControl: true,
+        styles: (document.body.classList.contains('dark-theme')) 
+          ? [
+              { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+              { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+              { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+              { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+              { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+              { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+              { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+              { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+              { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+              { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+              { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+              { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+              { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+              { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+              { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+              { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+              { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+              { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] },
+            ]
+          : []
+      });
+      
+      // Adicionar marcadores de exemplo (locais acessíveis)
+      const accessibleLocations = [
+        { position: { lat: -23.5505, lng: -46.6333 }, title: "Parque Ibirapuera", content: "Rampas de acesso, banheiros adaptados" },
+        { position: { lat: -22.9068, lng: -43.1729 }, title: "Praia de Copacabana", content: "Áreas acessíveis, cadeiras anfíbias" },
+        { position: { lat: -25.4284, lng: -49.2733 }, title: "Parque Barigui", content: "Trilhas acessíveis, estacionamento reservado" },
+        { position: { lat: -24.7206, lng: -47.8815 }, title: "Shopping Center Registro", content: "Elevadores, banheiros adaptados" }
+      ];
+      
+      // Criar marcadores e janelas de informação
+      accessibleLocations.forEach(location => {
+        const marker = new google.maps.Marker({
+          position: location.position,
+          map: map,
+          title: location.title,
+          animation: google.maps.Animation.DROP,
+          icon: {
+            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
+              <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0055b3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="7" r="4"/>
+                <path d="M17 21v-2a2 2 0 0 0-2-2H9a2 2 0 0 0-2 2v2"/>
+                <circle cx="12" cy="12" r="10" stroke="#0055b3" stroke-width="1" opacity="0.3"/>
+              </svg>
+            `),
+            scaledSize: new google.maps.Size(30, 30)
+          }
+        });
+        
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="max-width: 200px; padding: 5px;">
+              <h3 style="margin: 0 0 5px; font-size: 16px; color: #0055b3;">${location.title}</h3>
+              <p style="margin: 0; font-size: 14px;">${location.content}</p>
+              <a href="#" style="display: block; margin-top: 8px; color: #0055b3; text-decoration: none; font-size: 12px;">Ver detalhes</a>
+            </div>
+          `
+        });
+        
+        marker.addListener('click', () => {
+          infoWindow.open(map, marker);
+        });
+      });
+      
+      // Adicionar o controle de pesquisa de lugares
+      const input = document.createElement('input');
+      input.setAttribute('type', 'text');
+      input.setAttribute('placeholder', 'Buscar local...');
+      input.classList.add('map-search-input');
+      
+      const searchBox = new google.maps.places.SearchBox(input);
+      map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+      
+      // Evento para mudar os limites do mapa quando o usuário seleciona uma sugestão
+      searchBox.addListener('places_changed', () => {
+        const places = searchBox.getPlaces();
+        if (places.length === 0) return;
+        
+        const bounds = new google.maps.LatLngBounds();
+        places.forEach(place => {
+          if (!place.geometry || !place.geometry.location) return;
+          
+          // Criar um marcador para o local pesquisado
+          new google.maps.Marker({
+            map,
+            title: place.name,
+            position: place.geometry.location
+          });
+          
+          if (place.geometry.viewport) {
+            bounds.union(place.geometry.viewport);
+          } else {
+            bounds.extend(place.geometry.location);
+          }
+        });
+        
+        map.fitBounds(bounds);
+      });
+      
+      // Adicionar o botão de geolocalização
+      const locationButton = document.createElement('button');
+      locationButton.innerHTML = '<i class="fas fa-location-arrow"></i>';
+      locationButton.className = 'map-locator-button';
+      locationButton.title = 'Minha localização';
+      
+      map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(locationButton);
+      
+      // Evento para centralizar o mapa na localização do usuário
+      locationButton.addEventListener('click', () => {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(position => {
+            const userLocation = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            
+            // Criar um marcador para a localização do usuário
+            new google.maps.Marker({
+              position: userLocation,
+              map: map,
+              icon: {
+                path: google.maps.SymbolPath.CIRCLE,
+                scale: 7,
+                fillColor: '#4285F4',
+                fillOpacity: 1,
+                strokeColor: '#fff',
+                strokeWeight: 2
+              },
+              title: 'Você está aqui'
+            });
+            
+            map.setCenter(userLocation);
+            map.setZoom(15);
+          }, () => {
+            showAlert('Erro ao obter sua localização. Verifique as permissões.', 'error');
+          });
+        } else {
+          showAlert('Seu navegador não suporta geolocalização.', 'error');
+        }
+      });
+      
+      // Adicionar CSS para os controles personalizados
+      const mapStyles = document.createElement('style');
+      mapStyles.textContent = `
+        .map-search-input {
+          margin: 10px;
+          padding: 8px 15px;
+          width: 300px;
+          border: none;
+          border-radius: 3px;
+          box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+          font-size: 14px;
+          outline: none;
+        }
+        
+        .map-locator-button {
+          background: white;
+          border: none;
+          border-radius: 2px;
+          box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+          margin: 10px;
+          padding: 0;
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .map-locator-button i {
+          color: #666;
+          font-size: 18px;
+        }
+        
+        .map-locator-button:hover {
+          background: #f8f8f8;
+        }
+        
+        body.dark-theme .map-search-input,
+        body.dark-theme .map-locator-button {
+          background: #333;
+          color: #fff;
+        }
+        
+        body.dark-theme .map-locator-button i {
+          color: #fff;
+        }
+      `;
+      
+      document.head.appendChild(mapStyles);
+      
+    } catch (error) {
+      console.error('Erro ao inicializar o mapa:', error);
     mapContainer.innerHTML = `
       <div style="text-align: center; padding: 20px;">
         <i class="fas fa-map-marked-alt" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.6;"></i>
-        <p>Mapa em desenvolvimento</p>
-        <p style="font-size: 0.9rem; opacity: 0.7;">A API do Google Maps será integrada aqui</p>
+          <p>Erro ao carregar o mapa</p>
+          <p style="font-size: 0.9rem; opacity: 0.7;">Verifique a conexão ou as permissões</p>
       </div>
     `;
+    }
   }
 }
 
