@@ -424,6 +424,16 @@
     <!-- Script para Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase Config Validation -->
+    <script>
+        // Verificação da configuração do Firebase
+        if (!window.firebaseConfigLoaded) {
+            window.firebaseConfigLoaded = true;
+            console.log("Inicializando configuração do Firebase: wacs-project-3c9aa");
+        }
+    </script>
+    
     <script src="../../public/js/theme.js"></script>
     <script src="../../public/js/navbar-modern.js"></script>
     <script src="../../public/js/firebase-auth.js"></script>

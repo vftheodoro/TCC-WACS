@@ -1,12 +1,12 @@
 // Configuração do Firebase
 const firebaseConfig = {
-    apiKey: "AIzaSyBwzZWs5rFSPz2Ua7BwT9H9LSViLqCTm_g",
-    authDomain: "wacs-project-97f52.firebaseapp.com",
-    projectId: "wacs-project-97f52",
-    storageBucket: "wacs-project-97f52.firebasestorage.app",
-    messagingSenderId: "94601587488",
-    appId: "1:94601587488:web:25f81176e4091126024545",
-    measurementId: "G-RCGN9LG5F1"
+    apiKey: "AIzaSyCeI4wG8hEX96r9Xdp_vxJw5gwxGZ06Iuk",
+    authDomain: "wacs-project-3c9aa.firebaseapp.com",
+    projectId: "wacs-project-3c9aa",
+    storageBucket: "wacs-project-3c9aa.firebasestorage.app",
+    messagingSenderId: "515937823413",
+    appId: "1:515937823413:web:a3b50139098a4da024acfc",
+    measurementId: "G-16JG28H0YY"
 };
 
 // Inicialização do Firebase
