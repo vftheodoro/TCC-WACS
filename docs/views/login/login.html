@@ -14,6 +14,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="../../public/images/logo-light.png" type="image/png">
     <style>
+        /* Estilos para reduzir a navbar */
+        #main-nav {
+            padding: 0.5rem 0; /* Reduz o padding vertical */
+        }
+        
+        #main-nav .logo img {
+            width: 24px; /* Reduz o tamanho do logo */
+            height: auto;
+        }
+        
+        #main-nav .logo-text {
+            font-size: 1rem; /* Reduz o tamanho do texto do logo */
+        }
+        
+        #main-nav .download-btn {
+            padding: 0.4rem 0.8rem; /* Reduz o tamanho do botão voltar */
+            font-size: 0.9rem;
+        }
+        
+        #main-nav .switch {
+            transform: scale(0.8); /* Reduz o tamanho do switch de tema */
+        }
+        
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -21,6 +44,7 @@
             justify-content: center;
             padding: 2rem;
             background: var(--background-color, #fff);
+            padding-top: 4.5rem; /* Reduz o padding-top para acomodar a navbar menor */
         }
         
         .login-card {
@@ -213,17 +237,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 40px;
-            height: 40px;
+            width: 48px;
+            height: 48px;
             border-radius: 50%;
             background: #f5f5f5;
-            color: #333;
+            color: #fff;
+            font-size: 1.25rem;
             transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
         }
         
         body.dark-theme .social-icon {
             background: rgba(255, 255, 255, 0.05);
-            color: var(--dark-text, #e2e8f0);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
         }
         
         .social-icon:hover {
@@ -232,19 +258,39 @@
         }
         
         .social-icon.google {
-            color: #DB4437;
+            background-color: #DB4437;
+            color: #fff;
         }
         
         .social-icon.facebook {
-            color: #4267B2;
+            background-color: #4267B2;
+            color: #fff;
         }
         
         .social-icon.github {
-            color: #333;
+            background-color: #333;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .social-icon.github i {
+            font-size: 1.25rem;
+            width: auto;
+            height: auto;
+        }
+        
+        body.dark-theme .social-icon.google {
+            background-color: #DB4437;
+        }
+        
+        body.dark-theme .social-icon.facebook {
+            background-color: #4267B2;
         }
         
         body.dark-theme .social-icon.github {
-            color: #fff;
+            background-color: #333;
         }
         
         .register-link {
@@ -298,7 +344,7 @@
 </head>
 <body>
     <!-- Navigation (Adaptado do Site Base) -->
-    <nav class="navbar" id="main-nav">
+    <nav class="navbar" id="main-nav" style="position: fixed; width: 100%; top: 0; z-index: 1000; height: auto; min-height: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
         <div class="container">
             <div class="navbar-content">
                 <!-- Logo com nome -->
@@ -361,13 +407,10 @@
                 <p>Ou entre com</p>
                 <div class="social-icons">
                     <a href="#" class="social-icon google" id="googleLogin" aria-label="Login with Google">
-                        <i class="fab fa-google"></i>
+                        <i class="fab fa-google fa-lg"></i>
                     </a>
                     <a href="#" class="social-icon facebook" id="facebookLogin" aria-label="Login with Facebook">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="#" class="social-icon github" id="githubLogin" aria-label="Login with GitHub">
-                        <i class="fab fa-github"></i>
+                        <i class="fab fa-facebook-f fa-lg"></i>
                     </a>
                 </div>
             </div>
