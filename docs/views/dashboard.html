@@ -14,9 +14,76 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="../public/images/logo-light.png" type="image/png">
     <style>
+        /* Estilos da navbar compacta */
+        #main-nav {
+            min-height: 45px;
+        }
+        
+        .navbar-content {
+            padding: 0.35rem 0;
+        }
+        
+        .logo img {
+            width: 28px;
+            height: auto;
+        }
+        
+        .logo {
+            margin-right: 0.5rem;
+        }
+        
+        .logo-text {
+            font-size: 1.1rem;
+        }
+        
+        .nav-menu {
+            margin-left: 0;
+        }
+        
+        .nav-links {
+            gap: 0.25rem;
+        }
+        
+        .nav-links li {
+            margin: 0 0.2rem;
+        }
+        
+        .nav-links li:first-child {
+            margin-left: 0;
+        }
+        
+        .nav-links li a {
+            padding: 0.2rem 0.4rem;
+            height: 1.8rem;
+            font-size: 0.85rem;
+        }
+        
+        .nav-actions {
+            gap: 0.35rem;
+        }
+        
+        .theme-toggle {
+            transform: scale(0.8);
+        }
+        
+        .logout-btn {
+            padding: 0.2rem 0.65rem;
+            font-size: 0.8rem;
+        }
+        
+        .menu-toggle {
+            width: 20px;
+            height: 14px;
+        }
+        
+        .menu-toggle span {
+            height: 1.5px;
+        }
+
+        /* Ajuste para o espaço do dashboard */
         .dashboard-container {
-            padding-top: 80px;
-            min-height: calc(100vh - 80px);
+            padding-top: 45px;
+            min-height: calc(100vh - 45px);
             background: var(--background-color, #fff);
         }
         
@@ -326,6 +393,61 @@
         .add-location-btn:hover {
             background: var(--primary-hover, #0066d6);
             transform: translateY(-2px);
+        }
+
+        /* Estilos para o menu mobile */
+        .mobile-menu {
+            padding: 0.5rem;
+            margin-top: 0.2rem;
+        }
+        
+        .nav-links-mobile {
+            margin: 0 0 0.5rem 0;
+        }
+        
+        .nav-links-mobile li {
+            margin-bottom: 0.25rem;
+        }
+        
+        .nav-links-mobile a {
+            padding: 0.25rem 0.4rem;
+            font-size: 0.85rem;
+        }
+        
+        .download-btn-mobile {
+            padding: 0.35rem;
+            font-size: 0.8rem;
+        }
+        
+        /* Media queries para telas pequenas */
+        @media (max-width: 400px) {
+            .logo-text {
+                display: none;
+            }
+            
+            .nav-links li a {
+                padding: 0.2rem 0.3rem;
+            }
+        }
+
+        /* Centralização da navbar */
+        #main-nav .container {
+            display: flex;
+            justify-content: center;
+        }
+        
+        .navbar-content {
+            width: 100%;
+            max-width: 900px;
+            justify-content: space-between;
+        }
+        
+        @media (max-width: 960px) {
+            .navbar-content {
+                max-width: 100%;
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
         }
     </style>
 </head>
