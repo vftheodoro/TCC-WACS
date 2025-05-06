@@ -36,7 +36,9 @@
                 <li><a href="#funcionalidades" class="navbar-link">Funcionalidades</a></li>
                 <li><a href="#equipe" class="navbar-link">Equipe</a></li>
                 <li><a href="#contato" class="navbar-link">Contato</a></li>
-                <li><a href="views/login/login.html" class="navbar-link login-link-btn">Login</a></li>
+                <li><a href="views/login/login.html" class="navbar-link login-link-btn" id="loginLink">Login</a></li>
+                <li><a href="views/profile.html" class="navbar-link profile-link-btn hidden" id="profileLink">Meu Perfil</a></li>
+                <li><a href="views/dashboard.html" class="navbar-link dashboard-link-btn hidden" id="dashboardLink">Dashboard</a></li>
             </ul>
             
             <div class="navbar-actions">
@@ -51,6 +53,9 @@
                 <a href="#github" class="navbar-download">
                     <i class="fas fa-download"></i> Download
                 </a>
+                <button id="logoutBtn" class="navbar-login hidden">
+                    <i class="fas fa-sign-out-alt"></i> Sair
+                </button>
                 <button class="navbar-hamburger" id="menu-open" aria-label="Abrir menu">
                     <i class="fas fa-bars"></i>
                 </button>
@@ -92,7 +97,10 @@
             <li><a href="#galeria" class="mobile-link">Galeria</a></li>
             <li><a href="#contribua" class="mobile-link">Contribua</a></li>
             <li><a href="#contato" class="mobile-link">Contato</a></li>
-            <li><a href="views/login/login.html" class="mobile-link login-mobile">Login <i class="fas fa-user"></i></a></li>
+            <li><a href="views/login/login.html" class="mobile-link login-mobile" id="loginLinkMobile">Login <i class="fas fa-user"></i></a></li>
+            <li><a href="views/profile.html" class="mobile-link profile-mobile hidden" id="profileLinkMobile">Meu Perfil <i class="fas fa-user-edit"></i></a></li>
+            <li><a href="views/dashboard.html" class="mobile-link dashboard-mobile hidden" id="dashboardLinkMobile">Dashboard <i class="fas fa-tachometer-alt"></i></a></li>
+            <li><button id="logoutBtnMobile" class="mobile-link logout-mobile hidden">Sair <i class="fas fa-sign-out-alt"></i></button></li>
         </ul>
         <a href="#github" class="mobile-download">Download</a>
     </div>
@@ -194,6 +202,8 @@
                 font-weight: 500;
                 transition: all 0.3s ease;
                 margin-right: 0.75rem;
+                border: none;
+                cursor: pointer;
             }
             
             .navbar-login:hover {
@@ -214,6 +224,16 @@
                 color: var(--dark-primary, #4A90E2) !important;
             }
             
+            .profile-link-btn, .dashboard-link-btn {
+                color: var(--primary-color, #0055b3) !important;
+                font-weight: 500;
+            }
+            
+            body.dark-theme .profile-link-btn, 
+            body.dark-theme .dashboard-link-btn {
+                color: var(--dark-primary, #4A90E2) !important;
+            }
+            
             .login-mobile {
                 display: flex;
                 align-items: center;
@@ -225,8 +245,30 @@
                 border-radius: 0.5rem;
             }
             
-            body.dark-theme .login-mobile {
+            .profile-mobile, .dashboard-mobile, .logout-mobile {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-weight: 500;
+                margin-top: 0.5rem;
+                background-color: rgba(0, 85, 179, 0.1);
+                padding: 0.75rem 1rem;
+                border-radius: 0.5rem;
+                width: 100%;
+                text-align: left;
+                border: none;
+                cursor: pointer;
+            }
+            
+            body.dark-theme .login-mobile,
+            body.dark-theme .profile-mobile,
+            body.dark-theme .dashboard-mobile,
+            body.dark-theme .logout-mobile {
                 background-color: rgba(74, 144, 226, 0.1);
+            }
+            
+            .hidden {
+                display: none !important;
             }
             
             .hero-section {
@@ -849,5 +891,101 @@
     <script src="public/js/main.js"></script>
     <script defer src="public/js/theme.js"></script>
     <script src="public/js/navbar-modern.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="public/js/env-config.js"></script>
+    
+    <!-- Auth state management script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Firebase init
+            const firebaseConfig = {
+                apiKey: window.ENV.FIREBASE_API_KEY,
+                authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+                projectId: window.ENV.FIREBASE_PROJECT_ID,
+                storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+                messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+                appId: window.ENV.FIREBASE_APP_ID,
+                measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
+            };
+            
+            // Initialize Firebase
+            firebase.initializeApp(firebaseConfig);
+            const auth = firebase.auth();
+            
+            // DOM Elements - Desktop
+            const loginLink = document.getElementById('loginLink');
+            const profileLink = document.getElementById('profileLink');
+            const dashboardLink = document.getElementById('dashboardLink');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            // DOM Elements - Mobile
+            const loginLinkMobile = document.getElementById('loginLinkMobile');
+            const profileLinkMobile = document.getElementById('profileLinkMobile');
+            const dashboardLinkMobile = document.getElementById('dashboardLinkMobile');
+            const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+            
+            // Logout function
+            function handleLogout() {
+                auth.signOut()
+                    .then(() => {
+                        console.log('Usuário deslogado com sucesso');
+                        updateUIForLoggedOutUser();
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao fazer logout:', error);
+                    });
+            }
+            
+            // Add event listeners for logout
+            if (logoutBtn) logoutBtn.addEventListener('click', handleLogout);
+            if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', handleLogout);
+            
+            // Update UI for logged in user
+            function updateUIForLoggedInUser() {
+                // Desktop menu
+                loginLink.classList.add('hidden');
+                profileLink.classList.remove('hidden');
+                dashboardLink.classList.remove('hidden');
+                logoutBtn.classList.remove('hidden');
+                
+                // Mobile menu
+                loginLinkMobile.classList.add('hidden');
+                profileLinkMobile.classList.remove('hidden');
+                dashboardLinkMobile.classList.remove('hidden');
+                logoutBtnMobile.classList.remove('hidden');
+            }
+            
+            // Update UI for logged out user
+            function updateUIForLoggedOutUser() {
+                // Desktop menu
+                loginLink.classList.remove('hidden');
+                profileLink.classList.add('hidden');
+                dashboardLink.classList.add('hidden');
+                logoutBtn.classList.add('hidden');
+                
+                // Mobile menu
+                loginLinkMobile.classList.remove('hidden');
+                profileLinkMobile.classList.add('hidden');
+                dashboardLinkMobile.classList.add('hidden');
+                logoutBtnMobile.classList.add('hidden');
+            }
+            
+            // Auth state observer
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is signed in
+                    console.log('Usuário logado:', user.email);
+                    updateUIForLoggedInUser();
+                } else {
+                    // User is signed out
+                    console.log('Nenhum usuário logado');
+                    updateUIForLoggedOutUser();
+                }
+            });
+        });
+    </script>
 </body>
 </html>

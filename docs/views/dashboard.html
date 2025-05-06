@@ -320,11 +320,23 @@
             justify-content: center;
             font-size: 1.5rem;
             margin-right: 1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            text-decoration: none;
+        }
+        
+        .user-avatar:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
         body.dark-theme .user-avatar {
             background: var(--dark-accent, #1E293B);
             color: var(--dark-primary, #4A90E2);
+        }
+        
+        body.dark-theme .user-avatar:hover {
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
         }
         
         .user-details h2 {
@@ -334,10 +346,39 @@
         .user-details p {
             color: var(--text-light, #4b5563);
             margin: 0;
+            margin-bottom: 0.5rem;
         }
         
         body.dark-theme .user-details p {
             color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .profile-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color, #0055b3);
+            font-size: 0.875rem;
+            text-decoration: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .profile-link i {
+            margin-right: 0.25rem;
+        }
+        
+        .profile-link:hover {
+            background-color: var(--accent-color, #e0eaff);
+            text-decoration: none;
+        }
+        
+        body.dark-theme .profile-link {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        body.dark-theme .profile-link:hover {
+            background-color: var(--dark-accent, #1E293B);
         }
         
         .logout-btn {
@@ -468,8 +509,7 @@
                     <ul class="nav-links">
                         <li><a href="../index.html">Home</a></li>
                         <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                        <li><a href="#mapa">Mapa</a></li>
-                        <li><a href="#contribuir">Contribuir</a></li>
+                        <li><a href="profile.html">Perfil</a></li>
                     </ul>
                 </div>
 
@@ -499,8 +539,7 @@
                 <ul class="nav-links-mobile">
                     <li><a href="../index.html">Home</a></li>
                     <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="#mapa">Mapa</a></li>
-                    <li><a href="#contribuir">Contribuir</a></li>
+                    <li><a href="profile.html">Perfil</a></li>
                 </ul>
                 <button id="logoutBtnMobile" class="download-btn-mobile">Sair</button>
             </div>
@@ -511,12 +550,15 @@
         <div class="dashboard-header">
             <div class="container">
                 <div class="user-info">
-                    <div class="user-avatar" id="userAvatar">
+                    <a href="profile.html" class="user-avatar" id="userAvatar" title="Editar perfil">
                         <i class="fas fa-user"></i>
-                    </div>
+                    </a>
                     <div class="user-details">
                         <h2 id="userName">Carregando...</h2>
                         <p id="userEmail">Carregando...</p>
+                        <a href="profile.html" class="profile-link">
+                            <i class="fas fa-edit"></i> Editar perfil
+                        </a>
                     </div>
                 </div>
                 
@@ -628,13 +670,54 @@
         </div>
     </div>
 
-    <!-- Script para Firebase -->
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script src="../public/js/theme.js"></script>
     <script src="../public/js/navbar-modern.js"></script>
     <script src="../public/js/env-config.js"></script>
     <script src="../public/js/firebase-dashboard.js"></script>
+    
+    <!-- Auth state navbar handling -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get navbar elements
+            const navLinks = document.querySelector('.nav-links');
+            const navLinksMobile = document.querySelector('.nav-links-mobile');
+            
+            // Remove unnecessary links from authenticated pages
+            const removeUnnecessaryLinks = () => {
+                // Function to safely remove links that shouldn't be visible on authenticated pages
+                const removeLink = (parentElement, hrefValue) => {
+                    const links = parentElement.querySelectorAll(`a[href="${hrefValue}"]`);
+                    links.forEach(link => {
+                        const listItem = link.parentElement;
+                        if (listItem && listItem.tagName === 'LI') {
+                            listItem.remove();
+                        }
+                    });
+                };
+                
+                // Remove these links as they don't make sense in an authenticated context or are handled elsewhere
+                removeLink(navLinks, '#mapa');
+                removeLink(navLinks, '#contribuir');
+                removeLink(navLinksMobile, '#mapa');
+                removeLink(navLinksMobile, '#contribuir');
+            };
+            
+            // Clean up navbar for authenticated users
+            auth.onAuthStateChanged(function(user) {
+                if (user) {
+                    // User is authenticated, clean up navbar
+                    removeUnnecessaryLinks();
+                } else {
+                    // User is not authenticated, redirect to login page
+                    // This is already handled in firebase-dashboard.js
+                }
+            });
+        });
+    </script>
     
     <!-- Google Maps Script (carregado dinamicamente com a API key do env-config.js) -->
     <script>
