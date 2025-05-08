@@ -17,6 +17,83 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="./public/images/logo-light.png" type="image/png">
+    <style>
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            background: var(--background-color, #fff);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, 
+                rgba(0, 0, 0, 0.95) 0%,
+                rgba(0, 0, 0, 0.85) 50%,
+                rgba(0, 0, 0, 0.7) 100%);
+            padding: 2rem 1.5rem 1.5rem;
+            color: #ffffff;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0);
+        }
+        
+        .gallery-overlay h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.25rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+        }
+        
+        .gallery-overlay p {
+            margin: 0;
+            font-size: 0.875rem;
+            opacity: 1;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+            font-weight: 500;
+            color: #ffffff;
+        }
+        
+        body.dark-theme .gallery-item {
+            background: var(--dark-card, #1e1e2d);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        body.dark-theme .gallery-item img {
+            background-color: var(--dark-card, #1e1e2d);
+        }
+    </style>
 </head>
 <body>
     <!-- Navigation (Navbar Moderna) -->
@@ -718,21 +795,21 @@
             <h2>Galeria</h2>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="public/images/cadeira.webp" alt="Cadeira de Rodas Automatizada">
+                    <img src="public/images/fotos-projeto/pintandocadeira.jpeg" alt="Cadeira de Rodas Automatizada">
                     <div class="gallery-overlay">
                         <h3>Cadeira de Rodas Automatizada</h3>
                         <p>Protótipo em desenvolvimento</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="public/images/software.webp" alt="Interface do Aplicativo">
+                    <img src="public/images/fotos-projeto/medindocadeira.jpeg" alt="Interface do Aplicativo">
                     <div class="gallery-overlay">
                         <h3>Interface do Aplicativo</h3>
                         <p>Design moderno e acessível</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="public/images/sensor.webp" alt="Sensores e Hardware">
+                    <img src="public/images/fotos-projeto/selfiegrupo.jpeg" alt="Sensores e Hardware">
                     <div class="gallery-overlay">
                         <h3>Sensores e Hardware</h3>
                         <p>Componentes eletrônicos</p>
