@@ -18,6 +18,9 @@ const storage = firebase.storage();
 const profileForm = document.getElementById('profileForm');
 const displayNameInput = document.getElementById('displayName');
 const emailInput = document.getElementById('email');
+const currentPasswordInput = document.getElementById('currentPassword');
+const newPasswordInput = document.getElementById('newPassword');
+const confirmPasswordInput = document.getElementById('confirmPassword');
 const profilePhoto = document.getElementById('profilePhoto');
 const photoOverlay = document.getElementById('photoOverlay');
 const fileInput = document.getElementById('fileInput');
@@ -82,7 +85,126 @@ function setupDebug() {
 // Configurar event listeners
 function setupEventListeners() {
     // Formulário
-    profileForm.addEventListener('submit', handleProfileSubmit);
+    profileForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        if (!currentUser) {
+            showAlert('Usuário não autenticado', 'error');
+            return;
+        }
+        
+        const displayName = displayNameInput.value.trim();
+        const currentPassword = currentPasswordInput.value;
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmPasswordInput.value;
+        
+        // Validar senha se estiver alterando
+        if (newPassword || currentPassword || confirmPassword) {
+            if (!currentPassword) {
+                showAlert('Por favor, insira sua senha atual', 'error');
+                return;
+            }
+            if (!newPassword) {
+                showAlert('Por favor, insira a nova senha', 'error');
+                return;
+            }
+            if (newPassword !== confirmPassword) {
+                showAlert('As senhas não coincidem', 'error');
+                return;
+            }
+            if (newPassword.length < 6) {
+                showAlert('A nova senha deve ter pelo menos 6 caracteres', 'error');
+                return;
+            }
+        }
+        
+        try {
+            startLoading('Atualizando perfil...');
+            
+            // Atualizar senha se necessário
+            if (newPassword) {
+                // Reautenticar o usuário antes de alterar a senha
+                const credential = firebase.auth.EmailAuthProvider.credential(
+                    currentUser.email,
+                    currentPassword
+                );
+                
+                await currentUser.reauthenticateWithCredential(credential);
+                await currentUser.updatePassword(newPassword);
+                logDebug('Senha atualizada com sucesso');
+            }
+            
+            // Atualizar nome de exibição se alterado
+            if (displayName !== originalDisplayName) {
+                await currentUser.updateProfile({
+                    displayName: displayName
+                });
+                logDebug('Nome de exibição atualizado:', displayName);
+            }
+            
+            // Atualizar foto se alterada
+            if (photoChanged && photoFile) {
+                const photoURL = await uploadProfilePicture(photoFile);
+                await currentUser.updateProfile({
+                    photoURL: photoURL
+                });
+                logDebug('Foto de perfil atualizada:', photoURL);
+            } else if (photoRemoved) {
+                await currentUser.updateProfile({
+                    photoURL: null
+                });
+                logDebug('Foto de perfil removida');
+            }
+            
+            // Limpar campos de senha
+            currentPasswordInput.value = '';
+            newPasswordInput.value = '';
+            confirmPasswordInput.value = '';
+            
+            showAlert('Perfil atualizado com sucesso!', 'success');
+            
+            // Atualizar dados originais
+            originalDisplayName = displayName;
+            photoChanged = false;
+            photoRemoved = false;
+            
+        } catch (error) {
+            logDebug('Erro ao atualizar perfil:', error);
+            
+            if (error.code === 'auth/wrong-password') {
+                showAlert('Senha atual incorreta', 'error');
+            } else if (error.code === 'auth/requires-recent-login') {
+                showAlert('Por favor, faça login novamente para alterar sua senha', 'error');
+            } else if (error.code === 'auth/network-request-failed') {
+                showAlert('Erro de conexão. Verifique sua internet e tente novamente.', 'error');
+            } else if (error.code === 'auth/too-many-requests') {
+                showAlert('Muitas tentativas. Por favor, aguarde alguns minutos e tente novamente.', 'error');
+            } else if (error.code === 'storage/unauthorized') {
+                showAlert('Erro ao fazer upload da foto. Tente novamente.', 'error');
+            } else if (error.code === 'storage/canceled') {
+                showAlert('Upload da foto cancelado.', 'error');
+            } else if (error.code === 'storage/retry-limit-exceeded') {
+                showAlert('Erro ao fazer upload da foto. Tente novamente mais tarde.', 'error');
+            } else if (error.code === 'storage/invalid-checksum') {
+                showAlert('Erro ao fazer upload da foto. O arquivo pode estar corrompido.', 'error');
+            } else if (error.code === 'storage/invalid-format') {
+                showAlert('Formato de arquivo inválido para a foto.', 'error');
+            } else if (error.code === 'storage/invalid-url') {
+                showAlert('URL inválida para a foto de perfil.', 'error');
+            } else if (error.code === 'storage/object-not-found') {
+                showAlert('Arquivo não encontrado no servidor.', 'error');
+            } else if (error.code === 'storage/quota-exceeded') {
+                showAlert('Limite de armazenamento excedido.', 'error');
+            } else if (error.code === 'storage/unauthenticated') {
+                showAlert('Sessão expirada. Por favor, faça login novamente.', 'error');
+            } else {
+                console.error('Erro detalhado:', error);
+                showAlert(`Erro ao atualizar perfil: ${error.message || 'Erro desconhecido'}`, 'error');
+            }
+        } finally {
+            stopLoading();
+        }
+    });
     cancelBtn.addEventListener('click', handleCancel);
     
     // Foto
@@ -168,123 +290,6 @@ function getInitials(name) {
     }
     
     return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
-}
-
-// Função para lidar com o envio do formulário
-async function handleProfileSubmit(event) {
-    event.preventDefault();
-    
-    const newDisplayName = displayNameInput.value.trim();
-    const nameChanged = newDisplayName !== originalDisplayName;
-    
-    // Verificar se houve alguma alteração
-    if (!nameChanged && !photoChanged) {
-        showAlert('Nenhuma alteração foi feita.', 'info');
-        return;
-    }
-    
-    try {
-        // Mostrar loading e desabilitar botão
-        startLoading('Salvando alterações...');
-        disableSaveButton(true);
-        
-        // Objeto com as alterações
-        const profileUpdates = {};
-        
-        // Atualizar nome de exibição
-        if (nameChanged) {
-            logDebug('Atualizando nome de exibição:', newDisplayName);
-            profileUpdates.displayName = newDisplayName;
-        }
-        
-        // Processar alterações na foto
-        if (photoChanged) {
-            if (photoRemoved) {
-                // Remover foto
-                logDebug('Removendo foto de perfil');
-                updateLoadingText('Removendo foto...');
-                
-                if (userPhotoURL) {
-                    try {
-                        await deleteProfilePicture(currentUser.uid, userPhotoURL);
-                    } catch (error) {
-                        logDebug('Erro ao deletar foto:', error);
-                        // Continuar mesmo com erro
-                    }
-                }
-                
-                profileUpdates.photoURL = null;
-                userPhotoURL = null;
-            } else if (photoFile) {
-                // Fazer upload da nova foto
-                logDebug('Enviando nova foto de perfil');
-                updateLoadingText('Enviando foto...');
-                
-                try {
-                    const downloadURL = await uploadProfilePicture(
-                        currentUser.uid,
-                        photoFile,
-                        updateProgressUI,
-                        newDisplayName
-                    );
-                    
-                    if (downloadURL) {
-                        profileUpdates.photoURL = downloadURL;
-                        userPhotoURL = downloadURL;
-                        logDebug('Foto enviada com sucesso:', downloadURL);
-                    } else {
-                        throw new Error('Falha ao obter URL da foto após upload');
-                    }
-                } catch (error) {
-                    logDebug('Erro no upload da foto:', error);
-                    throw new Error(`Erro ao fazer upload da foto: ${error.message}`);
-                }
-            }
-        }
-        
-        // Atualizar perfil no Firebase
-        if (Object.keys(profileUpdates).length > 0) {
-            updateLoadingText('Atualizando perfil...');
-            await currentUser.updateProfile(profileUpdates);
-            logDebug('Perfil atualizado com sucesso:', profileUpdates);
-            
-            // Recarregar usuário para garantir que as alterações foram aplicadas
-            await currentUser.reload();
-            currentUser = auth.currentUser;
-            
-            // Verificar se as alterações foram aplicadas corretamente
-            const photoUpdated = photoChanged ? 
-                (photoRemoved ? !currentUser.photoURL : 
-                    photoFile ? currentUser.photoURL === userPhotoURL : true) 
-                : true;
-            
-            const nameUpdated = nameChanged ? 
-                currentUser.displayName === newDisplayName : true;
-            
-            if (!photoUpdated || !nameUpdated) {
-                logDebug('Aviso: Algumas alterações podem não ter sido aplicadas corretamente');
-                showAlert('Seu perfil foi atualizado, mas algumas alterações podem levar um tempo para serem exibidas.', 'warning');
-            } else {
-                showAlert('Perfil atualizado com sucesso!', 'success');
-            }
-            
-            // Atualizar estado
-            originalDisplayName = newDisplayName;
-            photoChanged = false;
-            photoRemoved = false;
-            photoFile = null;
-            
-            // Atualizar UI
-            loadUserData(currentUser);
-        }
-    } catch (error) {
-        logDebug('Erro ao atualizar perfil:', error);
-        showAlert(`Erro ao atualizar perfil: ${error.message}`, 'danger');
-    } finally {
-        // Esconder loading e habilitar botão
-        stopLoading();
-        disableSaveButton(false);
-    }
 }
 
 // Função para lidar com a seleção de arquivo
@@ -386,50 +391,26 @@ function handleLogout() {
 }
 
 // Upload de foto de perfil para o Firebase Storage
-async function uploadProfilePicture(userId, file, progressCallback = null, userName = null) {
-    if (!userId || !file) {
-        logDebug('Parâmetros inválidos para upload:', { userId, file });
+async function uploadProfilePicture(file) {
+    if (!currentUser || !file) {
+        logDebug('Parâmetros inválidos para upload:', { currentUser, file });
         throw new Error('Parâmetros inválidos para upload');
     }
     
     try {
         logDebug('Iniciando processo de upload da foto de perfil');
         
-        // Deletar fotos antigas primeiro
-        if (userPhotoURL) {
-            try {
-                await deleteProfilePicture(userId, userPhotoURL);
-            } catch (error) {
-                logDebug('Erro ao deletar foto antiga:', error);
-                // Continuamos mesmo se a deleção falhar
-            }
-        }
-        
         // Gerar nome de arquivo único
         const timestamp = new Date().getTime();
         const fileExtension = file.name.split('.').pop().toLowerCase();
-        const formattedName = formatNameForFile(userName || 'user');
-        const fileName = `${userId}_${formattedName}_profile_${timestamp}.${fileExtension}`;
+        const formattedName = formatNameForFile(currentUser.displayName || 'user');
+        const fileName = `${currentUser.uid}_${formattedName}_profile_${timestamp}.${fileExtension}`;
         
         // Referência para o arquivo no Storage
         const storageRef = storage.ref(`profile_pictures/${fileName}`);
         
         // Criar upload task
         const uploadTask = storageRef.put(file);
-        
-        // Monitorar progresso
-        if (progressCallback) {
-            uploadTask.on('state_changed', 
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressCallback(progress);
-                },
-                (error) => {
-                    logDebug('Erro durante upload:', error);
-                    throw error;
-                }
-            );
-        }
         
         // Aguardar conclusão do upload
         await uploadTask;
@@ -445,75 +426,6 @@ async function uploadProfilePicture(userId, file, progressCallback = null, userN
     }
 }
 
-// Deletar foto de perfil do Firebase Storage
-async function deleteProfilePicture(userId, photoURL) {
-    if (!userId) {
-        throw new Error('ID do usuário não fornecido');
-    }
-    
-    try {
-        logDebug('Iniciando deleção da foto de perfil');
-        
-        // Se temos a URL, podemos extrair a referência
-        let storageRef;
-        
-        if (photoURL && photoURL.includes('firebase')) {
-            try {
-                // Obter a referência a partir da URL
-                const storageUrl = new URL(photoURL);
-                const pathMatch = storageUrl.pathname.match(/\/o\/(.+?)(?:\?|$)/);
-                
-                if (pathMatch && pathMatch[1]) {
-                    // Decodificar o caminho
-                    const decodedPath = decodeURIComponent(pathMatch[1]);
-                    storageRef = storage.ref(decodedPath);
-                } else {
-                    throw new Error('Formato de URL de armazenamento inválido');
-                }
-            } catch (error) {
-                logDebug('Erro ao extrair referência da URL:', error);
-                // Tentar abordagem alternativa
-                storageRef = storage.refFromURL(photoURL);
-            }
-        } else {
-            // Buscar todas as fotos de perfil do usuário
-            const profilePicsRef = storage.ref('profile_pictures');
-            // Listar todas as fotos do perfil
-            try {
-                const listResult = await profilePicsRef.listAll();
-                
-                // Filtrar imagens que começam com o ID do usuário
-                const userPics = listResult.items.filter(item => {
-                    const name = item.name;
-                    return name.startsWith(userId);
-                });
-                
-                // Deletar todas as fotos antigas do usuário
-                const deletePromises = userPics.map(pic => pic.delete());
-                await Promise.all(deletePromises);
-                
-                logDebug(`${userPics.length} fotos antigas deletadas com sucesso.`);
-                return true;
-            } catch (error) {
-                logDebug('Erro ao listar/deletar fotos:', error);
-                throw error;
-            }
-        }
-        
-        // Deletar o arquivo
-        if (storageRef) {
-            await storageRef.delete();
-            logDebug('Foto deletada com sucesso');
-            return true;
-        }
-        
-        return false;
-    } catch (error) {
-        logDebug('Erro ao deletar foto de perfil:', error);
-        throw error;
-    }
-}
-
 // Formatar nome para usar em nomes de arquivos
 function formatNameForFile(name) {
     if (!name) return 'user';
@@ -525,11 +437,6 @@ function formatNameForFile(name) {
         .replace(/[^\w\s]/gi, '')
         .replace(/\s+/g, '_')
         .toLowerCase();
-}
-
-// Atualizar o progresso da UI
-function updateProgressUI(progress) {
-    updateLoadingText(`Enviando foto... ${progress.toFixed(0)}%`);
 }
 
 // Mostrar alerta
