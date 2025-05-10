@@ -1,1 +1,25 @@
- 
+# Arquivos de ambiente e configuração
+public/js/env-config.js
+
+# Dependências
+node_modules/
+
+# Arquivos de build
+/build
+/dist
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+*.swo 
