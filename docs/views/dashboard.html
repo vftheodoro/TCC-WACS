@@ -250,6 +250,18 @@
             align-items: center;
             justify-content: center;
             color: #999;
+            overflow: hidden;
+        }
+        
+        .location-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .location-card:hover .location-image img {
+            transform: scale(1.05);
         }
         
         body.dark-theme .location-image {
@@ -490,6 +502,167 @@
                 padding-right: 1rem;
             }
         }
+
+        /* Estilos para o modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+        }
+        
+        .modal-content {
+            background-color: var(--background-color, #fff);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: modalFadeIn 0.3s ease;
+        }
+        
+        body.dark-theme .modal-content {
+            background-color: var(--dark-card, #1e1e2d);
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-20px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+        
+        .close-modal {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            color: var(--text-light, #4b5563);
+            font-size: 1.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-theme .close-modal {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .close-modal:hover {
+            color: var(--primary-color, #0055b3);
+        }
+        
+        body.dark-theme .close-modal:hover {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .form-group label {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color, #d1d5db);
+            border-radius: 8px;
+            background: var(--input-bg, #f9fafb);
+            color: var(--text-color, #1f2937);
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        body.dark-theme .form-group input,
+        body.dark-theme .form-group textarea {
+            border-color: var(--dark-border, #2d3748);
+            background: var(--dark-input-bg, #1a1a2e);
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-color, #0055b3);
+            box-shadow: 0 0 0 3px rgba(0, 85, 179, 0.1);
+        }
+        
+        body.dark-theme .form-group input:focus,
+        body.dark-theme .form-group textarea:focus {
+            border-color: var(--dark-primary, #4A90E2);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+        }
+        
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .submit-btn {
+            background: var(--primary-color, #0055b3);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            width: 100%;
+        }
+        
+        body.dark-theme .submit-btn {
+            background: var(--dark-primary, #4A90E2);
+        }
+        
+        .submit-btn:hover {
+            background: var(--primary-hover, #0066d6);
+            transform: translateY(-2px);
+        }
+        
+        /* Mensagens de feedback */
+        .no-locations, .load-error {
+            padding: 2rem;
+            text-align: center;
+            background: var(--accent-color, #e0eaff);
+            border-radius: 12px;
+            color: var(--text-color, #1f2937);
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }
+        
+        body.dark-theme .no-locations, 
+        body.dark-theme .load-error {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .load-error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        body.dark-theme .load-error {
+            background: #7f1d1d;
+            color: #fecaca;
+        }
     </style>
 </head>
 <body>
@@ -662,11 +835,38 @@
                         </div>
                     </div>
                     
-                    <a href="#" class="add-location-btn">
+                    <a href="#" class="add-location-btn" id="openAddLocationModal">
                         <i class="fas fa-plus"></i> Adicionar Local Acessível
                     </a>
                 </div>
             </div>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar local acessível -->
+    <div id="addLocationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Adicionar Local Acessível</h2>
+            <form id="addLocationForm">
+                <div class="form-group">
+                    <label for="locationName">Nome do Local</label>
+                    <input type="text" id="locationName" required>
+                </div>
+                <div class="form-group">
+                    <label for="locationAddress">Endereço Completo</label>
+                    <input type="text" id="locationAddress" required>
+                </div>
+                <div class="form-group">
+                    <label for="locationFeatures">Recursos de Acessibilidade</label>
+                    <textarea id="locationFeatures" placeholder="Descreva os recursos de acessibilidade (ex: rampa de acesso, elevadores, etc)" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="locationImage">URL da Imagem (opcional)</label>
+                    <input type="url" id="locationImage" placeholder="https://exemplo.com/imagem.jpg">
+                </div>
+                <button type="submit" class="submit-btn">Salvar Local</button>
+            </form>
         </div>
     </div>
 
@@ -678,6 +878,181 @@
     <script src="../public/js/navbar-modern.js"></script>
     <script src="../public/js/env-config.js"></script>
     <script src="../public/js/firebase-dashboard.js"></script>
+    
+    <!-- Script para o modal e funcionalidade de adicionar locais -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elementos do DOM
+            const openModalBtn = document.getElementById('openAddLocationModal');
+            const modal = document.getElementById('addLocationModal');
+            const closeModalBtn = document.querySelector('.close-modal');
+            const form = document.getElementById('addLocationForm');
+            const locationsContainer = document.querySelector('.locations-list');
+            
+            // Abrir modal
+            openModalBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                modal.style.display = 'block';
+            });
+            
+            // Fechar modal (X)
+            closeModalBtn.addEventListener('click', function() {
+                modal.style.display = 'none';
+            });
+            
+            // Fechar modal ao clicar fora do conteúdo
+            window.addEventListener('click', function(event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+            
+            // Adicionar local ao enviar o formulário
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Verificar se o usuário está autenticado
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('Você precisa estar logado para adicionar um local.');
+                    return;
+                }
+                
+                // Obter valores do formulário
+                const name = document.getElementById('locationName').value;
+                const address = document.getElementById('locationAddress').value;
+                const features = document.getElementById('locationFeatures').value;
+                const imageUrl = document.getElementById('locationImage').value || 'https://via.placeholder.com/300x150?text=Local+Acessível';
+                
+                // Preparar objeto para o Firestore
+                const locationData = {
+                    name: name,
+                    address: address,
+                    features: features,
+                    imageUrl: imageUrl,
+                    userId: user.uid,
+                    userName: user.displayName || user.email.split('@')[0],
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    rating: 0,
+                    reviewCount: 0
+                };
+                
+                // Salvar no Firestore
+                firebase.firestore().collection('accessibleLocations').add(locationData)
+                    .then((docRef) => {
+                        // Adicionar o ID do documento aos dados
+                        locationData.id = docRef.id;
+                        
+                        // Atualizar a UI
+                        addLocationToUI(locationData);
+                        
+                        // Resetar o formulário e fechar o modal
+                        form.reset();
+                        modal.style.display = 'none';
+                        
+                        // Mostrar mensagem de sucesso
+                        alert('Local adicionado com sucesso!');
+                        
+                        // Atualizar contador de contribuições do usuário
+                        updateUserContributionCount();
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao adicionar local:', error);
+                        alert('Ocorreu um erro ao adicionar o local. Por favor, tente novamente.');
+                    });
+            });
+            
+            // Função para adicionar um novo local à interface
+            function addLocationToUI(location) {
+                const locationCard = document.createElement('div');
+                locationCard.className = 'location-card';
+                locationCard.innerHTML = `
+                    <div class="location-image">
+                        ${location.imageUrl.includes('placeholder') 
+                            ? '<i class="fas fa-image"></i> Imagem do Local' 
+                            : `<img src="${location.imageUrl}" alt="${location.name}">`}
+                    </div>
+                    <div class="location-details">
+                        <h3>${location.name}</h3>
+                        <p>${location.address}</p>
+                        <p>${location.features}</p>
+                        <div class="location-rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>Novo local (Sem avaliações)</span>
+                        </div>
+                    </div>
+                `;
+                
+                // Adicionar no início da lista
+                if (locationsContainer.firstChild) {
+                    locationsContainer.insertBefore(locationCard, locationsContainer.firstChild);
+                } else {
+                    locationsContainer.appendChild(locationCard);
+                }
+            }
+            
+            // Função para carregar locais do Firestore
+            function loadLocations() {
+                firebase.firestore().collection('accessibleLocations')
+                    .orderBy('createdAt', 'desc')
+                    .limit(6)
+                    .get()
+                    .then((querySnapshot) => {
+                        // Limpar o container de locais
+                        locationsContainer.innerHTML = '';
+                        
+                        // Verificar se há locais
+                        if (querySnapshot.empty) {
+                            locationsContainer.innerHTML = '<p class="no-locations">Nenhum local acessível cadastrado ainda. Seja o primeiro a contribuir!</p>';
+                            return;
+                        }
+                        
+                        // Adicionar cada local à UI
+                        querySnapshot.forEach((doc) => {
+                            const locationData = doc.data();
+                            locationData.id = doc.id;
+                            addLocationToUI(locationData);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao carregar locais:', error);
+                        locationsContainer.innerHTML = '<p class="load-error">Erro ao carregar locais. Por favor, recarregue a página.</p>';
+                    });
+            }
+            
+            // Função para atualizar o contador de contribuições do usuário
+            function updateUserContributionCount() {
+                const user = firebase.auth().currentUser;
+                if (!user) return;
+                
+                firebase.firestore().collection('accessibleLocations')
+                    .where('userId', '==', user.uid)
+                    .get()
+                    .then((querySnapshot) => {
+                        const contributionCount = querySnapshot.size;
+                        const contributionsElement = document.querySelector('.stat-card:nth-child(3) .stat-content p');
+                        if (contributionsElement) {
+                            contributionsElement.textContent = contributionCount;
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao atualizar contagem de contribuições:', error);
+                    });
+            }
+            
+            // Inicializar: carregar locais quando o usuário estiver autenticado
+            firebase.auth().onAuthStateChanged(function(user) {
+                if (user) {
+                    loadLocations();
+                    updateUserContributionCount();
+                }
+            });
+        });
+    </script>
     
     <!-- Auth state navbar handling -->
     <script>
