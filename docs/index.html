@@ -134,9 +134,16 @@
                 <li><a href="#funcionalidades" class="navbar-link">Funcionalidades</a></li>
                 <li><a href="#equipe" class="navbar-link">Equipe</a></li>
                 <li><a href="#contato" class="navbar-link">Contato</a></li>
+                <li class="navbar-divider hidden" id="navbarDivider"></li>
+                <li class="auth-links hidden" id="authLinks">
+                    <a href="views/dashboard.html" class="navbar-link dashboard-link-btn" id="dashboardLink">
+                        <i class="fas fa-tachometer-alt"></i> Dashboard
+                    </a>
+                    <a href="views/profile.html" class="navbar-link profile-link-btn" id="profileLink">
+                        <i class="fas fa-user"></i> Meu Perfil
+                    </a>
+                </li>
                 <li><a href="views/login/login.html" class="navbar-link login-link-btn" id="loginLink">Login</a></li>
-                <li><a href="views/profile.html" class="navbar-link profile-link-btn hidden" id="profileLink">Meu Perfil</a></li>
-                <li><a href="views/dashboard.html" class="navbar-link dashboard-link-btn hidden" id="dashboardLink">Dashboard</a></li>
             </ul>
             
             <div class="navbar-actions">
@@ -192,12 +199,17 @@
                 </ul>
             </li>
             <li><a href="#equipe" class="mobile-link">Equipe</a></li>
-            <li><a href="#galeria" class="mobile-link">Galeria</a></li>
-            <li><a href="#contribua" class="mobile-link">Contribua</a></li>
             <li><a href="#contato" class="mobile-link">Contato</a></li>
-            <li><a href="views/login/login.html" class="mobile-link login-mobile" id="loginLinkMobile">Login <i class="fas fa-user"></i></a></li>
-            <li><a href="views/profile.html" class="mobile-link profile-mobile hidden" id="profileLinkMobile">Meu Perfil <i class="fas fa-user-edit"></i></a></li>
-            <li><a href="views/dashboard.html" class="mobile-link dashboard-mobile hidden" id="dashboardLinkMobile">Dashboard <i class="fas fa-tachometer-alt"></i></a></li>
+            <li class="mobile-divider hidden" id="mobileDivider"></li>
+            <li class="auth-links-mobile hidden" id="authLinksMobile">
+                <a href="views/dashboard.html" class="mobile-link dashboard-mobile" id="dashboardLinkMobile">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="views/profile.html" class="mobile-link profile-mobile" id="profileLinkMobile">
+                    <i class="fas fa-user"></i> Meu Perfil
+                </a>
+            </li>
+            <li><a href="views/login/login.html" class="mobile-link login-mobile" id="loginLinkMobile">Login <i class="fas fa-sign-in-alt"></i></a></li>
             <li><button id="logoutBtnMobile" class="mobile-link logout-mobile hidden">Sair <i class="fas fa-sign-out-alt"></i></button></li>
         </ul>
         <a href="#github" class="mobile-download">Download</a>

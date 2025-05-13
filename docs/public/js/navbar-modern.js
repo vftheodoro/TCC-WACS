@@ -2,11 +2,69 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     // Elementos do DOM
-    const navbar = document.getElementById('main-nav');
+    const navbar = document.getElementById('navbar');
     const menuToggle = document.querySelector('.menu-toggle');
     const mobileMenu = document.querySelector('.mobile-menu');
     const dropdowns = document.querySelectorAll('.dropdown');
     const mobileDropdowns = document.querySelectorAll('.mobile-dropdown');
+    
+    // Elementos de autenticação
+    const loginLink = document.getElementById('loginLink');
+    const profileLink = document.getElementById('profileLink');
+    const dashboardLink = document.getElementById('dashboardLink');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const navbarDivider = document.getElementById('navbarDivider');
+    const authLinks = document.getElementById('authLinks');
+    
+    // Elementos de autenticação mobile
+    const loginLinkMobile = document.getElementById('loginLinkMobile');
+    const profileLinkMobile = document.getElementById('profileLinkMobile');
+    const dashboardLinkMobile = document.getElementById('dashboardLinkMobile');
+    const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+    const mobileDivider = document.getElementById('mobileDivider');
+    const authLinksMobile = document.getElementById('authLinksMobile');
+    
+    // Função para atualizar a navbar baseado no estado de autenticação
+    function updateNavbarAuthState(isAuthenticated) {
+        if (isAuthenticated) {
+            // Desktop
+            loginLink.classList.add('hidden');
+            profileLink.classList.remove('hidden');
+            dashboardLink.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+            navbarDivider.classList.remove('hidden');
+            authLinks.classList.remove('hidden');
+            
+            // Mobile
+            loginLinkMobile.classList.add('hidden');
+            profileLinkMobile.classList.remove('hidden');
+            dashboardLinkMobile.classList.remove('hidden');
+            logoutBtnMobile.classList.remove('hidden');
+            mobileDivider.classList.remove('hidden');
+            authLinksMobile.classList.remove('hidden');
+        } else {
+            // Desktop
+            loginLink.classList.remove('hidden');
+            profileLink.classList.add('hidden');
+            dashboardLink.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+            navbarDivider.classList.add('hidden');
+            authLinks.classList.add('hidden');
+            
+            // Mobile
+            loginLinkMobile.classList.remove('hidden');
+            profileLinkMobile.classList.add('hidden');
+            dashboardLinkMobile.classList.add('hidden');
+            logoutBtnMobile.classList.add('hidden');
+            mobileDivider.classList.add('hidden');
+            authLinksMobile.classList.add('hidden');
+        }
+    }
+    
+    // Verificar estado de autenticação ao carregar a página
+    firebase.auth().onAuthStateChanged(function(user) {
+        updateNavbarAuthState(!!user);
+    });
     
     // Detectar se é dispositivo móvel
     const isMobile = window.innerWidth <= 768;

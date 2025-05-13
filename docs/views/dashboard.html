@@ -319,6 +319,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 2rem;
+            margin-top: 20px;
         }
         
         .user-avatar {
@@ -965,6 +966,198 @@
         body.dark-theme .show-reviews-button {
             color: var(--dark-primary, #4A90E2);
         }
+        
+        /* Estilos para a última avaliação */
+        .last-review {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+        
+        body.dark-theme .last-review {
+            border-color: var(--dark-border, #2d3748);
+        }
+        
+        .last-review-content {
+            background: var(--accent-color, #e0eaff);
+            padding: 0.75rem;
+            border-radius: 8px;
+        }
+        
+        body.dark-theme .last-review-content {
+            background: var(--dark-accent, #1E293B);
+        }
+        
+        .last-review .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .last-review .review-author {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .last-review .review-author {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .last-review .review-date {
+            font-size: 0.75rem;
+            color: var(--text-light, #6b7280);
+        }
+        
+        body.dark-theme .last-review .review-date {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .last-review .review-stars {
+            margin-bottom: 0.5rem;
+        }
+        
+        .last-review .review-text {
+            font-size: 0.875rem;
+            color: var(--text-light, #4b5563);
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        body.dark-theme .last-review .review-text {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .no-reviews {
+            font-size: 0.875rem;
+            color: var(--text-light, #6b7280);
+            font-style: italic;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        
+        body.dark-theme .no-reviews {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .review-error {
+            font-size: 0.875rem;
+            color: #dc2626;
+            text-align: center;
+            padding: 0.5rem;
+        }
+        
+        body.dark-theme .review-error {
+            color: #f87171;
+        }
+        
+        /* Estilos para a lista de todas as avaliações */
+        .all-reviews-list {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+        
+        .all-reviews-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .all-reviews-list::-webkit-scrollbar-track {
+            background: var(--accent-color, #e0eaff);
+            border-radius: 4px;
+        }
+        
+        .all-reviews-list::-webkit-scrollbar-thumb {
+            background: var(--primary-color, #0055b3);
+            border-radius: 4px;
+        }
+        
+        body.dark-theme .all-reviews-list::-webkit-scrollbar-track {
+            background: var(--dark-accent, #1E293B);
+        }
+        
+        body.dark-theme .all-reviews-list::-webkit-scrollbar-thumb {
+            background: var(--dark-primary, #4A90E2);
+        }
+        
+        .review-item-full {
+            background: var(--accent-color, #e0eaff);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+        
+        body.dark-theme .review-item-full {
+            background: var(--dark-accent, #1E293B);
+        }
+        
+        .review-item-full:last-child {
+            margin-bottom: 0;
+        }
+        
+        .review-item-full .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .review-item-full .review-author {
+            font-weight: 600;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .review-item-full .review-author {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .review-item-full .review-date {
+            font-size: 0.875rem;
+            color: var(--text-light, #6b7280);
+        }
+        
+        body.dark-theme .review-item-full .review-date {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .review-item-full .review-stars {
+            margin-bottom: 0.5rem;
+        }
+        
+        .review-item-full .review-text {
+            color: var(--text-light, #4b5563);
+            line-height: 1.5;
+        }
+        
+        body.dark-theme .review-item-full .review-text {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .view-all-reviews-btn {
+            display: inline-flex;
+            align-items: center;
+            background: none;
+            border: none;
+            color: var(--primary-color, #0055b3);
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: 0.25rem 0;
+            margin-top: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        
+        body.dark-theme .view-all-reviews-btn {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .view-all-reviews-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .view-all-reviews-btn i {
+            margin-left: 0.25rem;
+        }
     </style>
 </head>
 <body>
@@ -1215,6 +1408,18 @@
         </div>
     </div>
 
+    <!-- Modal para todos os comentários -->
+    <div id="allReviewsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Avaliações do Local</h2>
+            <div id="locationReviewsInfo"></div>
+            <div id="allReviewsList" class="all-reviews-list">
+                <p>Carregando avaliações...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
@@ -1226,6 +1431,32 @@
     
     <!-- Script para o modal e funcionalidade de adicionar locais -->
     <script>
+        // Função global para renderizar estrelas de avaliação
+        function renderRatingStars(rating, size = 'normal') {
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+            
+            let starsHTML = '';
+            
+            // Estrelas cheias
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '<i class="fas fa-star"></i>';
+            }
+            
+            // Meia estrela (se aplicável)
+            if (hasHalfStar) {
+                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+            }
+            
+            // Estrelas vazias
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '<i class="far fa-star"></i>';
+            }
+            
+            return starsHTML;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Elementos do DOM
             const openModalBtn = document.getElementById('openAddLocationModal');
@@ -1671,14 +1902,13 @@
                         <button class="rate-button" data-id="${location.id}" data-name="${location.name}" data-address="${location.address}">
                             <i class="fas fa-star"></i> Avaliar Local
                         </button>
+                        <div class="last-review" id="last-review-${location.id}">
+                            <p>Carregando última avaliação...</p>
+                        </div>
                         ${reviewCount > 0 ? `
-                            <div class="review-summary">
-                                <span>Avaliações recentes</span>
-                                <button class="show-reviews-button" data-id="${location.id}">Ver todas</button>
-                            </div>
-                            <div class="location-reviews" id="reviews-${location.id}">
-                                <p>Carregando avaliações...</p>
-                            </div>
+                            <button class="view-all-reviews-btn" data-id="${location.id}" data-name="${location.name}">
+                                Ver todas as avaliações <i class="fas fa-chevron-right"></i>
+                            </button>
                         ` : ''}
                     </div>
                 `;
@@ -1701,20 +1931,67 @@
                     });
                 }
                 
-                // Carregar avaliações se houver
-                if (reviewCount > 0) {
-                    const reviewsContainer = locationCard.querySelector(`#reviews-${location.id}`);
-                    loadLocationReviews(location.id, reviewsContainer);
-                    
-                    // Adicionar evento para mostrar todas as avaliações
-                    const showReviewsButton = locationCard.querySelector('.show-reviews-button');
-                    if (showReviewsButton) {
-                        showReviewsButton.addEventListener('click', function() {
-                            const id = this.getAttribute('data-id');
-                            alert('Funcionalidade para ver todas as avaliações será implementada em breve!');
-                        });
-                    }
+                // Adicionar evento ao botão de ver todas as avaliações
+                const viewAllReviewsBtn = locationCard.querySelector('.view-all-reviews-btn');
+                if (viewAllReviewsBtn) {
+                    viewAllReviewsBtn.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        const name = this.getAttribute('data-name');
+                        openAllReviewsModal(id, name);
+                    });
                 }
+                
+                // Carregar a última avaliação
+                loadLastReview(location.id);
+            }
+            
+            // Função para carregar a última avaliação de um local
+            function loadLastReview(locationId) {
+                const lastReviewContainer = document.getElementById(`last-review-${locationId}`);
+                
+                firebase.firestore().collection('reviews')
+                    .where('locationId', '==', locationId)
+                    .get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            lastReviewContainer.innerHTML = '<p class="no-reviews">Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
+                            return;
+                        }
+                        
+                        // Ordenar as avaliações em memória
+                        const reviews = querySnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        
+                        // Ordenar por data de criação (mais recente primeiro)
+                        reviews.sort((a, b) => {
+                            const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                            const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                            return dateB - dateA;
+                        });
+                        
+                        const review = reviews[0]; // Pegar a mais recente
+                        const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
+                        const formattedDate = date.toLocaleDateString('pt-BR');
+                        
+                        lastReviewContainer.innerHTML = `
+                            <div class="last-review-content">
+                                <div class="review-header">
+                                    <span class="review-author">${review.userName}</span>
+                                    <span class="review-date">${formattedDate}</span>
+                                </div>
+                                <div class="review-stars">
+                                    ${renderRatingStars(review.rating)}
+                                </div>
+                                ${review.comment ? `<p class="review-text">${review.comment}</p>` : ''}
+                            </div>
+                        `;
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao carregar última avaliação:', error);
+                        lastReviewContainer.innerHTML = '<p class="review-error">Erro ao carregar avaliação</p>';
+                    });
             }
             
             // Função para carregar locais do Firestore
@@ -1968,6 +2245,169 @@
                 }
             });
         }
+    </script>
+
+    <script>
+        // ... existing code ...
+        function addLocationToUI(location) {
+            const locationCard = document.createElement('div');
+            locationCard.className = 'location-card';
+            locationCard.dataset.id = location.id;
+            
+            // Calcular ou usar a avaliação existente
+            const rating = location.rating || 0;
+            const reviewCount = location.reviewCount || 0;
+            
+            locationCard.innerHTML = `
+                <div class="location-image">
+                    ${location.imageUrl.includes('placeholder') 
+                        ? '<i class="fas fa-image"></i> Imagem do Local' 
+                        : `<img src="${location.imageUrl}" alt="${location.name}">`}
+                </div>
+                <div class="location-details">
+                    <h3>${location.name}</h3>
+                    <p>${location.address}</p>
+                    <p>${location.features}</p>
+                    <div class="location-rating">
+                        ${renderRatingStars(rating)}
+                        <span>${rating.toFixed(1)} (${formatReviewText(reviewCount)})</span>
+                    </div>
+                    <button class="rate-button" data-id="${location.id}" data-name="${location.name}" data-address="${location.address}">
+                        <i class="fas fa-star"></i> Avaliar Local
+                    </button>
+                    <div class="last-review" id="last-review-${location.id}">
+                        <p>Carregando última avaliação...</p>
+                    </div>
+                    ${reviewCount > 0 ? `
+                        <button class="view-all-reviews-btn" data-id="${location.id}" data-name="${location.name}">
+                            Ver todas as avaliações <i class="fas fa-chevron-right"></i>
+                        </button>
+                    ` : ''}
+                </div>
+            `;
+            
+            // Adicionar no início da lista
+            if (locationsContainer.firstChild) {
+                locationsContainer.insertBefore(locationCard, locationsContainer.firstChild);
+            } else {
+                locationsContainer.appendChild(locationCard);
+            }
+            
+            // Adicionar evento ao botão de avaliação
+            const rateButton = locationCard.querySelector('.rate-button');
+            if (rateButton) {
+                rateButton.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    const address = this.getAttribute('data-address');
+                    openRateModal(id, name, address);
+                });
+            }
+            
+            // Adicionar evento ao botão de ver todas as avaliações
+            const viewAllReviewsBtn = locationCard.querySelector('.view-all-reviews-btn');
+            if (viewAllReviewsBtn) {
+                viewAllReviewsBtn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const name = this.getAttribute('data-name');
+                    openAllReviewsModal(id, name);
+                });
+            }
+            
+            // Carregar a última avaliação
+            loadLastReview(location.id);
+        }
+
+        // Função para abrir o modal com todas as avaliações
+        function openAllReviewsModal(locationId, locationName) {
+            const modal = document.getElementById('allReviewsModal');
+            const reviewsList = document.getElementById('allReviewsList');
+            const locationInfo = document.getElementById('locationReviewsInfo');
+            
+            // Limpar conteúdo anterior
+            reviewsList.innerHTML = '<p>Carregando avaliações...</p>';
+            
+            // Mostrar informações do local
+            locationInfo.innerHTML = `
+                <h3>${locationName}</h3>
+                <p>Carregando avaliações...</p>
+            `;
+            
+            // Abrir modal
+            modal.style.display = 'block';
+            
+            // Carregar todas as avaliações
+            firebase.firestore().collection('reviews')
+                .where('locationId', '==', locationId)
+                .get()
+                .then((querySnapshot) => {
+                    if (querySnapshot.empty) {
+                        reviewsList.innerHTML = '<p class="no-reviews">Nenhuma avaliação ainda.</p>';
+                        locationInfo.innerHTML = `
+                            <h3>${locationName}</h3>
+                            <p>Nenhuma avaliação ainda.</p>
+                        `;
+                        return;
+                    }
+                    
+                    // Ordenar avaliações por data
+                    const reviews = querySnapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    })).sort((a, b) => {
+                        const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                        const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                        return dateB - dateA;
+                    });
+                    
+                    // Atualizar informações do local
+                    const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+                    locationInfo.innerHTML = `
+                        <h3>${locationName}</h3>
+                        <p>Média: ${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? 'avaliação' : 'avaliações'})</p>
+                    `;
+                    
+                    // Renderizar lista de avaliações
+                    reviewsList.innerHTML = reviews.map(review => {
+                        const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
+                        const formattedDate = date.toLocaleDateString('pt-BR');
+                        
+                        return `
+                            <div class="review-item-full">
+                                <div class="review-header">
+                                    <span class="review-author">${review.userName}</span>
+                                    <span class="review-date">${formattedDate}</span>
+                                </div>
+                                <div class="review-stars">
+                                    ${renderRatingStars(review.rating)}
+                                </div>
+                                ${review.comment ? `<p class="review-text">${review.comment}</p>` : ''}
+                            </div>
+                        `;
+                    }).join('');
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar avaliações:', error);
+                    reviewsList.innerHTML = '<p class="review-error">Erro ao carregar avaliações. Por favor, tente novamente.</p>';
+                });
+        }
+
+        // Adicionar evento para fechar o modal de todas as avaliações
+        document.addEventListener('DOMContentLoaded', function() {
+            const allReviewsModal = document.getElementById('allReviewsModal');
+            const closeAllReviewsModal = allReviewsModal.querySelector('.close-modal');
+            
+            closeAllReviewsModal.addEventListener('click', function() {
+                allReviewsModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === allReviewsModal) {
+                    allReviewsModal.style.display = 'none';
+                }
+            });
+        });
+        // ... existing code ...
     </script>
 </body>
 </html> 
