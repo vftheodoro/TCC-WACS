@@ -614,6 +614,86 @@
             resize: vertical;
         }
         
+        /* Estilos para o mapa no formulário */
+        .location-map-selector {
+            width: 100%;
+            height: 300px;
+            background-color: #f1f1f1;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        body.dark-theme .location-map-selector {
+            background-color: #1a1a2e;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+        
+        .map-instructions {
+            font-size: 0.875rem;
+            color: var(--text-light, #4b5563);
+            margin-bottom: 1rem;
+            font-style: italic;
+        }
+        
+        body.dark-theme .map-instructions {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .coordinates-fields {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .coordinate-field {
+            flex: 1;
+        }
+        
+        .coordinate-field label {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .coordinate-field input {
+            background-color: var(--accent-color, #e0eaff);
+            font-family: monospace;
+            text-align: center;
+        }
+        
+        body.dark-theme .coordinate-field input {
+            background-color: var(--dark-accent, #1E293B);
+        }
+        
+        .map-marker-pulse {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary-color, #0055b3);
+            position: absolute;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+        }
+        
+        .map-marker-pulse:before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: rgba(0, 85, 179, 0.4);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+        
         .submit-btn {
             background: var(--primary-color, #0055b3);
             color: white;
@@ -662,6 +742,228 @@
         body.dark-theme .load-error {
             background: #7f1d1d;
             color: #fecaca;
+        }
+        
+        /* Estilos para a janela de informações do mapa */
+        .map-info-window {
+            padding: 8px;
+            max-width: 300px;
+        }
+        
+        .map-info-window h3 {
+            margin: 0 0 8px 0;
+            font-size: 16px;
+            color: var(--primary-color, #0055b3);
+        }
+        
+        .map-info-window p {
+            margin: 0 0 6px 0;
+            font-size: 14px;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .map-info-window {
+            background-color: var(--dark-card, #1e1e2d);
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        /* Estilos para o sistema de avaliação */
+        .rating-stars {
+            display: flex;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+        }
+        
+        .rating-stars i {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+        
+        body.dark-theme .rating-stars i {
+            color: #4b5563;
+        }
+        
+        .rating-stars i:hover,
+        .rating-stars i.fas {
+            color: #fbbf24;
+        }
+        
+        .rating-stars i:hover ~ i {
+            color: #d1d5db;
+        }
+        
+        body.dark-theme .rating-stars i:hover ~ i {
+            color: #4b5563;
+        }
+        
+        #locationToRate {
+            background-color: var(--accent-color, #e0eaff);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+        
+        body.dark-theme #locationToRate {
+            background-color: var(--dark-accent, #1E293B);
+        }
+        
+        #locationToRate h3 {
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            color: var(--primary-color, #0055b3);
+        }
+        
+        body.dark-theme #locationToRate h3 {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        #locationToRate p {
+            margin: 0.25rem 0;
+            color: var(--text-light, #4b5563);
+        }
+        
+        body.dark-theme #locationToRate p {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        /* Estilos para reviews em cards de locais */
+        .location-reviews {
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+        
+        body.dark-theme .location-reviews {
+            border-color: var(--dark-border, #2d3748);
+        }
+        
+        .review-item {
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px dashed var(--border-color, #e5e7eb);
+        }
+        
+        body.dark-theme .review-item {
+            border-color: var(--dark-border, #2d3748);
+        }
+        
+        .review-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.25rem;
+        }
+        
+        .review-author {
+            font-weight: 600;
+            font-size: 0.875rem;
+            color: var(--text-color, #1f2937);
+        }
+        
+        body.dark-theme .review-author {
+            color: var(--dark-text, #e2e8f0);
+        }
+        
+        .review-date {
+            font-size: 0.75rem;
+            color: var(--text-light, #6b7280);
+        }
+        
+        body.dark-theme .review-date {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .review-stars {
+            display: flex;
+            gap: 0.1rem;
+            margin-bottom: 0.25rem;
+            font-size: 0.875rem;
+        }
+        
+        .review-stars i.fas {
+            color: #fbbf24;
+        }
+        
+        .review-stars i.far {
+            color: #d1d5db;
+        }
+        
+        body.dark-theme .review-stars i.far {
+            color: #4b5563;
+        }
+        
+        .review-text {
+            font-size: 0.875rem;
+            color: var(--text-light, #4b5563);
+            margin: 0.25rem 0 0 0;
+        }
+        
+        body.dark-theme .review-text {
+            color: var(--dark-text-light, #94a3b8);
+        }
+        
+        .rate-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+            border: none;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.875rem;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-theme .rate-button {
+            background-color: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .rate-button:hover {
+            background-color: var(--primary-color, #0055b3);
+            color: white;
+        }
+        
+        body.dark-theme .rate-button:hover {
+            background-color: var(--dark-primary, #4A90E2);
+            color: white;
+        }
+        
+        .rate-button i {
+            margin-right: 0.25rem;
+        }
+        
+        .review-summary {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .show-reviews-button {
+            background: none;
+            border: none;
+            color: var(--primary-color, #0055b3);
+            font-size: 0.875rem;
+            cursor: pointer;
+            padding: 0;
+            text-decoration: underline;
+        }
+        
+        body.dark-theme .show-reviews-button {
+            color: var(--dark-primary, #4A90E2);
         }
     </style>
 </head>
@@ -858,6 +1160,21 @@
                     <input type="text" id="locationAddress" required>
                 </div>
                 <div class="form-group">
+                    <label for="locationMap">Selecione o Local no Mapa</label>
+                    <div id="locationMap" class="location-map-selector"></div>
+                    <p class="map-instructions">Clique no mapa para selecionar a localização exata ou busque pelo endereço acima</p>
+                    <div class="coordinates-fields">
+                        <div class="coordinate-field">
+                            <label for="locationLat">Latitude</label>
+                            <input type="text" id="locationLat" readonly>
+                        </div>
+                        <div class="coordinate-field">
+                            <label for="locationLng">Longitude</label>
+                            <input type="text" id="locationLng" readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="locationFeatures">Recursos de Acessibilidade</label>
                     <textarea id="locationFeatures" placeholder="Descreva os recursos de acessibilidade (ex: rampa de acesso, elevadores, etc)" required></textarea>
                 </div>
@@ -866,6 +1183,34 @@
                     <input type="url" id="locationImage" placeholder="https://exemplo.com/imagem.jpg">
                 </div>
                 <button type="submit" class="submit-btn">Salvar Local</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal para avaliação de local -->
+    <div id="rateLocationModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Avaliar Local</h2>
+            <div id="locationToRate"></div>
+            <form id="rateLocationForm">
+                <input type="hidden" id="locationIdToRate">
+                <div class="form-group">
+                    <label>Sua Avaliação</label>
+                    <div class="rating-stars">
+                        <i class="far fa-star" data-rating="1"></i>
+                        <i class="far fa-star" data-rating="2"></i>
+                        <i class="far fa-star" data-rating="3"></i>
+                        <i class="far fa-star" data-rating="4"></i>
+                        <i class="far fa-star" data-rating="5"></i>
+                        <input type="hidden" id="ratingValue" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="ratingComment">Comentário (opcional)</label>
+                    <textarea id="ratingComment" placeholder="Compartilhe sua experiência sobre este local..."></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Enviar Avaliação</button>
             </form>
         </div>
     </div>
@@ -889,10 +1234,153 @@
             const form = document.getElementById('addLocationForm');
             const locationsContainer = document.querySelector('.locations-list');
             
+            // Elementos do modal de avaliação
+            const rateModal = document.getElementById('rateLocationModal');
+            const rateForm = document.getElementById('rateLocationForm');
+            const closeRateModalBtn = rateModal.querySelector('.close-modal');
+            const ratingStars = document.querySelectorAll('.rating-stars i');
+            const ratingValueInput = document.getElementById('ratingValue');
+            
+            // Variáveis para o mapa
+            let map, marker, geocoder, placesService;
+            let defaultLocation = { lat: -24.4874, lng: -47.8446 }; // Registro, SP como localização padrão
+            
+            // Configuração das estrelas de avaliação
+            ratingStars.forEach(star => {
+                star.addEventListener('click', function() {
+                    const rating = this.getAttribute('data-rating');
+                    ratingValueInput.value = rating;
+                    
+                    // Atualizar visual das estrelas
+                    ratingStars.forEach(s => {
+                        const sRating = s.getAttribute('data-rating');
+                        if (sRating <= rating) {
+                            s.classList.remove('far');
+                            s.classList.add('fas');
+                        } else {
+                            s.classList.remove('fas');
+                            s.classList.add('far');
+                        }
+                    });
+                });
+            });
+            
+            // Inicializar o mapa quando o modal for aberto
+            function initLocationMap() {
+                if (!map && google && google.maps) {
+                    const mapOptions = {
+                        center: defaultLocation,
+                        zoom: 15,
+                        mapTypeId: google.maps.MapTypeId.ROADMAP,
+                        mapTypeControl: false,
+                        streetViewControl: false,
+                        fullscreenControl: false
+                    };
+                    
+                    map = new google.maps.Map(document.getElementById('locationMap'), mapOptions);
+                    geocoder = new google.maps.Geocoder();
+                    placesService = new google.maps.places.PlacesService(map);
+                    
+                    // Adicionar marcador inicial
+                    marker = new google.maps.Marker({
+                        position: defaultLocation,
+                        map: map,
+                        draggable: true,
+                        animation: google.maps.Animation.DROP,
+                    });
+                    
+                    // Atualizar campos quando o marcador for movido
+                    marker.addListener('dragend', function() {
+                        const position = marker.getPosition();
+                        updateCoordinateFields(position.lat(), position.lng());
+                        geocodePosition(position);
+                    });
+                    
+                    // Permitir que o usuário clique no mapa para mover o marcador
+                    map.addListener('click', function(event) {
+                        marker.setPosition(event.latLng);
+                        updateCoordinateFields(event.latLng.lat(), event.latLng.lng());
+                        geocodePosition(event.latLng);
+                    });
+                    
+                    // Preencher os campos iniciais de coordenadas
+                    updateCoordinateFields(defaultLocation.lat, defaultLocation.lng);
+                    
+                    // Configurar a busca por endereço
+                    const addressInput = document.getElementById('locationAddress');
+                    addressInput.addEventListener('blur', function() {
+                        if (addressInput.value.trim() !== '') {
+                            geocodeAddress(addressInput.value);
+                        }
+                    });
+                    
+                    // Adicionar botão Enter para buscar o endereço
+                    addressInput.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter') {
+                            e.preventDefault(); // Prevenir o envio do formulário
+                            if (addressInput.value.trim() !== '') {
+                                geocodeAddress(addressInput.value);
+                            }
+                        }
+                    });
+                }
+            }
+            
+            // Função para geocodificar um endereço e atualizar o mapa
+            function geocodeAddress(address) {
+                if (geocoder) {
+                    geocoder.geocode({ 'address': address }, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK) {
+                            const location = results[0].geometry.location;
+                            
+                            map.setCenter(location);
+                            marker.setPosition(location);
+                            updateCoordinateFields(location.lat(), location.lng());
+                            
+                            // Zoom mais próximo para endereços específicos
+                            map.setZoom(17);
+                        } else {
+                            console.error('Geocode falhou: ' + status);
+                            alert('Não foi possível encontrar este endereço. Por favor, tente outro ou selecione manualmente no mapa.');
+                        }
+                    });
+                }
+            }
+            
+            // Função para geocodificar uma posição e atualizar o campo de endereço
+            function geocodePosition(latLng) {
+                if (geocoder) {
+                    geocoder.geocode({ 'location': latLng }, function(results, status) {
+                        if (status === google.maps.GeocoderStatus.OK && results[0]) {
+                            document.getElementById('locationAddress').value = results[0].formatted_address;
+                        } else {
+                            console.error('Geocode reverso falhou: ' + status);
+                        }
+                    });
+                }
+            }
+            
+            // Atualizar os campos de coordenadas
+            function updateCoordinateFields(lat, lng) {
+                document.getElementById('locationLat').value = lat.toFixed(6);
+                document.getElementById('locationLng').value = lng.toFixed(6);
+            }
+            
             // Abrir modal
             openModalBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 modal.style.display = 'block';
+                
+                // Inicializar mapa após um pequeno atraso para garantir que o DOM esteja pronto
+                setTimeout(function() {
+                    initLocationMap();
+                    
+                    // Redimensionar o mapa para garantir que seja exibido corretamente
+                    if (map) {
+                        google.maps.event.trigger(map, 'resize');
+                        map.setCenter(marker.getPosition());
+                    }
+                }, 300);
             });
             
             // Fechar modal (X)
@@ -905,7 +1393,187 @@
                 if (event.target === modal) {
                     modal.style.display = 'none';
                 }
+                if (event.target === rateModal) {
+                    rateModal.style.display = 'none';
+                }
             });
+            
+            // Renderizar estrelas de avaliação baseado na pontuação
+            function renderRatingStars(rating, size = 'normal') {
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 >= 0.5;
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                
+                let starsHTML = '';
+                
+                // Estrelas cheias
+                for (let i = 0; i < fullStars; i++) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                }
+                
+                // Meia estrela (se aplicável)
+                if (hasHalfStar) {
+                    starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                }
+                
+                // Estrelas vazias
+                for (let i = 0; i < emptyStars; i++) {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+                
+                return starsHTML;
+            }
+            
+            // Função para formatar texto de avaliação (plural/singular)
+            function formatReviewText(count) {
+                if (count === 0) return "Sem avaliações";
+                if (count === 1) return "1 avaliação";
+                return `${count} avaliações`;
+            }
+            
+            // Função para carregar avaliações de um local específico
+            function loadLocationReviews(locationId, container) {
+                firebase.firestore().collection('reviews')
+                    .where('locationId', '==', locationId)
+                    .orderBy('createdAt', 'desc')
+                    .limit(3)
+                    .get()
+                    .then((querySnapshot) => {
+                        if (querySnapshot.empty) {
+                            container.innerHTML = '<p>Nenhuma avaliação ainda. Seja o primeiro a avaliar!</p>';
+                            return;
+                        }
+                        
+                        let reviewsHTML = '';
+                        
+                        querySnapshot.forEach((doc) => {
+                            const review = doc.data();
+                            const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
+                            const formattedDate = date.toLocaleDateString('pt-BR');
+                            
+                            reviewsHTML += `
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <span class="review-author">${review.userName}</span>
+                                        <span class="review-date">${formattedDate}</span>
+                                    </div>
+                                    <div class="review-stars">
+                                        ${renderRatingStars(review.rating)}
+                                    </div>
+                                    ${review.comment ? `<p class="review-text">${review.comment}</p>` : ''}
+                                </div>
+                            `;
+                        });
+                        
+                        container.innerHTML = reviewsHTML;
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao carregar avaliações:', error);
+                        container.innerHTML = '<p>Erro ao carregar avaliações. Por favor, tente novamente mais tarde.</p>';
+                    });
+            }
+            
+            // Função para abrir o modal de avaliação
+            function openRateModal(locationId, locationName, locationAddress) {
+                // Limpar formulário anterior
+                rateForm.reset();
+                ratingStars.forEach(s => {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                });
+                
+                // Preencher informações do local a ser avaliado
+                document.getElementById('locationIdToRate').value = locationId;
+                document.getElementById('locationToRate').innerHTML = `
+                    <h3>${locationName}</h3>
+                    <p>${locationAddress}</p>
+                `;
+                
+                // Abrir modal
+                rateModal.style.display = 'block';
+            }
+            
+            // Adicionar evento de submit para o formulário de avaliação
+            rateForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Verificar se o usuário está autenticado
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('Você precisa estar logado para avaliar um local.');
+                    return;
+                }
+                
+                // Obter valores do formulário
+                const locationId = document.getElementById('locationIdToRate').value;
+                const rating = parseInt(ratingValueInput.value);
+                const comment = document.getElementById('ratingComment').value;
+                
+                // Validar avaliação
+                if (!rating || rating < 1 || rating > 5) {
+                    alert('Por favor, selecione uma avaliação de 1 a 5 estrelas.');
+                    return;
+                }
+                
+                // Preparar objeto de avaliação
+                const reviewData = {
+                    locationId: locationId,
+                    userId: user.uid,
+                    userName: user.displayName || user.email.split('@')[0],
+                    rating: rating,
+                    comment: comment,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                
+                // Salvar avaliação no Firestore
+                firebase.firestore().collection('reviews').add(reviewData)
+                    .then(() => {
+                        // Atualizar a média de avaliações do local
+                        updateLocationRating(locationId);
+                        
+                        // Fechar modal e mostrar confirmação
+                        rateModal.style.display = 'none';
+                        alert('Avaliação enviada com sucesso!');
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao adicionar avaliação:', error);
+                        alert('Ocorreu um erro ao enviar sua avaliação. Por favor, tente novamente.');
+                    });
+            });
+            
+            // Função para atualizar a média de avaliações de um local
+            function updateLocationRating(locationId) {
+                firebase.firestore().collection('reviews')
+                    .where('locationId', '==', locationId)
+                    .get()
+                    .then((querySnapshot) => {
+                        // Calcular média das avaliações
+                        let totalRating = 0;
+                        let reviewCount = querySnapshot.size;
+                        
+                        querySnapshot.forEach((doc) => {
+                            totalRating += doc.data().rating;
+                        });
+                        
+                        const averageRating = reviewCount > 0 ? totalRating / reviewCount : 0;
+                        
+                        // Atualizar o documento do local
+                        firebase.firestore().collection('accessibleLocations').doc(locationId).update({
+                            rating: parseFloat(averageRating.toFixed(1)),
+                            reviewCount: reviewCount
+                        })
+                        .then(() => {
+                            // Atualizar a UI, recarregando os locais
+                            loadLocations();
+                        })
+                        .catch((error) => {
+                            console.error('Erro ao atualizar avaliação do local:', error);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao carregar avaliações:', error);
+                    });
+            }
             
             // Adicionar local ao enviar o formulário
             form.addEventListener('submit', function(e) {
@@ -923,6 +1591,14 @@
                 const address = document.getElementById('locationAddress').value;
                 const features = document.getElementById('locationFeatures').value;
                 const imageUrl = document.getElementById('locationImage').value || 'https://via.placeholder.com/300x150?text=Local+Acessível';
+                const lat = parseFloat(document.getElementById('locationLat').value);
+                const lng = parseFloat(document.getElementById('locationLng').value);
+                
+                // Validar coordenadas
+                if (isNaN(lat) || isNaN(lng)) {
+                    alert('Por favor, selecione um local válido no mapa.');
+                    return;
+                }
                 
                 // Preparar objeto para o Firestore
                 const locationData = {
@@ -930,6 +1606,7 @@
                     address: address,
                     features: features,
                     imageUrl: imageUrl,
+                    location: new firebase.firestore.GeoPoint(lat, lng),
                     userId: user.uid,
                     userName: user.displayName || user.email.split('@')[0],
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -955,6 +1632,11 @@
                         
                         // Atualizar contador de contribuições do usuário
                         updateUserContributionCount();
+                        
+                        // Atualizar o mapa principal (se disponível)
+                        if (typeof updateMainMap === 'function') {
+                            updateMainMap();
+                        }
                     })
                     .catch((error) => {
                         console.error('Erro ao adicionar local:', error);
@@ -966,6 +1648,12 @@
             function addLocationToUI(location) {
                 const locationCard = document.createElement('div');
                 locationCard.className = 'location-card';
+                locationCard.dataset.id = location.id;
+                
+                // Calcular ou usar a avaliação existente
+                const rating = location.rating || 0;
+                const reviewCount = location.reviewCount || 0;
+                
                 locationCard.innerHTML = `
                     <div class="location-image">
                         ${location.imageUrl.includes('placeholder') 
@@ -977,13 +1665,21 @@
                         <p>${location.address}</p>
                         <p>${location.features}</p>
                         <div class="location-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
-                            <span>Novo local (Sem avaliações)</span>
+                            ${renderRatingStars(rating)}
+                            <span>${rating.toFixed(1)} (${formatReviewText(reviewCount)})</span>
                         </div>
+                        <button class="rate-button" data-id="${location.id}" data-name="${location.name}" data-address="${location.address}">
+                            <i class="fas fa-star"></i> Avaliar Local
+                        </button>
+                        ${reviewCount > 0 ? `
+                            <div class="review-summary">
+                                <span>Avaliações recentes</span>
+                                <button class="show-reviews-button" data-id="${location.id}">Ver todas</button>
+                            </div>
+                            <div class="location-reviews" id="reviews-${location.id}">
+                                <p>Carregando avaliações...</p>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
                 
@@ -992,6 +1688,32 @@
                     locationsContainer.insertBefore(locationCard, locationsContainer.firstChild);
                 } else {
                     locationsContainer.appendChild(locationCard);
+                }
+                
+                // Adicionar evento ao botão de avaliação
+                const rateButton = locationCard.querySelector('.rate-button');
+                if (rateButton) {
+                    rateButton.addEventListener('click', function() {
+                        const id = this.getAttribute('data-id');
+                        const name = this.getAttribute('data-name');
+                        const address = this.getAttribute('data-address');
+                        openRateModal(id, name, address);
+                    });
+                }
+                
+                // Carregar avaliações se houver
+                if (reviewCount > 0) {
+                    const reviewsContainer = locationCard.querySelector(`#reviews-${location.id}`);
+                    loadLocationReviews(location.id, reviewsContainer);
+                    
+                    // Adicionar evento para mostrar todas as avaliações
+                    const showReviewsButton = locationCard.querySelector('.show-reviews-button');
+                    if (showReviewsButton) {
+                        showReviewsButton.addEventListener('click', function() {
+                            const id = this.getAttribute('data-id');
+                            alert('Funcionalidade para ver todas as avaliações será implementada em breve!');
+                        });
+                    }
                 }
             }
             
@@ -1103,6 +1825,135 @@
             script.async = true;
             script.defer = true;
             document.head.appendChild(script);
+        }
+        
+        // Variáveis globais para os mapas
+        let mainMap, mainMapMarkers = [];
+        
+        // Inicializar mapa principal
+        function initMap() {
+            // Configuração do mapa principal na dashboard
+            const mapContainer = document.querySelector('.map-container');
+            if (mapContainer) {
+                mapContainer.innerHTML = ''; // Limpar o conteúdo de placeholder
+                
+                const mapOptions = {
+                    center: { lat: -24.4874, lng: -47.8446 }, // Registro, SP
+                    zoom: 14,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true
+                };
+                
+                mainMap = new google.maps.Map(mapContainer, mapOptions);
+                
+                // Carregar os locais acessíveis para o mapa
+                loadLocationsForMap();
+            }
+        }
+        
+        // Função para carregar os locais no mapa principal
+        function loadLocationsForMap() {
+            if (!mainMap) return;
+            
+            // Limpar marcadores existentes
+            mainMapMarkers.forEach(marker => marker.setMap(null));
+            mainMapMarkers = [];
+            
+            // Buscar locais no Firestore
+            firebase.firestore().collection('accessibleLocations')
+                .get()
+                .then((querySnapshot) => {
+                    const bounds = new google.maps.LatLngBounds();
+                    let hasLocations = false;
+                    
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.location) {
+                            hasLocations = true;
+                            const position = {
+                                lat: data.location.latitude,
+                                lng: data.location.longitude
+                            };
+                            
+                            // Criar marcador
+                            const marker = new google.maps.Marker({
+                                position: position,
+                                map: mainMap,
+                                title: data.name,
+                                animation: google.maps.Animation.DROP
+                            });
+                            
+                            // Formatação para rating
+                            const rating = data.rating || 0;
+                            const reviewCount = data.reviewCount || 0;
+                            let ratingStars = '';
+                            
+                            // Gerar estrelas HTML
+                            for (let i = 1; i <= 5; i++) {
+                                if (i <= Math.floor(rating)) {
+                                    ratingStars += '<i class="fas fa-star" style="color: #fbbf24;"></i>';
+                                } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
+                                    ratingStars += '<i class="fas fa-star-half-alt" style="color: #fbbf24;"></i>';
+                                } else {
+                                    ratingStars += '<i class="far fa-star" style="color: #d1d5db;"></i>';
+                                }
+                            }
+                            
+                            // Criar janela de informações
+                            const infowindow = new google.maps.InfoWindow({
+                                content: `
+                                    <div class="map-info-window">
+                                        <h3>${data.name}</h3>
+                                        <p>${data.address}</p>
+                                        <p><strong>Recursos:</strong> ${data.features}</p>
+                                        <div style="margin-top:8px;">
+                                            ${ratingStars}
+                                            <span style="margin-left:6px;font-size:13px;">
+                                                ${rating.toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'})
+                                            </span>
+                                        </div>
+                                    </div>
+                                `
+                            });
+                            
+                            // Abrir janela de informações ao clicar no marcador
+                            marker.addListener('click', function() {
+                                infowindow.open(mainMap, marker);
+                            });
+                            
+                            // Adicionar à coleção de marcadores
+                            mainMapMarkers.push(marker);
+                            
+                            // Extender os limites do mapa para incluir este marcador
+                            bounds.extend(position);
+                        }
+                    });
+                    
+                    // Ajustar o mapa para mostrar todos os marcadores
+                    if (hasLocations) {
+                        mainMap.fitBounds(bounds);
+                        
+                        // Definir um zoom máximo para não aproximar demais se houver apenas um ou poucos locais
+                        const listener = google.maps.event.addListener(mainMap, 'idle', function() {
+                            if (mainMap.getZoom() > 16) {
+                                mainMap.setZoom(16);
+                            }
+                            google.maps.event.removeListener(listener);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar locais para o mapa:', error);
+                });
+        }
+        
+        // Função para atualizar o mapa principal (chamada após adicionar um novo local)
+        function updateMainMap() {
+            if (mainMap) {
+                loadLocationsForMap();
+            }
         }
         
         // Aguardar o carregamento das variáveis de ambiente antes de carregar o Google Maps
