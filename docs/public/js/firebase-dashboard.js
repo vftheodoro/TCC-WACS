@@ -373,6 +373,68 @@ function initMap() {
   }
 }
 
+// Função para buscar a contagem de locais acessíveis
+function getAccessibleLocationsCount() {
+  return db.collection('accessibleLocations').get()
+    .then(snapshot => {
+      const count = snapshot.size;
+      // Busca o card pelo título
+      const statCards = document.querySelectorAll('.stat-card');
+      statCards.forEach(card => {
+        const title = card.querySelector('.stat-content h3');
+        if (title && title.textContent.trim().toLowerCase().includes('locais acessíveis')) {
+          const countElement = card.querySelector('.stat-content p');
+          if (countElement) {
+            countElement.textContent = count;
+          }
+        }
+      });
+      return count;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar contagem de locais:', error);
+      return 0;
+    });
+}
+
+// Função para buscar a contagem de colaboradores
+function getCollaboratorsCount() {
+  return db.collection('users').get()
+    .then(snapshot => {
+      const count = snapshot.size;
+      // Atualizar o elemento que mostra a contagem
+      const countElement = document.querySelector('.stat-card:nth-child(2) .stat-content p');
+      if (countElement) {
+        countElement.textContent = count;
+      }
+      return count;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar contagem de colaboradores:', error);
+      return 0;
+    });
+}
+
+// Função para buscar as contribuições do usuário atual
+function getUserContributions(userId) {
+  return db.collection('locations')
+    .where('addedBy', '==', userId)
+    .get()
+    .then(snapshot => {
+      const count = snapshot.size;
+      // Atualizar o elemento que mostra a contagem
+      const countElement = document.querySelector('.stat-card:nth-child(3) .stat-content p');
+      if (countElement) {
+        countElement.textContent = count;
+      }
+      return count;
+    })
+    .catch(error => {
+      console.error('Erro ao buscar contribuições do usuário:', error);
+      return 0;
+    });
+}
+
 // Evento para botão de logout
 if (logoutBtn) {
   logoutBtn.addEventListener('click', logout);
@@ -388,6 +450,9 @@ auth.onAuthStateChanged(user => {
     console.log('Usuário logado:', user.email);
     updateUIWithUserData(user);
     initMap();
+    getAccessibleLocationsCount();
+    getCollaboratorsCount();
+    getUserContributions(user.uid);
   } else {
     // Usuário não está logado
     console.log('Nenhum usuário logado');
