@@ -12,6 +12,7 @@ const firebaseConfig = {
 // Inicialização do Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 // Elementos da página
 const loginForm = document.getElementById('loginForm');
@@ -31,6 +32,48 @@ auth.setPersistence(
     ? firebase.auth.Auth.Persistence.LOCAL 
     : firebase.auth.Auth.Persistence.SESSION
 );
+
+// Função para atualizar dados do usuário no Firestore
+function updateUserData(user) {
+    if (!user) return Promise.reject('Nenhum usuário fornecido');
+    
+    // Dados básicos a serem atualizados no login
+    const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || '',
+        photoURL: user.photoURL || '',
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    // Verificar se o documento do usuário já existe
+    return db.collection('users').doc(user.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                // Apenas atualizar o último login
+                return db.collection('users').doc(user.uid).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+            } else {
+                // Criar um novo documento para o usuário
+                return db.collection('users').doc(user.uid).set({
+                    ...userData,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    accountStatus: 'active',
+                    userRole: 'user'
+                });
+            }
+        })
+        .then(() => {
+            console.log('Dados do usuário atualizados com sucesso no Firestore');
+            return userData;
+        })
+        .catch((error) => {
+            console.error('Erro ao atualizar dados do usuário no Firestore:', error);
+            // Não vamos interromper o fluxo de login se falhar a atualização de dados
+            return userData;
+        });
+}
 
 // Função para mostrar alerta
 function showAlert(message, type = 'error') {
@@ -66,8 +109,13 @@ loginForm.addEventListener('submit', (e) => {
     auth.signInWithEmailAndPassword(email, password)
         .then((userCredential) => {
             // Login bem-sucedido
-            showAlert('Login realizado com sucesso!', 'success');
-            setTimeout(redirectAfterLogin, 1500);
+            const user = userCredential.user;
+            
+            // Atualizar dados do usuário no Firestore
+            return updateUserData(user).then(() => {
+                showAlert('Login realizado com sucesso!', 'success');
+                setTimeout(redirectAfterLogin, 1500);
+            });
         })
         .catch((error) => {
             // Tratar erros específicos
@@ -101,8 +149,14 @@ googleLoginBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Login com Google realizado com sucesso!', 'success');
-            setTimeout(redirectAfterLogin, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Atualizar dados do usuário no Firestore
+            return updateUserData(user).then(() => {
+                showAlert('Login com Google realizado com sucesso!', 'success');
+                setTimeout(redirectAfterLogin, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao fazer login com Google: ${error.message}`);
@@ -117,8 +171,14 @@ facebookLoginBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.FacebookAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Login com Facebook realizado com sucesso!', 'success');
-            setTimeout(redirectAfterLogin, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Atualizar dados do usuário no Firestore
+            return updateUserData(user).then(() => {
+                showAlert('Login com Facebook realizado com sucesso!', 'success');
+                setTimeout(redirectAfterLogin, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao fazer login com Facebook: ${error.message}`);
@@ -133,8 +193,14 @@ githubLoginBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Login com GitHub realizado com sucesso!', 'success');
-            setTimeout(redirectAfterLogin, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Atualizar dados do usuário no Firestore
+            return updateUserData(user).then(() => {
+                showAlert('Login com GitHub realizado com sucesso!', 'success');
+                setTimeout(redirectAfterLogin, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao fazer login com GitHub: ${error.message}`);
@@ -187,6 +253,13 @@ auth.onAuthStateChanged((user) => {
     if (user) {
         // Usuário já está logado
         console.log('Usuário já logado:', user.email);
+        
+        // Atualizar último login se estiver em outra página que não seja login/register
+        if (!window.location.pathname.includes('login.html') && !window.location.pathname.includes('register.html')) {
+            updateUserData(user).catch(error => {
+                console.error('Erro ao atualizar último login:', error);
+            });
+        }
         
         // Verificar se estamos na página de login (para não redirecionar se estivermos em outra página)
         if (window.location.pathname.includes('login.html')) {

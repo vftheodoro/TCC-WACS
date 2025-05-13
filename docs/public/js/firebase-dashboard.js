@@ -12,6 +12,7 @@ const firebaseConfig = {
 // Inicializar Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore();
 
 // Referências DOM
 const userNameElement = document.getElementById('userName');
@@ -77,30 +78,70 @@ function getInitials(name) {
   return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
 }
 
+// Função para buscar dados do usuário do Firestore
+function getUserData(user) {
+  return db.collection('users').doc(user.uid).get()
+    .then(doc => {
+      if (doc.exists) {
+        return doc.data();
+      } else {
+        // Se o documento não existir, criar um novo com dados básicos
+        const userData = {
+          uid: user.uid,
+          email: user.email,
+          displayName: user.displayName || '',
+          photoURL: user.photoURL || '',
+          phoneNumber: user.phoneNumber || '',
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        
+        // Salvar os dados do usuário
+        return db.collection('users').doc(user.uid).set(userData)
+          .then(() => userData);
+      }
+    })
+    .catch(error => {
+      console.error('Erro ao buscar dados do usuário:', error);
+      return null;
+    });
+}
+
 // Função para atualizar UI com dados do usuário
 function updateUIWithUserData(user) {
   if (user) {
-    // Mostrar email do usuário
-    userEmailElement.textContent = user.email;
-    
-    // Mostrar nome do usuário ou 'Usuário' se não tiver nome
-    const displayName = user.displayName || 'Usuário';
-    userNameElement.textContent = displayName;
-    
-    // Modificar avatar para mostrar iniciais ou ícone padrão
-    if (user.displayName) {
-      userAvatarElement.innerHTML = getInitials(user.displayName);
-    } else {
-      userAvatarElement.innerHTML = '<i class="fas fa-user"></i>';
-    }
-    
-    // Se o usuário tiver foto, mostrar
-    if (user.photoURL) {
-      userAvatarElement.innerHTML = '';
-      userAvatarElement.style.backgroundImage = `url(${user.photoURL})`;
-      userAvatarElement.style.backgroundSize = 'cover';
-      userAvatarElement.style.backgroundPosition = 'center';
-    }
+    // Buscar dados adicionais do usuário do Firestore
+    getUserData(user).then(userData => {
+      // Mostrar email do usuário
+      userEmailElement.textContent = user.email;
+      
+      // Usar dados do Firestore se disponíveis, ou fallback para dados do Auth
+      const displayName = (userData && userData.displayName) || user.displayName || 'Usuário';
+      userNameElement.textContent = displayName;
+      
+      // Modificar avatar para mostrar iniciais ou ícone padrão
+      if (displayName !== 'Usuário') {
+        userAvatarElement.innerHTML = getInitials(displayName);
+      } else {
+        userAvatarElement.innerHTML = '<i class="fas fa-user"></i>';
+      }
+      
+      // Se o usuário tiver foto, mostrar
+      const photoURL = (userData && userData.photoURL) || user.photoURL;
+      if (photoURL) {
+        userAvatarElement.innerHTML = '';
+        userAvatarElement.style.backgroundImage = `url(${photoURL})`;
+        userAvatarElement.style.backgroundSize = 'cover';
+        userAvatarElement.style.backgroundPosition = 'center';
+      }
+      
+      // Atualizar timestamp de último login
+      db.collection('users').doc(user.uid).update({
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+      }).catch(error => {
+        console.error('Erro ao atualizar último login:', error);
+      });
+    });
   } else {
     // Redirecionar para login se não estiver autenticado
     window.location.href = 'login/login.html';

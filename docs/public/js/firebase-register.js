@@ -12,11 +12,13 @@ const firebaseConfig = {
 // Inicialização do Firebase
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const db = firebase.firestore(); // Inicializar Firestore
 
 // Elementos da página
 const registerForm = document.getElementById('registerForm');
 const nameInput = document.getElementById('name');
 const emailInput = document.getElementById('email');
+const phoneInput = document.getElementById('phone');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('confirmPassword');
 const termsCheckbox = document.getElementById('terms');
@@ -42,6 +44,33 @@ function showAlert(message, type = 'error') {
 function redirectAfterRegister() {
     // Redireciona para a página após o registro (dashboard ou qualquer outra página)
     window.location.href = '../dashboard.html';
+}
+
+// Função para salvar dados do usuário no Firestore
+function saveUserToFirestore(user, additionalData = {}) {
+    // Dados básicos do usuário
+    const userData = {
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || additionalData.name || '',
+        photoURL: user.photoURL || '',
+        phoneNumber: user.phoneNumber || '',
+        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+        lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        // Dados adicionais que podem ser fornecidos durante o registro
+        ...additionalData
+    };
+
+    // Salvar ou atualizar os dados do usuário no Firestore
+    return db.collection('users').doc(user.uid).set(userData, { merge: true })
+        .then(() => {
+            console.log('Dados do usuário salvos com sucesso no Firestore');
+            return userData;
+        })
+        .catch((error) => {
+            console.error('Erro ao salvar dados do usuário no Firestore:', error);
+            throw error;
+        });
 }
 
 // Função para verificar a força da senha
@@ -100,12 +129,13 @@ registerForm.addEventListener('submit', (e) => {
     // Obter valores dos campos
     const name = nameInput.value.trim();
     const email = emailInput.value.trim();
+    const phone = phoneInput.value.trim();
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
     
     // Validação básica
     if (!name || !email || !password || !confirmPassword) {
-        showAlert('Por favor, preencha todos os campos.');
+        showAlert('Por favor, preencha todos os campos obrigatórios.');
         return;
     }
     
@@ -133,6 +163,15 @@ registerForm.addEventListener('submit', (e) => {
             // Atualizar o perfil com o nome do usuário
             return user.updateProfile({
                 displayName: name
+            }).then(() => {
+                // Salvar dados adicionais no Firestore
+                return saveUserToFirestore(user, {
+                    name: name,
+                    phoneNumber: phone,
+                    registrationMethod: 'email',
+                    accountStatus: 'active',
+                    userRole: 'user' // Default role para novos usuários
+                });
             }).then(() => {
                 showAlert('Conta criada com sucesso!', 'success');
                 setTimeout(redirectAfterRegister, 1500);
@@ -172,8 +211,20 @@ googleRegisterBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Conta com Google criada/vinculada com sucesso!', 'success');
-            setTimeout(redirectAfterRegister, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Salvar dados do usuário no Firestore
+            return saveUserToFirestore(user, {
+                registrationMethod: 'google',
+                accountStatus: 'active',
+                userRole: 'user',
+                isNewUser: isNewUser,
+                phoneNumber: phoneInput.value.trim() // Adicionar telefone se disponível
+            }).then(() => {
+                showAlert('Conta com Google criada/vinculada com sucesso!', 'success');
+                setTimeout(redirectAfterRegister, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao registrar com Google: ${error.message}`);
@@ -193,8 +244,20 @@ facebookRegisterBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.FacebookAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Conta com Facebook criada/vinculada com sucesso!', 'success');
-            setTimeout(redirectAfterRegister, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Salvar dados do usuário no Firestore
+            return saveUserToFirestore(user, {
+                registrationMethod: 'facebook',
+                accountStatus: 'active',
+                userRole: 'user',
+                isNewUser: isNewUser,
+                phoneNumber: phoneInput.value.trim() // Adicionar telefone se disponível
+            }).then(() => {
+                showAlert('Conta com Facebook criada/vinculada com sucesso!', 'success');
+                setTimeout(redirectAfterRegister, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao registrar com Facebook: ${error.message}`);
@@ -214,8 +277,20 @@ githubRegisterBtn.addEventListener('click', (e) => {
     const provider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(provider)
         .then((result) => {
-            showAlert('Conta com GitHub criada/vinculada com sucesso!', 'success');
-            setTimeout(redirectAfterRegister, 1500);
+            const user = result.user;
+            const isNewUser = result.additionalUserInfo.isNewUser;
+            
+            // Salvar dados do usuário no Firestore
+            return saveUserToFirestore(user, {
+                registrationMethod: 'github',
+                accountStatus: 'active',
+                userRole: 'user',
+                isNewUser: isNewUser,
+                phoneNumber: phoneInput.value.trim() // Adicionar telefone se disponível
+            }).then(() => {
+                showAlert('Conta com GitHub criada/vinculada com sucesso!', 'success');
+                setTimeout(redirectAfterRegister, 1500);
+            });
         })
         .catch((error) => {
             showAlert(`Erro ao registrar com GitHub: ${error.message}`);
@@ -228,6 +303,15 @@ auth.onAuthStateChanged((user) => {
     if (user) {
         // Usuário já está logado
         console.log('Usuário já logado:', user.email);
+        
+        // Atualizar a data do último login
+        if (user.uid) {
+            db.collection('users').doc(user.uid).update({
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(error => {
+                console.error('Erro ao atualizar último login:', error);
+            });
+        }
         
         // Se estamos na página de registro, redireciona
         if (window.location.pathname.includes('register.html')) {

@@ -13,11 +13,13 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const storage = firebase.storage();
+const db = firebase.firestore(); // Inicializar Firestore
 
 // Elementos DOM
 const profileForm = document.getElementById('profileForm');
 const displayNameInput = document.getElementById('displayName');
 const emailInput = document.getElementById('email');
+const phoneInput = document.getElementById('phone');
 const currentPasswordInput = document.getElementById('currentPassword');
 const newPasswordInput = document.getElementById('newPassword');
 const confirmPasswordInput = document.getElementById('confirmPassword');
@@ -40,6 +42,7 @@ const debugOutput = document.getElementById('debugOutput');
 let currentUser = null;
 let userPhotoURL = null;
 let originalDisplayName = '';
+let originalPhone = '';
 let photoFile = null;
 let photoChanged = false;
 let photoRemoved = false;
@@ -94,6 +97,7 @@ function setupEventListeners() {
         }
         
         const displayName = displayNameInput.value.trim();
+        const phone = phoneInput.value.trim();
         const currentPassword = currentPasswordInput.value;
         const newPassword = newPasswordInput.value;
         const confirmPassword = confirmPasswordInput.value;
@@ -134,12 +138,25 @@ function setupEventListeners() {
                 logDebug('Senha atualizada com sucesso');
             }
             
+            let firestoreUpdates = {};
+            
             // Atualizar nome de exibição se alterado
             if (displayName !== originalDisplayName) {
                 await currentUser.updateProfile({
                     displayName: displayName
                 });
+                
+                firestoreUpdates.displayName = displayName;
+                
                 logDebug('Nome de exibição atualizado:', displayName);
+            }
+            
+            // Atualizar telefone se alterado
+            if (phone !== originalPhone) {
+                firestoreUpdates.phoneNumber = phone;
+                originalPhone = phone;
+                
+                logDebug('Telefone atualizado:', phone);
             }
             
             // Atualizar foto se alterada
@@ -148,12 +165,23 @@ function setupEventListeners() {
                 await currentUser.updateProfile({
                     photoURL: photoURL
                 });
+                
+                firestoreUpdates.photoURL = photoURL;
+                
                 logDebug('Foto de perfil atualizada:', photoURL);
             } else if (photoRemoved) {
                 await currentUser.updateProfile({
                     photoURL: null
                 });
+                
+                firestoreUpdates.photoURL = null;
+                
                 logDebug('Foto de perfil removida');
+            }
+            
+            // Atualizar dados no Firestore se houver mudanças
+            if (Object.keys(firestoreUpdates).length > 0) {
+                await updateUserDataInFirestore(currentUser, firestoreUpdates);
             }
             
             // Limpar campos de senha
@@ -240,6 +268,24 @@ function loadUserData(user) {
     // Nome de exibição
     displayNameInput.value = user.displayName || '';
     originalDisplayName = user.displayName || '';
+    
+    // Buscar dados adicionais do Firestore
+    db.collection('users').doc(user.uid).get()
+        .then(doc => {
+            if (doc.exists) {
+                const userData = doc.data();
+                
+                // Telefone
+                if (userData.phoneNumber) {
+                    phoneInput.value = userData.phoneNumber;
+                    originalPhone = userData.phoneNumber;
+                    logDebug('Telefone carregado:', userData.phoneNumber);
+                }
+            }
+        })
+        .catch(error => {
+            logDebug('Erro ao buscar dados adicionais do usuário:', error);
+        });
     
     // Foto de perfil
     if (user.photoURL) {
@@ -360,6 +406,7 @@ function handleRemovePhoto() {
 function handleCancel() {
     // Restaurar valores originais
     displayNameInput.value = originalDisplayName;
+    phoneInput.value = originalPhone;
     
     // Restaurar foto
     photoChanged = false;
@@ -500,4 +547,29 @@ function logDebug(...args) {
         debugOutput.innerHTML += logEntry + '\n';
         debugOutput.scrollTop = debugOutput.scrollHeight;
     }
+}
+
+// Atualizar dados do usuário no Firestore
+function updateUserDataInFirestore(user, data = {}) {
+    if (!user || !user.uid) {
+        logDebug('Usuário inválido para atualização no Firestore');
+        return Promise.reject('Usuário inválido');
+    }
+
+    const updateData = {
+        ...data,
+        lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    logDebug('Atualizando dados no Firestore:', updateData);
+    
+    return db.collection('users').doc(user.uid).update(updateData)
+        .then(() => {
+            logDebug('Dados atualizados com sucesso no Firestore');
+            return true;
+        })
+        .catch((error) => {
+            logDebug('Erro ao atualizar dados no Firestore:', error);
+            throw error;
+        });
 } 
