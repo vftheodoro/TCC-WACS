@@ -158,6 +158,9 @@
                 <a href="#github" class="navbar-download">
                     <i class="fas fa-download"></i> Download
                 </a>
+                <a href="views/dashboard.html" class="navbar-dashboard hidden" id="navDashboardBtn">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
                 <button id="logoutBtn" class="navbar-login hidden">
                     <i class="fas fa-sign-out-alt"></i> Sair
                 </button>
@@ -322,6 +325,29 @@
             }
             
             body.dark-theme .navbar-login {
+                background-color: var(--dark-primary, #4A90E2);
+            }
+            
+            .navbar-dashboard {
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.5rem 1rem;
+                background-color: var(--primary-color, #0055b3);
+                color: white;
+                border-radius: 0.5rem;
+                text-decoration: none;
+                font-weight: 500;
+                transition: all 0.3s ease;
+                margin-right: 0.75rem;
+            }
+            
+            .navbar-dashboard:hover {
+                background-color: var(--primary-hover, #0066d6);
+                transform: translateY(-2px);
+            }
+            
+            body.dark-theme .navbar-dashboard {
                 background-color: var(--dark-primary, #4A90E2);
             }
             
@@ -1035,6 +1061,7 @@
             const profileLink = document.getElementById('profileLink');
             const dashboardLink = document.getElementById('dashboardLink');
             const logoutBtn = document.getElementById('logoutBtn');
+            const navDashboardBtn = document.getElementById('navDashboardBtn');
             
             // DOM Elements - Mobile
             const loginLinkMobile = document.getElementById('loginLinkMobile');
@@ -1065,6 +1092,7 @@
                 profileLink.classList.remove('hidden');
                 dashboardLink.classList.remove('hidden');
                 logoutBtn.classList.remove('hidden');
+                navDashboardBtn.classList.remove('hidden');
                 
                 // Mobile menu
                 loginLinkMobile.classList.add('hidden');
@@ -1080,6 +1108,7 @@
                 profileLink.classList.add('hidden');
                 dashboardLink.classList.add('hidden');
                 logoutBtn.classList.add('hidden');
+                navDashboardBtn.classList.add('hidden');
                 
                 // Mobile menu
                 loginLinkMobile.classList.remove('hidden');
