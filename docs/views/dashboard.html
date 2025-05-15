@@ -2759,7 +2759,9 @@
         }
         
         // Variáveis globais para os mapas
-        let mainMap, mainMapMarkers = [];
+        window.mainMap = undefined;
+        window.mainMapMarkers = [];
+        let mainMapMarkers = window.mainMapMarkers; // manter referência para compatibilidade
         
         // Inicializar mapa principal
         function initMap() {
@@ -2821,11 +2823,11 @@
         
         // Função para carregar os locais no mapa principal
         function loadLocationsForMap() {
-            if (!mainMap) return;
+            if (!window.mainMap) return;
             
             // Limpar marcadores existentes
-            mainMapMarkers.forEach(marker => marker.setMap(null));
-            mainMapMarkers = [];
+            window.mainMapMarkers.forEach(marker => marker.setMap(null));
+            window.mainMapMarkers = [];
             
             // Buscar locais no Firestore
             firebase.firestore().collection('accessibleLocations')
@@ -2846,7 +2848,7 @@
                             // Criar marcador
                             const marker = new google.maps.Marker({
                                 position: position,
-                                map: mainMap,
+                                map: window.mainMap,
                                 title: data.name,
                                 animation: google.maps.Animation.DROP
                             });
@@ -2886,11 +2888,11 @@
                             
                             // Abrir janela de informações ao clicar no marcador
                             marker.addListener('click', function() {
-                                infowindow.open(mainMap, marker);
+                                infowindow.open(window.mainMap, marker);
                             });
                             
                             // Adicionar à coleção de marcadores
-                            mainMapMarkers.push(marker);
+                            window.mainMapMarkers.push(marker);
                             
                             // Extender os limites do mapa para incluir este marcador
                             bounds.extend(position);
@@ -2899,12 +2901,12 @@
                     
                     // Ajustar o mapa para mostrar todos os marcadores
                     if (hasLocations) {
-                        mainMap.fitBounds(bounds);
+                        window.mainMap.fitBounds(bounds);
                         
                         // Definir um zoom máximo para não aproximar demais se houver apenas um ou poucos locais
-                        const listener = google.maps.event.addListener(mainMap, 'idle', function() {
-                            if (mainMap.getZoom() > 16) {
-                                mainMap.setZoom(16);
+                        const listener = google.maps.event.addListener(window.mainMap, 'idle', function() {
+                            if (window.mainMap.getZoom() > 16) {
+                                window.mainMap.setZoom(16);
                             }
                             google.maps.event.removeListener(listener);
                         });
