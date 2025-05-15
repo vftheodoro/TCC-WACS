@@ -1854,6 +1854,245 @@
         .fa-spin {
             animation: spin 1s linear infinite;
         }
+
+        /* Estilos para o modal de perfil do usuário */
+        .user-profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+
+        body.dark-theme .user-profile-photo {
+            background: var(--dark-accent, #1a1a2e);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .user-profile-info h2 {
+            margin: 0;
+            color: var(--text-color, #1f2937);
+            font-size: 1.5rem;
+        }
+
+        .user-profile-info p {
+            margin: 0.5rem 0 0;
+            color: var(--text-light, #6b7280);
+            font-size: 0.9rem;
+        }
+
+        .user-profile-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .chat-btn {
+            background: var(--primary-color, #0055b3);
+            color: white;
+        }
+
+        .friend-btn {
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+        }
+
+        .chat-btn:hover {
+            background: var(--primary-dark, #004494);
+        }
+
+        .friend-btn:hover {
+            background: var(--accent-dark, #ccd9ff);
+        }
+
+        body.dark-theme .chat-btn {
+            background: var(--dark-primary, #4A90E2);
+        }
+
+        body.dark-theme .friend-btn {
+            background: var(--dark-accent, #1a1a2e);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .contribution-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat {
+            flex: 1;
+            text-align: center;
+            padding: 1rem;
+            background: var(--accent-color, #e0eaff);
+            border-radius: 8px;
+            color: var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .stat {
+            background: var(--dark-accent, #1a1a2e);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .stat i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat span {
+            display: block;
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .stat p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: var(--text-light, #6b7280);
+        }
+
+        .user-contributions-list {
+            margin-top: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .user-link {
+            color: var(--primary-color, #0055b3);
+            text-decoration: none;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .user-link:hover {
+            color: var(--primary-hover, #0066d6);
+            text-decoration: underline;
+        }
+
+        body.dark-theme .user-link {
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        body.dark-theme .user-link:hover {
+            color: var(--dark-primary-hover, #5AA0F2);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .delete-location-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color, #dc3545);
+            cursor: pointer;
+            padding: 0.25rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .delete-location-btn:hover {
+            background-color: rgba(220, 53, 69, 0.1);
+        }
+
+        body.dark-theme .delete-location-btn {
+            color: var(--dark-danger, #ff4d4d);
+        }
+
+        body.dark-theme .delete-location-btn:hover {
+            background-color: rgba(255, 77, 77, 0.1);
+        }
+
+        .alert {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            animation: slideIn 0.3s ease;
+            max-width: 300px;
+        }
+
+        .alert.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        body.dark-theme .alert.success {
+            background-color: #1e4a2e;
+            color: #9be6b1;
+            border-color: #2d5a3d;
+        }
+
+        body.dark-theme .alert.error {
+            background-color: #4a1e1e;
+            color: #e6a5a5;
+            border-color: #5a2d2d;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -2162,6 +2401,48 @@
             <div id="locationReviewsInfo"></div>
             <div id="allReviewsList" class="all-reviews-list">
                 <p>Carregando avaliações...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Perfil do Usuário -->
+    <div id="userProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="user-profile-header">
+                <div class="user-profile-photo">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="user-profile-info">
+                    <h2 id="modalUserName">Nome do Usuário</h2>
+                    <p id="modalUserEmail">email@exemplo.com</p>
+                </div>
+            </div>
+            <div class="user-profile-actions">
+                <button class="action-btn chat-btn">
+                    <i class="fas fa-comment"></i> Conversar
+                </button>
+                <button class="action-btn friend-btn">
+                    <i class="fas fa-user-plus"></i> Adicionar Amigo
+                </button>
+            </div>
+            <div class="user-profile-contributions">
+                <h3>Contribuições</h3>
+                <div class="contribution-stats">
+                    <div class="stat">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="modalUserLocations">0</span>
+                        <p>Locais Adicionados</p>
+                    </div>
+                    <div class="stat">
+                        <i class="fas fa-star"></i>
+                        <span id="modalUserReviews">0</span>
+                        <p>Avaliações</p>
+                    </div>
+                </div>
+                <div id="modalUserContributions" class="user-contributions-list">
+                    <!-- Lista de contribuições será preenchida dinamicamente -->
+                </div>
             </div>
         </div>
     </div>
@@ -3189,6 +3470,9 @@
                 <div class="location-details">
                     <h3>${location.name}</h3>
                     <p>${location.address}</p>
+                    <p class="location-author">
+                        Adicionado por: <a href="#" class="user-link" data-user-id="${location.userId}">${location.userName}</a>
+                    </p>
                     <div class="accessibility-features">
                         ${(location.accessibilityFeatures || []).map(feature => {
                             const icons = {
@@ -3683,13 +3967,14 @@
                         </div>
                         <div class="sender-info">
                             ${photoContent}
+                            <span class="user-link" data-user-id="${message.userId}">${message.userName || 'Usuário'}</span>
                         </div>
                     `;
                 } else {
                     messageElement.innerHTML = `
                         <div class="sender-info">
                             ${photoContent}
-                            <div class="sender-name">${message.userName || 'Usuário'}</div>
+                            <span class="user-link" data-user-id="${message.userId}">${message.userName || 'Usuário'}</span>
                         </div>
                         ${messageText}
                         <div class="message-time">${timeFormatted}</div>
@@ -3802,6 +4087,164 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        // ... existing code ...
+        
+        // Adicionar evento para fechar o modal de perfil do usuário
+        document.addEventListener('DOMContentLoaded', function() {
+            const userProfileModal = document.getElementById('userProfileModal');
+            const closeBtn = userProfileModal.querySelector('.close-modal');
+            
+            closeBtn.addEventListener('click', function() {
+                userProfileModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === userProfileModal) {
+                    userProfileModal.style.display = 'none';
+                }
+            });
+        });
+
+        // Adicionar função para abrir o modal de perfil
+        async function openUserProfileModal(userId) {
+            const modal = document.getElementById('userProfileModal');
+            const modalUserName = document.getElementById('modalUserName');
+            const modalUserEmail = document.getElementById('modalUserEmail');
+            const modalUserPhoto = document.querySelector('.user-profile-photo');
+            const modalUserLocations = document.getElementById('modalUserLocations');
+            const modalUserReviews = document.getElementById('modalUserReviews');
+            const modalUserContributions = document.getElementById('modalUserContributions');
+
+            try {
+                // Buscar dados do usuário
+                const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+                const userData = userDoc.data() || {};
+
+                // Preencher informações básicas
+                modalUserName.textContent = userData.displayName || 'Usuário';
+                modalUserEmail.textContent = userData.email || '';
+
+                // Configurar foto do usuário
+                if (userData.photoURL) {
+                    modalUserPhoto.innerHTML = `<img src="${userData.photoURL}" alt="${userData.displayName}" style="width: 100%; height: 100%; object-fit: cover;">`;
+                } else {
+                    modalUserPhoto.innerHTML = '<i class="fas fa-user"></i>';
+                }
+
+                // Buscar contribuições do usuário
+                const [locations, reviews] = await Promise.all([
+                    firebase.firestore().collection('accessibleLocations')
+                        .where('userId', '==', userId)
+                        .get(),
+                    firebase.firestore().collection('reviews')
+                        .where('userId', '==', userId)
+                        .get()
+                ]);
+
+                // Atualizar estatísticas
+                modalUserLocations.textContent = locations.size;
+                modalUserReviews.textContent = reviews.size;
+
+                // Limpar e preencher lista de contribuições
+                modalUserContributions.innerHTML = '';
+                
+                // Adicionar locais
+                locations.forEach(doc => {
+                    const location = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'contribution-item';
+                    div.innerHTML = `
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="contribution-details">
+                            <strong>${location.name}</strong>
+                            <small>${location.address}</small>
+                        </div>
+                    `;
+                    modalUserContributions.appendChild(div);
+                });
+
+                // Adicionar avaliações
+                reviews.forEach(doc => {
+                    const review = doc.data();
+                    const div = document.createElement('div');
+                    div.className = 'contribution-item';
+                    div.innerHTML = `
+                        <i class="fas fa-star"></i>
+                        <div class="contribution-details">
+                            <strong>Avaliação: ${review.rating}/5</strong>
+                            <small>${review.comment || 'Sem comentário'}</small>
+                        </div>
+                    `;
+                    modalUserContributions.appendChild(div);
+                });
+
+                // Mostrar o modal
+                modal.style.display = 'block';
+            } catch (error) {
+                console.error('Erro ao carregar perfil do usuário:', error);
+                alert('Erro ao carregar perfil do usuário. Por favor, tente novamente.');
+            }
+        }
+
+        // Adicionar event listeners para o modal
+        document.addEventListener('DOMContentLoaded', function() {
+            const userProfileModal = document.getElementById('userProfileModal');
+            const closeBtn = userProfileModal.querySelector('.close-modal');
+            
+            // Event listener para links de usuário
+            document.addEventListener('click', function(e) {
+                if (e.target.matches('.user-link')) {
+                    e.preventDefault();
+                    const userId = e.target.getAttribute('data-user-id');
+                    openUserProfileModal(userId);
+                }
+            });
+
+            // Fechar modal
+            closeBtn.addEventListener('click', function() {
+                userProfileModal.style.display = 'none';
+            });
+
+            // Fechar modal ao clicar fora
+            window.addEventListener('click', function(event) {
+                if (event.target === userProfileModal) {
+                    userProfileModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
+
+    <script>
+        // ... existing code ...
+
+        // Função para mostrar alertas
+        function showAlert(message, type = 'success') {
+            // Remover alertas existentes
+            const existingAlerts = document.querySelectorAll('.alert');
+            existingAlerts.forEach(alert => alert.remove());
+
+            // Criar novo alerta
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.innerHTML = `
+                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+                ${message}
+            `;
+
+            // Adicionar ao DOM
+            document.body.appendChild(alert);
+
+            // Remover após 3 segundos
+            setTimeout(() => {
+                alert.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => alert.remove(), 300);
+            }, 3000);
+        }
+
+        // ... existing code ...
     </script>
 </body>
 </html> 
