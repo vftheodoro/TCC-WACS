@@ -1386,6 +1386,272 @@
         body.dark-theme .system-message {
             color: var(--dark-text-light, #94a3b8);
         }
+
+        .accessibility-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .accessibility-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .accessibility-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .option-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            background-color: var(--accent-color, #e0eaff);
+            border: 2px solid transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .option-content i {
+            font-size: 1.5rem;
+            color: var(--primary-color, #0055b3);
+        }
+
+        .option-content span {
+            font-size: 0.9rem;
+            color: var(--text-color, #1f2937);
+        }
+
+        .accessibility-option:hover .option-content {
+            background-color: var(--primary-color, #0055b3);
+        }
+
+        .accessibility-option:hover .option-content i,
+        .accessibility-option:hover .option-content span {
+            color: white;
+        }
+
+        .accessibility-option input:checked + .option-content {
+            background-color: var(--primary-color, #0055b3);
+            border-color: var(--primary-color, #0055b3);
+        }
+
+        .accessibility-option input:checked + .option-content i,
+        .accessibility-option input:checked + .option-content span {
+            color: white;
+        }
+
+        body.dark-theme .option-content {
+            background-color: var(--dark-accent, #1E293B);
+        }
+
+        body.dark-theme .option-content i {
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        body.dark-theme .option-content span {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        body.dark-theme .accessibility-option:hover .option-content {
+            background-color: var(--dark-primary, #4A90E2);
+        }
+
+        body.dark-theme .accessibility-option input:checked + .option-content {
+            background-color: var(--dark-primary, #4A90E2);
+            border-color: var(--dark-primary, #4A90E2);
+        }
+
+        .accessibility-features {
+            display: flex;
+            gap: 0.5rem;
+            margin: 0.5rem 0;
+            flex-wrap: wrap;
+        }
+        
+        .accessibility-features i {
+            font-size: 1.2rem;
+            color: var(--primary-color, #0055b3);
+            background: var(--accent-color, #e0eaff);
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        body.dark-theme .accessibility-features i {
+            color: var(--dark-primary, #4A90E2);
+            background: var(--dark-accent, #1E293B);
+        }
+        
+        .accessibility-features i:hover {
+            transform: scale(1.1);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .accessibility-ratings {
+            display: grid;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .accessibility-rating-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--accent-color, #e0eaff);
+            border-radius: 8px;
+        }
+
+        body.dark-theme .accessibility-rating-item {
+            background: var(--dark-accent, #1E293B);
+        }
+
+        .accessibility-rating-item i.feature-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color, #0055b3);
+            width: 2rem;
+            text-align: center;
+        }
+
+        body.dark-theme .accessibility-rating-item i.feature-icon {
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .accessibility-rating-item .feature-name {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .accessibility-rating-item .feature-name {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .accessibility-rating-item .feature-stars {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .accessibility-rating-item .feature-stars i {
+            cursor: pointer;
+            color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+
+        body.dark-theme .accessibility-rating-item .feature-stars i {
+            color: #4b5563;
+        }
+
+        .accessibility-rating-item .feature-stars i:hover,
+        .accessibility-rating-item .feature-stars i.fas {
+            color: #fbbf24;
+        }
+
+        .feature-ratings {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        body.dark-theme .feature-ratings {
+            border-color: var(--dark-border, #2d3748);
+        }
+
+        .feature-rating-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            background: var(--accent-color, #e0eaff);
+            border-radius: 6px;
+        }
+
+        body.dark-theme .feature-rating-item {
+            background: var(--dark-accent, #1E293B);
+        }
+
+        .feature-rating-item i {
+            font-size: 1.2rem;
+            color: var(--primary-color, #0055b3);
+            width: 1.5rem;
+            text-align: center;
+        }
+
+        body.dark-theme .feature-rating-item i {
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .feature-rating-item span {
+            flex: 1;
+            font-size: 0.9rem;
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .feature-rating-item span {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .feature-rating-item .feature-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .feature-rating-item .feature-stars i {
+            font-size: 0.9rem;
+            color: #fbbf24;
+        }
+
+        .feature-averages {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--accent-color, #e0eaff);
+            border-radius: 8px;
+        }
+
+        body.dark-theme .feature-averages {
+            background: var(--dark-accent, #1E293B);
+        }
+
+        .feature-average {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-average:last-child {
+            margin-bottom: 0;
+        }
+
+        .feature-average span {
+            font-size: 0.9rem;
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .feature-average span {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .feature-average .feature-stars {
+            display: flex;
+            gap: 0.1rem;
+        }
+
+        .feature-average .feature-stars i {
+            font-size: 0.9rem;
+            color: #fbbf24;
+        }
     </style>
 </head>
 <body>
@@ -1614,8 +1880,44 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="locationFeatures">Recursos de Acessibilidade</label>
-                    <textarea id="locationFeatures" placeholder="Descreva os recursos de acessibilidade (ex: rampa de acesso, elevadores, etc)" required></textarea>
+                    <label>Recursos de Acessibilidade</label>
+                    <div class="accessibility-options">
+                        <label class="accessibility-option">
+                            <input type="checkbox" name="accessibility" value="wheelchair" class="accessibility-checkbox">
+                            <div class="option-content">
+                                <i class="fas fa-wheelchair"></i>
+                                <span>Cadeira de Rodas</span>
+                            </div>
+                        </label>
+                        <label class="accessibility-option">
+                            <input type="checkbox" name="accessibility" value="blind" class="accessibility-checkbox">
+                            <div class="option-content">
+                                <i class="fas fa-walking"></i>
+                                <span>Piso Tátil</span>
+                            </div>
+                        </label>
+                        <label class="accessibility-option">
+                            <input type="checkbox" name="accessibility" value="deaf" class="accessibility-checkbox">
+                            <div class="option-content">
+                                <i class="fas fa-arrow-up-right-from-square"></i>
+                                <span>Rampa</span>
+                            </div>
+                        </label>
+                        <label class="accessibility-option">
+                            <input type="checkbox" name="accessibility" value="elevator" class="accessibility-checkbox">
+                            <div class="option-content">
+                                <i class="fas fa-elevator"></i>
+                                <span>Elevador</span>
+                            </div>
+                        </label>
+                        <label class="accessibility-option">
+                            <input type="checkbox" name="accessibility" value="parking" class="accessibility-checkbox">
+                            <div class="option-content">
+                                <i class="fas fa-restroom"></i>
+                                <span>Banheiro Adaptado</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="locationImage">URL da Imagem (opcional)</label>
@@ -1635,19 +1937,14 @@
             <form id="rateLocationForm">
                 <input type="hidden" id="locationIdToRate">
                 <div class="form-group">
-                    <label>Sua Avaliação</label>
-                    <div class="rating-stars">
-                        <i class="far fa-star" data-rating="1"></i>
-                        <i class="far fa-star" data-rating="2"></i>
-                        <i class="far fa-star" data-rating="3"></i>
-                        <i class="far fa-star" data-rating="4"></i>
-                        <i class="far fa-star" data-rating="5"></i>
-                        <input type="hidden" id="ratingValue" required>
+                    <label>Avaliação dos Recursos de Acessibilidade</label>
+                    <div id="accessibilityRatings" class="accessibility-ratings">
+                        <!-- Será preenchido dinamicamente -->
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="ratingComment">Comentário (opcional)</label>
-                    <textarea id="ratingComment" placeholder="Compartilhe sua experiência sobre este local..."></textarea>
+                    <textarea id="ratingComment" rows="3"></textarea>
                 </div>
                 <button type="submit" class="submit-btn">Enviar Avaliação</button>
             </form>
@@ -1965,13 +2262,86 @@
                     <h3>${locationName}</h3>
                     <p>${locationAddress}</p>
                 `;
+
+                // Buscar informações do local para obter os recursos de acessibilidade
+                firebase.firestore().collection('accessibleLocations').doc(locationId).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const location = doc.data();
+                            const accessibilityFeatures = location.accessibilityFeatures || [];
+                            
+                            // Mapear recursos para ícones e nomes
+                            const featureMap = {
+                                'wheelchair': { icon: 'fa-wheelchair', name: 'Cadeira de Rodas' },
+                                'blind': { icon: 'fa-walking', name: 'Piso Tátil' },
+                                'deaf': { icon: 'fa-arrow-up-right-from-square', name: 'Rampa' },
+                                'elevator': { icon: 'fa-elevator', name: 'Elevador' },
+                                'parking': { icon: 'fa-restroom', name: 'Banheiro Adaptado' }
+                            };
+
+                            // Criar HTML para cada recurso
+                            const ratingsHTML = accessibilityFeatures.map(feature => {
+                                const featureInfo = featureMap[feature];
+                                if (!featureInfo) return '';
+
+                                return `
+                                    <div class="accessibility-rating-item">
+                                        <i class="fas ${featureInfo.icon} feature-icon"></i>
+                                        <span class="feature-name">${featureInfo.name}</span>
+                                        <div class="feature-stars" data-feature="${feature}">
+                                            <i class="far fa-star" data-rating="1"></i>
+                                            <i class="far fa-star" data-rating="2"></i>
+                                            <i class="far fa-star" data-rating="3"></i>
+                                            <i class="far fa-star" data-rating="4"></i>
+                                            <i class="far fa-star" data-rating="5"></i>
+                                            <input type="hidden" name="feature_rating_${feature}" value="">
+                                        </div>
+                                    </div>
+                                `;
+                            }).join('');
+
+                            // Atualizar o container de avaliações
+                            const accessibilityRatingsContainer = document.getElementById('accessibilityRatings');
+                            if (accessibilityRatingsContainer) {
+                                accessibilityRatingsContainer.innerHTML = ratingsHTML;
+
+                                // Adicionar eventos para as estrelas de cada recurso
+                                document.querySelectorAll('.feature-stars').forEach(starsContainer => {
+                                    const stars = starsContainer.querySelectorAll('i');
+                                    const input = starsContainer.querySelector('input');
+                                    
+                                    stars.forEach(star => {
+                                        star.addEventListener('click', function() {
+                                            const rating = this.getAttribute('data-rating');
+                                            input.value = rating;
+                                            
+                                            // Atualizar visual das estrelas
+                                            stars.forEach(s => {
+                                                const sRating = s.getAttribute('data-rating');
+                                                if (sRating <= rating) {
+                                                    s.classList.remove('far');
+                                                    s.classList.add('fas');
+                                                } else {
+                                                    s.classList.remove('fas');
+                                                    s.classList.add('far');
+                                                }
+                                            });
+                                        });
+                                    });
+                                });
+                            }
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Erro ao carregar informações do local:', error);
+                    });
                 
                 // Abrir modal
                 rateModal.style.display = 'block';
             }
             
             // Adicionar evento de submit para o formulário de avaliação
-            rateForm.addEventListener('submit', function(e) {
+            rateForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Verificar se o usuário está autenticado
@@ -1983,21 +2353,39 @@
                 
                 // Obter valores do formulário
                 const locationId = document.getElementById('locationIdToRate').value;
-                const rating = parseInt(ratingValueInput.value);
                 const comment = document.getElementById('ratingComment').value;
                 
-                // Validar avaliação
-                if (!rating || rating < 1 || rating > 5) {
-                    alert('Por favor, selecione uma avaliação de 1 a 5 estrelas.');
+                // Coletar avaliações dos recursos de acessibilidade
+                const featureRatings = {};
+                document.querySelectorAll('.feature-stars').forEach(starsContainer => {
+                    const feature = starsContainer.getAttribute('data-feature');
+                    const rating = parseInt(starsContainer.querySelector('input').value);
+                    if (rating) {
+                        featureRatings[feature] = rating;
+                    }
+                });
+
+                // Validar se todas as opções de acessibilidade foram avaliadas
+                const location = await firebase.firestore().collection('accessibleLocations').doc(locationId).get();
+                const accessibilityFeatures = location.data().accessibilityFeatures || [];
+                const missingRatings = accessibilityFeatures.filter(feature => !featureRatings[feature]);
+
+                if (missingRatings.length > 0) {
+                    alert('Por favor, avalie todos os recursos de acessibilidade disponíveis.');
                     return;
                 }
+
+                // Calcular a média das avaliações de acessibilidade
+                const ratings = Object.values(featureRatings);
+                const averageRating = ratings.reduce((sum, rating) => sum + rating, 0) / ratings.length;
                 
                 // Preparar objeto de avaliação
                 const reviewData = {
                     locationId: locationId,
                     userId: user.uid,
                     userName: user.displayName || user.email.split('@')[0],
-                    rating: rating,
+                    rating: parseFloat(averageRating.toFixed(1)), // Média arredondada para 1 casa decimal
+                    featureRatings: featureRatings,
                     comment: comment,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
@@ -2066,10 +2454,19 @@
                 // Obter valores do formulário
                 const name = document.getElementById('locationName').value;
                 const address = document.getElementById('locationAddress').value;
-                const features = document.getElementById('locationFeatures').value;
                 const imageUrl = document.getElementById('locationImage').value || 'https://via.placeholder.com/300x150?text=Local+Acessível';
                 const lat = parseFloat(document.getElementById('locationLat').value);
                 const lng = parseFloat(document.getElementById('locationLng').value);
+                
+                // Coletar opções de acessibilidade selecionadas
+                const accessibilityOptions = Array.from(document.querySelectorAll('.accessibility-checkbox:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                // Validar se pelo menos uma opção de acessibilidade foi selecionada
+                if (accessibilityOptions.length === 0) {
+                    alert('Por favor, selecione pelo menos uma opção de acessibilidade.');
+                    return;
+                }
                 
                 // Validar coordenadas
                 if (isNaN(lat) || isNaN(lng)) {
@@ -2081,7 +2478,7 @@
                 const locationData = {
                     name: name,
                     address: address,
-                    features: features,
+                    accessibilityFeatures: accessibilityOptions,
                     imageUrl: imageUrl,
                     location: new firebase.firestore.GeoPoint(lat, lng),
                     userId: user.uid,
@@ -2140,7 +2537,18 @@
                     <div class="location-details">
                         <h3>${location.name}</h3>
                         <p>${location.address}</p>
-                        <p>${location.features}</p>
+                        <div class="accessibility-features">
+                            ${(location.accessibilityFeatures || []).map(feature => {
+                                const icons = {
+                                    'wheelchair': '<i class="fas fa-wheelchair" title="Cadeira de Rodas"></i>',
+                                    'blind': '<i class="fas fa-walking" title="Piso Tátil"></i>',
+                                    'deaf': '<i class="fas fa-arrow-up-right-from-square" title="Rampa"></i>',
+                                    'elevator': '<i class="fas fa-elevator" title="Elevador"></i>',
+                                    'parking': '<i class="fas fa-restroom" title="Banheiro Adaptado"></i>'
+                                };
+                                return icons[feature] || '';
+                            }).join(' ')}
+                        </div>
                         <div class="location-rating">
                             ${renderRatingStars(rating)}
                             <span>${rating.toFixed(1)} (${formatReviewText(reviewCount)})</span>
@@ -2220,7 +2628,7 @@
                         const review = reviews[0]; // Pegar a mais recente
                         const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
                         const formattedDate = date.toLocaleDateString('pt-BR');
-                        
+
                         lastReviewContainer.innerHTML = `
                             <div class="last-review-content">
                                 <div class="review-header">
@@ -2513,7 +2921,18 @@
                 <div class="location-details">
                     <h3>${location.name}</h3>
                     <p>${location.address}</p>
-                    <p>${location.features}</p>
+                    <div class="accessibility-features">
+                        ${(location.accessibilityFeatures || []).map(feature => {
+                            const icons = {
+                                'wheelchair': '<i class="fas fa-wheelchair" title="Cadeira de Rodas"></i>',
+                                'blind': '<i class="fas fa-walking" title="Piso Tátil"></i>',
+                                'deaf': '<i class="fas fa-arrow-up-right-from-square" title="Rampa"></i>',
+                                'elevator': '<i class="fas fa-elevator" title="Elevador"></i>',
+                                'parking': '<i class="fas fa-restroom" title="Banheiro Adaptado"></i>'
+                            };
+                            return icons[feature] || '';
+                        }).join(' ')}
+                    </div>
                     <div class="location-rating">
                         ${renderRatingStars(rating)}
                         <span>${rating.toFixed(1)} (${formatReviewText(reviewCount)})</span>
@@ -2606,6 +3025,7 @@
                         return dateB - dateA;
                     });
                     
+                    // Calcular médias
                     // Atualizar informações do local
                     const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
                     locationInfo.innerHTML = `
@@ -2693,8 +3113,8 @@
                             chatMessages.innerHTML = `
                                 <div class="system-message">
                                     <p>Você precisa estar logado para usar o chat.</p>
-                                </div>
-                            `;
+                            </div>
+                        `;
                         }
                     });
                 }
@@ -2738,8 +3158,8 @@
                         chatMessages.innerHTML = `
                             <div class="system-message">
                                 <p>Erro ao carregar mensagens. Por favor, tente novamente.</p>
-                            </div>
-                        `;
+                        </div>
+                    `;
                     });
             }
             
