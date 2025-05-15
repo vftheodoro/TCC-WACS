@@ -150,6 +150,31 @@ function updateUIWithUserData(user) {
 
 // Inicializar Google Maps
 function initMap() {
+  // Detectar tema atual
+  const isDark = document.body.classList.contains('dark-theme');
+  // Definir estilos do mapa para tema escuro
+  const darkMapStyles = [
+    { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+    { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+    { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+    { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+    { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+    { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+    { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+    { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+    { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+    { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+    { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+    { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+    { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+    { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+    { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+    { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] },
+  ];
+  window._WACS_DASHBOARD_MAP_STYLES = { dark: darkMapStyles, light: [] };
+
   if (mapContainer) {
     // Criar o elemento para o mapa
     mapContainer.innerHTML = '<div id="map" style="width: 100%; height: 100%;"></div>';
@@ -166,29 +191,10 @@ function initMap() {
         streetViewControl: false,
         fullscreenControl: true,
         zoomControl: true,
-        styles: (document.body.classList.contains('dark-theme')) 
-          ? [
-              { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
-              { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
-              { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
-              { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-              { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-              { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
-              { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
-              { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
-              { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
-              { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
-              { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
-              { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
-              { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
-              { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
-              { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
-              { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
-              { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
-              { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] },
-            ]
-          : []
+        styles: isDark ? darkMapStyles : []
       });
+      // Guardar referência global para poder acessar depois
+      window._WACS_DASHBOARD_MAP_INSTANCE = map;
       
       // Adicionar marcadores de exemplo (locais acessíveis)
       const accessibleLocations = [
@@ -360,6 +366,17 @@ function initMap() {
       
       document.head.appendChild(mapStyles);
       
+      // Adicionar listener para troca de tema
+      if (!window._WACS_DASHBOARD_THEME_LISTENER) {
+        window._WACS_DASHBOARD_THEME_LISTENER = true;
+        document.addEventListener('themechange', () => {
+          const isDarkNow = document.body.classList.contains('dark-theme');
+          const styles = isDarkNow ? window._WACS_DASHBOARD_MAP_STYLES.dark : window._WACS_DASHBOARD_MAP_STYLES.light;
+          if (window._WACS_DASHBOARD_MAP_INSTANCE) {
+            window._WACS_DASHBOARD_MAP_INSTANCE.setOptions({ styles });
+          }
+        });
+      }
     } catch (error) {
       console.error('Erro ao inicializar o mapa:', error);
     mapContainer.innerHTML = `

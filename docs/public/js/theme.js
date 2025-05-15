@@ -22,6 +22,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Função para alternar o tema
     function toggleTheme() {
+    // Disparar evento customizado após alternar o tema
+    const fireThemeChange = () => {
+        const event = new Event('themechange');
+        document.dispatchEvent(event);
+    };
         // Obtem o estado atual do checkbox
         const isDark = themeSwitch.checked;
         
@@ -40,6 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(() => {
             document.body.classList.remove('theme-transition');
         }, 1000);
+        // Notificar outros componentes sobre a troca de tema
+        fireThemeChange();
     }
     
     // Adiciona evento de change ao checkbox

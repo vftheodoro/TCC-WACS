@@ -2763,6 +2763,37 @@
         
         // Inicializar mapa principal
         function initMap() {
+            // --- Adiciona sincronização do tema do mapa principal ---
+            const darkMapStyles = [
+                { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.fill", stylers: [{ color: "#746855" }] },
+                { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+                { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+                { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+                { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+                { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+                { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+                { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+                { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+                { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+                { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+                { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#515c6d" }] },
+                { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+            ];
+            // Listener para troca de tema
+            document.removeEventListener('themechange', window._wacs_main_map_theme_listener);
+            window._wacs_main_map_theme_listener = function() {
+                if (window.mainMap) {
+                    const isDark = document.body.classList.contains('dark-theme');
+                    window.mainMap.setOptions({ styles: isDark ? darkMapStyles : [] });
+                }
+            };
+            document.addEventListener('themechange', window._wacs_main_map_theme_listener);
+
             // Configuração do mapa principal na dashboard
             const mapContainer = document.querySelector('.map-container');
             if (mapContainer) {
@@ -2777,7 +2808,11 @@
                     fullscreenControl: true
                 };
                 
-                mainMap = new google.maps.Map(mapContainer, mapOptions);
+                window.mainMap = new google.maps.Map(mapContainer, mapOptions);
+                
+                // Aplica o estilo correto no carregamento inicial
+                const isDark = document.body.classList.contains('dark-theme');
+                window.mainMap.setOptions({ styles: isDark ? darkMapStyles : [] });
                 
                 // Carregar os locais acessíveis para o mapa
                 loadLocationsForMap();
