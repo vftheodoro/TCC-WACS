@@ -1796,6 +1796,64 @@
         .feature-rating-badge .feature-name {
             font-weight: 500;
         }
+
+        /* Estilos para o input de arquivo */
+        .form-group input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px dashed var(--border-color, #d1d5db);
+            border-radius: 8px;
+            background: var(--input-bg, #f9fafb);
+            color: var(--text-color, #1f2937);
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .form-group input[type="file"]:hover {
+            border-color: var(--primary-color, #0055b3);
+            background-color: rgba(0, 85, 179, 0.05);
+        }
+
+        body.dark-theme .form-group input[type="file"] {
+            border-color: var(--dark-border, #2d3748);
+            background: var(--dark-input-bg, #1a1a2e);
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        body.dark-theme .form-group input[type="file"]:hover {
+            border-color: var(--dark-primary, #4A90E2);
+            background-color: rgba(74, 144, 226, 0.1);
+        }
+
+        .form-group .form-text {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.875rem;
+            color: var(--text-muted, #6b7280);
+        }
+
+        body.dark-theme .form-group .form-text {
+            color: var(--dark-text-muted, #9ca3af);
+        }
+
+        /* Estilos para o botão de submit durante o carregamento */
+        .submit-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .fa-spinner {
+            margin-right: 0.5rem;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .fa-spin {
+            animation: spin 1s linear infinite;
+        }
     </style>
 </head>
 <body>
@@ -2064,8 +2122,9 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="locationImage">URL da Imagem (opcional)</label>
-                    <input type="url" id="locationImage" placeholder="https://exemplo.com/imagem.jpg">
+                    <label for="locationImage">Imagem do Local</label>
+                    <input type="file" id="locationImage" accept="image/*" required>
+                    <small class="form-text">Selecione uma imagem do local (máximo 5MB)</small>
                 </div>
                 <button type="submit" class="submit-btn">Salvar Local</button>
             </form>
@@ -2111,6 +2170,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     <script src="../public/js/theme.js"></script>
     <script src="../public/js/navbar-modern.js"></script>
     <script src="../public/js/env-config.js"></script>
@@ -2588,7 +2648,7 @@
             }
             
             // Adicionar local ao enviar o formulário
-            form.addEventListener('submit', function(e) {
+            form.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 
                 // Verificar se o usuário está autenticado
@@ -2601,9 +2661,15 @@
                 // Obter valores do formulário
                 const name = document.getElementById('locationName').value;
                 const address = document.getElementById('locationAddress').value;
-                const imageUrl = document.getElementById('locationImage').value || 'https://via.placeholder.com/300x150?text=Local+Acessível';
+                const imageFile = document.getElementById('locationImage').files[0];
                 const lat = parseFloat(document.getElementById('locationLat').value);
                 const lng = parseFloat(document.getElementById('locationLng').value);
+                
+                // Validar tamanho da imagem (máximo 5MB)
+                if (imageFile.size > 5 * 1024 * 1024) {
+                    alert('A imagem deve ter no máximo 5MB.');
+                    return;
+                }
                 
                 // Coletar opções de acessibilidade selecionadas
                 const accessibilityOptions = Array.from(document.querySelectorAll('.accessibility-checkbox:checked'))
@@ -2620,49 +2686,67 @@
                     alert('Por favor, selecione um local válido no mapa.');
                     return;
                 }
-                
-                // Preparar objeto para o Firestore
-                const locationData = {
-                    name: name,
-                    address: address,
-                    accessibilityFeatures: accessibilityOptions,
-                    imageUrl: imageUrl,
-                    location: new firebase.firestore.GeoPoint(lat, lng),
-                    userId: user.uid,
-                    userName: user.displayName || user.email.split('@')[0],
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    rating: 0,
-                    reviewCount: 0
-                };
-                
-                // Salvar no Firestore
-                firebase.firestore().collection('accessibleLocations').add(locationData)
-                    .then((docRef) => {
-                        // Adicionar o ID do documento aos dados
-                        locationData.id = docRef.id;
-                        
-                        // Atualizar a UI
-                        addLocationToUI(locationData);
-                        
-                        // Resetar o formulário e fechar o modal
-                        form.reset();
-                        modal.style.display = 'none';
-                        
-                        // Mostrar mensagem de sucesso
-                        alert('Local adicionado com sucesso!');
-                        
-                        // Atualizar contador de contribuições do usuário
-                        updateUserContributionCount();
-                        
-                        // Atualizar o mapa principal (se disponível)
-                        if (typeof updateMainMap === 'function') {
-                            updateMainMap();
-                        }
-                    })
-                    .catch((error) => {
-                        console.error('Erro ao adicionar local:', error);
-                        alert('Ocorreu um erro ao adicionar o local. Por favor, tente novamente.');
-                    });
+
+                try {
+                    // Mostrar indicador de carregamento
+                    const submitBtn = form.querySelector('.submit-btn');
+                    const originalBtnText = submitBtn.innerHTML;
+                    submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Salvando...';
+                    submitBtn.disabled = true;
+
+                    // Upload da imagem para o Firebase Storage
+                    const storageRef = firebase.storage().ref();
+                    const fileName = `${user.uid}_${Date.now()}_${imageFile.name}`;
+                    const imageRef = storageRef.child(`locations/${fileName}`);
+                    await imageRef.put(imageFile);
+                    const imageUrl = await imageRef.getDownloadURL();
+                    
+                    // Preparar objeto para o Firestore
+                    const locationData = {
+                        name: name,
+                        address: address,
+                        accessibilityFeatures: accessibilityOptions,
+                        imageUrl: imageUrl,
+                        location: new firebase.firestore.GeoPoint(lat, lng),
+                        userId: user.uid,
+                        userName: user.displayName || user.email.split('@')[0],
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        rating: 0,
+                        reviewCount: 0
+                    };
+                    
+                    // Salvar no Firestore
+                    const docRef = await firebase.firestore().collection('accessibleLocations').add(locationData);
+                    
+                    // Adicionar o ID do documento aos dados
+                    locationData.id = docRef.id;
+                    
+                    // Atualizar a UI
+                    addLocationToUI(locationData);
+                    
+                    // Resetar o formulário e fechar o modal
+                    form.reset();
+                    modal.style.display = 'none';
+                    
+                    // Mostrar mensagem de sucesso
+                    alert('Local adicionado com sucesso!');
+                    
+                    // Atualizar contador de contribuições do usuário
+                    updateUserContributionCount();
+                    
+                    // Atualizar o mapa principal (se disponível)
+                    if (typeof updateMainMap === 'function') {
+                        updateMainMap();
+                    }
+                } catch (error) {
+                    console.error('Erro ao adicionar local:', error);
+                    alert('Ocorreu um erro ao adicionar o local. Por favor, tente novamente.');
+                } finally {
+                    // Restaurar botão de envio
+                    const submitBtn = form.querySelector('.submit-btn');
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                }
             });
             
             // Função para adicionar um novo local à interface
@@ -3720,4 +3804,4 @@
         });
     </script>
 </body>
-</html> </html> 
+</html> 
