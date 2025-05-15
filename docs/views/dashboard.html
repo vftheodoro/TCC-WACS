@@ -1705,6 +1705,56 @@
             font-weight: 600;
             font-size: 0.875rem;
         }
+        
+        /* Estilos para deletar mensagens */
+        .message-delete-btn {
+            position: absolute;
+            top: 0.25rem;
+            right: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            cursor: pointer;
+            color: rgba(255, 255, 255, 0.6);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.8rem;
+        }
+        
+        .chat-message.received .message-delete-btn {
+            color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .chat-message:hover .message-delete-btn {
+            opacity: 1;
+        }
+        
+        .message-delete-btn:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .chat-message.received .message-delete-btn:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+            color: rgba(0, 0, 0, 0.8);
+        }
+        
+        /* Mensagem apagada */
+        .deleted-message {
+            font-style: italic;
+            opacity: 0.7;
+        }
+        
+        .deleted-message i {
+            margin-right: 0.25rem;
+        }
+        
+        body.dark-theme .chat-message .message-delete-btn:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
     </style>
 </head>
 <body>
@@ -3280,10 +3330,11 @@
                 // Ouvir por novas mensagens em tempo real
                 db.collection('chatMessages')
                     .orderBy('timestamp', 'desc')
-                    .limit(1)
+                    .limit(50)
                     .onSnapshot((snapshot) => {
                         snapshot.docChanges().forEach((change) => {
                             if (change.type === 'added') {
+                                // Nova mensagem adicionada
                                 const message = {id: change.doc.id, ...change.doc.data()};
                                 
                                 // Verificar se a mensagem já está na UI (para evitar duplicatas)
@@ -3309,6 +3360,25 @@
                                     } else {
                                         addMessageToUI(message);
                                         scrollToBottom();
+                                    }
+                                }
+                            } else if (change.type === 'modified') {
+                                // Mensagem modificada (ex: apagada)
+                                const message = {id: change.doc.id, ...change.doc.data()};
+                                const messageElement = document.getElementById(`message-${message.id}`);
+                                
+                                // Se a mensagem foi apagada, atualizar na UI
+                                if (message.deleted && messageElement) {
+                                    const messageText = messageElement.querySelector('.message-text');
+                                    if (messageText) {
+                                        messageText.innerHTML = `<i class="fas fa-ban"></i> Esta mensagem foi apagada`;
+                                        messageText.classList.add('deleted-message');
+                                    }
+                                    
+                                    // Remover o botão de apagar se existir
+                                    const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                                    if (deleteBtn) {
+                                        deleteBtn.remove();
                                     }
                                 }
                             }
@@ -3369,6 +3439,10 @@
                 const messageElement = document.createElement('div');
                 messageElement.className = `chat-message ${isCurrentUser ? 'sent' : 'received'}`;
                 messageElement.id = `message-${message.id}`;
+                messageElement.setAttribute('data-message-id', message.id);
+                
+                // Verificar se a mensagem foi apagada
+                const isDeleted = message.deleted === true;
                 
                 // Formatar horário
                 const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
@@ -3390,11 +3464,24 @@
                     }
                 }
                 
+                // Criar HTML da mensagem com base no status (apagada ou não)
+                let messageText = '';
+                if (isDeleted) {
+                    messageText = `<p class="message-text deleted-message"><i class="fas fa-ban"></i> Esta mensagem foi apagada</p>`;
+                } else {
+                    messageText = `<p class="message-text">${escapeHtml(message.text)}</p>`;
+                    
+                    // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
+                    if (isCurrentUser) {
+                        messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
+                    }
+                }
+                
                 // Criar HTML da mensagem
                 if (isCurrentUser) {
                     messageElement.innerHTML = `
                         <div class="message-content">
-                            <p class="message-text">${escapeHtml(message.text)}</p>
+                            ${messageText}
                             <div class="message-time">${timeFormatted}</div>
                         </div>
                         <div class="sender-info">
@@ -3407,13 +3494,26 @@
                             ${photoContent}
                             <div class="sender-name">${message.userName || 'Usuário'}</div>
                         </div>
-                        <p class="message-text">${escapeHtml(message.text)}</p>
+                        ${messageText}
                         <div class="message-time">${timeFormatted}</div>
                     `;
                 }
                 
                 // Adicionar ao container
                 chatMessages.appendChild(messageElement);
+                
+                // Adicionar evento para o botão de apagar, se a mensagem não estiver apagada
+                if (!isDeleted && isCurrentUser) {
+                    const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                    if (deleteBtn) {
+                        deleteBtn.addEventListener('click', function() {
+                            const messageId = this.getAttribute('data-message-id');
+                            if (confirm('Tem certeza que deseja apagar esta mensagem?')) {
+                                deleteMessage(messageId);
+                            }
+                        });
+                    }
+                }
             }
             
             // Função auxiliar para escapar HTML (evitar injeção de código)
@@ -3429,6 +3529,55 @@
             // Rolar chat para a última mensagem
             function scrollToBottom() {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Função para apagar uma mensagem
+            function deleteMessage(messageId) {
+                if (!messageId || !currentUser) return;
+                
+                // Buscar a mensagem primeiro para confirmar que é do usuário atual
+                db.collection('chatMessages').doc(messageId).get()
+                    .then(doc => {
+                        if (doc.exists) {
+                            const message = doc.data();
+                            
+                            // Verificar se a mensagem pertence ao usuário atual
+                            if (message.userId === currentUser.uid) {
+                                // Atualizar a mensagem como apagada ao invés de excluir
+                                return db.collection('chatMessages').doc(messageId).update({
+                                    deleted: true,
+                                    deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+                                });
+                            } else {
+                                throw new Error('Você só pode apagar suas próprias mensagens');
+                            }
+                        } else {
+                            throw new Error('Mensagem não encontrada');
+                        }
+                    })
+                    .then(() => {
+                        console.log('Mensagem apagada com sucesso');
+                        
+                        // Atualizar a UI - encontrar a mensagem na UI e marcar como apagada
+                        const messageElement = document.getElementById(`message-${messageId}`);
+                        if (messageElement) {
+                            const messageText = messageElement.querySelector('.message-text');
+                            if (messageText) {
+                                messageText.innerHTML = `<i class="fas fa-ban"></i> Esta mensagem foi apagada`;
+                                messageText.classList.add('deleted-message');
+                            }
+                            
+                            // Remover o botão de apagar
+                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                            if (deleteBtn) {
+                                deleteBtn.remove();
+                            }
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao apagar mensagem:', error);
+                        alert('Erro ao apagar mensagem: ' + error.message);
+                    });
             }
             
             // Inicializar chat se o Firebase estiver disponível
