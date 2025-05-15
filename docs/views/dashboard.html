@@ -1755,6 +1755,47 @@
         body.dark-theme .chat-message .message-delete-btn:hover {
             background-color: rgba(255, 255, 255, 0.1);
         }
+        
+        /* Estilos para as avaliações detalhadas de acessibilidade */
+        .feature-ratings-detail {
+            margin-top: 0.75rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .feature-rating-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background-color: var(--accent-color, #e0eaff);
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+        
+        body.dark-theme .feature-rating-badge {
+            background-color: var(--dark-accent, #1E293B);
+        }
+        
+        .feature-rating-badge i {
+            color: var(--primary-color, #0055b3);
+            font-size: 0.85rem;
+        }
+        
+        body.dark-theme .feature-rating-badge i {
+            color: var(--dark-primary, #4A90E2);
+        }
+        
+        .feature-rating-badge .feature-stars {
+            display: flex;
+            color: #fbbf24;
+            margin-left: 0.3rem;
+        }
+        
+        .feature-rating-badge .feature-name {
+            font-weight: 500;
+        }
     </style>
 </head>
 <body>
@@ -2085,19 +2126,22 @@
             
             let starsHTML = '';
             
+            // Classes diferentes baseadas no tamanho
+            let starClass = size === 'small' ? 'fa-xs' : '';
+            
             // Estrelas cheias
             for (let i = 0; i < fullStars; i++) {
-                starsHTML += '<i class="fas fa-star"></i>';
+                starsHTML += `<i class="fas fa-star ${starClass}"></i>`;
             }
             
             // Meia estrela (se aplicável)
             if (hasHalfStar) {
-                starsHTML += '<i class="fas fa-star-half-alt"></i>';
+                starsHTML += `<i class="fas fa-star-half-alt ${starClass}"></i>`;
             }
             
             // Estrelas vazias
             for (let i = 0; i < emptyStars; i++) {
-                starsHTML += '<i class="far fa-star"></i>';
+                starsHTML += `<i class="far fa-star ${starClass}"></i>`;
             }
             
             return starsHTML;
@@ -3141,78 +3185,147 @@
             // Abrir modal
             modal.style.display = 'block';
             
-            // Carregar todas as avaliações
-            firebase.firestore().collection('reviews')
-                .where('locationId', '==', locationId)
-                .get()
-                .then((querySnapshot) => {
-                    if (querySnapshot.empty) {
-                        reviewsList.innerHTML = '<p class="no-reviews">Nenhuma avaliação ainda.</p>';
-                        locationInfo.innerHTML = `
-                            <h3>${locationName}</h3>
-                            <p>Nenhuma avaliação ainda.</p>
-                        `;
-                        return;
+            // Buscar informações do local para obter os recursos de acessibilidade
+            db.collection('accessibleLocations').doc(locationId).get()
+                .then(locationDoc => {
+                    if (!locationDoc.exists) {
+                        throw new Error('Local não encontrado');
                     }
                     
-                    // Ordenar avaliações por data
-                    const reviews = querySnapshot.docs.map(doc => ({
-                        id: doc.id,
-                        ...doc.data()
-                    })).sort((a, b) => {
-                        const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
-                        const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
-                        return dateB - dateA;
-                    });
+                    const locationData = locationDoc.data();
+                    const accessibilityFeatures = locationData.accessibilityFeatures || [];
                     
-                    // Calcular médias
-                    // Atualizar informações do local
-                    const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
-                    locationInfo.innerHTML = `
-                        <h3>${locationName}</h3>
-                        <p>Média: ${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? 'avaliação' : 'avaliações'})</p>
-                    `;
+                    // Mapear recursos para ícones e nomes
+                    const featureMap = {
+                        'wheelchair': { icon: 'fa-wheelchair', name: 'Cadeira de Rodas' },
+                        'blind': { icon: 'fa-walking', name: 'Piso Tátil' },
+                        'deaf': { icon: 'fa-arrow-up-right-from-square', name: 'Rampa' },
+                        'elevator': { icon: 'fa-elevator', name: 'Elevador' },
+                        'parking': { icon: 'fa-restroom', name: 'Banheiro Adaptado' }
+                    };
                     
-                    // Renderizar lista de avaliações
-                    reviewsList.innerHTML = reviews.map(review => {
-                        const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
-                        const formattedDate = date.toLocaleDateString('pt-BR');
-                        
-                        return `
-                            <div class="review-item-full">
-                                <div class="review-header">
-                                    <span class="review-author">${review.userName}</span>
-                                    <span class="review-date">${formattedDate}</span>
+                    // Agora carregar todas as avaliações para este local
+                    return db.collection('reviews')
+                        .where('locationId', '==', locationId)
+                        .get()
+                        .then((querySnapshot) => {
+                            if (querySnapshot.empty) {
+                                reviewsList.innerHTML = '<p class="no-reviews">Nenhuma avaliação ainda.</p>';
+                                locationInfo.innerHTML = `
+                                    <h3>${locationName}</h3>
+                                    <p>Nenhuma avaliação ainda.</p>
+                                `;
+                                return;
+                            }
+                            
+                            // Ordenar avaliações por data
+                            const reviews = querySnapshot.docs.map(doc => ({
+                                id: doc.id,
+                                ...doc.data()
+                            })).sort((a, b) => {
+                                const dateA = a.createdAt ? a.createdAt.toDate() : new Date(0);
+                                const dateB = b.createdAt ? b.createdAt.toDate() : new Date(0);
+                                return dateB - dateA;
+                            });
+                            
+                            // Calcular médias
+                            const averageRating = reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length;
+                            
+                            // Calcular médias por recurso de acessibilidade
+                            const featureRatingTotals = {};
+                            const featureRatingCounts = {};
+                            
+                            reviews.forEach(review => {
+                                if (review.featureRatings) {
+                                    Object.entries(review.featureRatings).forEach(([feature, rating]) => {
+                                        featureRatingTotals[feature] = (featureRatingTotals[feature] || 0) + rating;
+                                        featureRatingCounts[feature] = (featureRatingCounts[feature] || 0) + 1;
+                                    });
+                                }
+                            });
+                            
+                            // Calcular médias finais
+                            const featureAverages = {};
+                            Object.keys(featureRatingTotals).forEach(feature => {
+                                featureAverages[feature] = featureRatingTotals[feature] / featureRatingCounts[feature];
+                            });
+                            
+                            // Atualizar informações do local
+                            let featuresHTML = '';
+                            accessibilityFeatures.forEach(feature => {
+                                if (featureMap[feature] && featureAverages[feature]) {
+                                    const average = featureAverages[feature];
+                                    featuresHTML += `
+                                        <div class="feature-rating-badge">
+                                            <i class="fas ${featureMap[feature].icon}"></i>
+                                            <span class="feature-name">${featureMap[feature].name}</span>:
+                                            <span class="feature-stars">${renderRatingStars(average, 'small')}</span>
+                                            <span>(${average.toFixed(1)})</span>
+                                        </div>
+                                    `;
+                                }
+                            });
+                            
+                            locationInfo.innerHTML = `
+                                <h3>${locationName}</h3>
+                                <p>Média: ${averageRating.toFixed(1)} (${reviews.length} ${reviews.length === 1 ? 'avaliação' : 'avaliações'})</p>
+                                <div class="feature-ratings-detail">
+                                    ${featuresHTML}
                                 </div>
-                                <div class="review-stars">
-                                    ${renderRatingStars(review.rating)}
-                                </div>
-                                ${review.comment ? `<p class="review-text">${review.comment}</p>` : ''}
-                            </div>
-                        `;
-                    }).join('');
+                            `;
+                            
+                            // Renderizar lista de avaliações
+                            reviewsList.innerHTML = reviews.map(review => {
+                                const date = review.createdAt ? new Date(review.createdAt.toDate()) : new Date();
+                                const formattedDate = date.toLocaleDateString('pt-BR');
+                                
+                                // Gerar badges para cada recurso avaliado
+                                let featureRatingsHTML = '';
+                                if (review.featureRatings && Object.keys(review.featureRatings).length > 0) {
+                                    featureRatingsHTML = '<div class="feature-ratings-detail">';
+                                    
+                                    Object.entries(review.featureRatings).forEach(([feature, rating]) => {
+                                        if (featureMap[feature]) {
+                                            featureRatingsHTML += `
+                                                <div class="feature-rating-badge">
+                                                    <i class="fas ${featureMap[feature].icon}"></i>
+                                                    <span class="feature-name">${featureMap[feature].name}</span>:
+                                                    <div class="feature-stars">
+                                                        ${Array(rating).fill('<i class="fas fa-star"></i>').join('')}
+                                                    </div>
+                                                </div>
+                                            `;
+                                        }
+                                    });
+                                    
+                                    featureRatingsHTML += '</div>';
+                                }
+                                
+                                return `
+                                    <div class="review-item-full">
+                                        <div class="review-header">
+                                            <span class="review-author">${review.userName}</span>
+                                            <span class="review-date">${formattedDate}</span>
+                                        </div>
+                                        <div class="review-stars">
+                                            ${renderRatingStars(review.rating)}
+                                        </div>
+                                        ${review.comment ? `<p class="review-text">${review.comment}</p>` : ''}
+                                        ${featureRatingsHTML}
+                                    </div>
+                                `;
+                            }).join('');
+                        });
                 })
                 .catch((error) => {
                     console.error('Erro ao carregar avaliações:', error);
                     reviewsList.innerHTML = '<p class="review-error">Erro ao carregar avaliações. Por favor, tente novamente.</p>';
+                    locationInfo.innerHTML = `
+                        <h3>${locationName}</h3>
+                        <p class="review-error">Erro ao carregar avaliações: ${error.message}</p>
+                    `;
                 });
         }
-
-        // Adicionar evento para fechar o modal de todas as avaliações
-        document.addEventListener('DOMContentLoaded', function() {
-            const allReviewsModal = document.getElementById('allReviewsModal');
-            const closeAllReviewsModal = allReviewsModal.querySelector('.close-modal');
-            
-            closeAllReviewsModal.addEventListener('click', function() {
-                allReviewsModal.style.display = 'none';
-            });
-            
-            window.addEventListener('click', function(event) {
-                if (event.target === allReviewsModal) {
-                    allReviewsModal.style.display = 'none';
-                }
-            });
-        });
         // ... existing code ...
     </script>
 
@@ -3586,5 +3699,25 @@
             }
         });
     </script>
+
+    <script>
+        // ... existing code ...
+        
+        // Adicionar evento para fechar o modal de todas as avaliações
+        document.addEventListener('DOMContentLoaded', function() {
+            const allReviewsModal = document.getElementById('allReviewsModal');
+            const closeAllReviewsModal = allReviewsModal.querySelector('.close-modal');
+            
+            closeAllReviewsModal.addEventListener('click', function() {
+                allReviewsModal.style.display = 'none';
+            });
+            
+            window.addEventListener('click', function(event) {
+                if (event.target === allReviewsModal) {
+                    allReviewsModal.style.display = 'none';
+                }
+            });
+        });
+    </script>
 </body>
-</html> 
+</html> </html> 
