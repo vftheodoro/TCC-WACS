@@ -1221,6 +1221,9 @@
             align-self: flex-end;
             margin-left: auto;
             border-bottom-right-radius: 4px;
+            display: flex;
+            align-items: center;
+            flex-direction: row-reverse;
         }
         
         .chat-message.received {
@@ -1240,10 +1243,50 @@
             color: var(--dark-text, #e2e8f0);
         }
         
-        .chat-message .sender-name {
-            font-weight: 600;
+        .chat-message .sender-info {
+            display: flex;
+            align-items: center;
             margin-bottom: 0.25rem;
-            font-size: 0.875rem;
+        }
+        
+        .chat-message.sent .sender-info {
+            margin-left: 0.75rem;
+            margin-bottom: 0;
+        }
+        
+        .chat-message.sent .message-content {
+            flex: 1;
+        }
+        
+        .chat-message .sender-photo {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--primary-color, #0055b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .chat-message.sent .sender-photo {
+            margin-right: 0;
+            background-color: white;
+            color: var(--primary-color, #0055b3);
+        }
+        
+        body.dark-theme .chat-message .sender-photo {
+            background-color: var(--dark-primary, #4A90E2);
+        }
+        
+        body.dark-theme .chat-message.sent .sender-photo {
+            background-color: white;
+            color: var(--dark-primary, #4A90E2);
         }
         
         .chat-message .message-text {
@@ -1308,12 +1351,12 @@
         #chatMessageInput:focus {
             outline: none;
             border-color: var(--primary-color, #0055b3);
-            box-shadow: 0 0 0 2px rgba(0, 85, 179, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 85, 179, 0.1);
         }
         
         body.dark-theme #chatMessageInput:focus {
             border-color: var(--dark-primary, #4A90E2);
-            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
         }
         
         .chat-send-btn {
@@ -1652,6 +1695,16 @@
             font-size: 0.9rem;
             color: #fbbf24;
         }
+
+        body.dark-theme .chat-message.sent .sender-photo {
+            background-color: white;
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .chat-message .sender-name {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
     </style>
 </head>
 <body>
@@ -1731,7 +1784,7 @@
                         </div>
                         <div class="stat-content">
                             <h3>Locais Acessíveis</h3>
-                            <p>125</p>
+                            <p></p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -1740,7 +1793,7 @@
                         </div>
                         <div class="stat-content">
                             <h3>Colaboradores</h3>
-                            <p>43</p>
+                            <p></p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -1749,7 +1802,7 @@
                         </div>
                         <div class="stat-content">
                             <h3>Suas Contribuições</h3>
-                            <p>0</p>
+                            <p></p>
                         </div>
                     </div>
                 </div>
@@ -3173,22 +3226,44 @@
                             messages.push({id: doc.id, ...doc.data()});
                         });
                         
-                        // Exibir em ordem cronológica (da mais antiga para a mais recente)
-                        messages.reverse().forEach(message => {
-                            addMessageToUI(message);
+                        // Obter fotos de perfil para mensagens antigas que não possuem essa informação
+                        const messagePromises = messages.map(async (message) => {
+                            if (!message.photoURL && message.userId) {
+                                try {
+                                    // Buscar dados do usuário para obter a foto de perfil
+                                    const userDoc = await db.collection('users').doc(message.userId).get();
+                                    if (userDoc.exists) {
+                                        const userData = userDoc.data();
+                                        if (userData.photoURL) {
+                                            message.photoURL = userData.photoURL;
+                                        }
+                                    }
+                                } catch (error) {
+                                    console.error("Erro ao buscar foto de perfil:", error);
+                                }
+                            }
+                            return message;
                         });
                         
-                        // Rolar para a mensagem mais recente
-                        scrollToBottom();
-                        
-                        // Se não houver mensagens, mostrar mensagem inicial
-                        if (messages.length === 0) {
-                            chatMessages.innerHTML = `
-                                <div class="system-message">
-                                    <p>Ainda não há mensagens. Seja o primeiro a iniciar uma conversa!</p>
-                                </div>
-                            `;
-                        }
+                        // Quando todas as promessas forem resolvidas
+                        Promise.all(messagePromises).then(updatedMessages => {
+                            // Exibir em ordem cronológica (da mais antiga para a mais recente)
+                            updatedMessages.reverse().forEach(message => {
+                                addMessageToUI(message);
+                            });
+                            
+                            // Rolar para a mensagem mais recente
+                            scrollToBottom();
+                            
+                            // Se não houver mensagens, mostrar mensagem inicial
+                            if (updatedMessages.length === 0) {
+                                chatMessages.innerHTML = `
+                                    <div class="system-message">
+                                        <p>Ainda não há mensagens. Seja o primeiro a iniciar uma conversa!</p>
+                                    </div>
+                                `;
+                            }
+                        });
                     })
                     .catch((error) => {
                         console.error("Erro ao carregar mensagens do chat:", error);
@@ -3213,8 +3288,28 @@
                                 
                                 // Verificar se a mensagem já está na UI (para evitar duplicatas)
                                 if (!document.getElementById(`message-${message.id}`)) {
-                                    addMessageToUI(message);
-                                    scrollToBottom();
+                                    // Verificar se a mensagem tem a URL da foto e, caso não tenha, buscar
+                                    if (!message.photoURL && message.userId) {
+                                        db.collection('users').doc(message.userId).get()
+                                            .then(userDoc => {
+                                                if (userDoc.exists) {
+                                                    const userData = userDoc.data();
+                                                    if (userData.photoURL) {
+                                                        message.photoURL = userData.photoURL;
+                                                    }
+                                                }
+                                                addMessageToUI(message);
+                                                scrollToBottom();
+                                            })
+                                            .catch(error => {
+                                                console.error("Erro ao buscar foto do usuário:", error);
+                                                addMessageToUI(message);
+                                                scrollToBottom();
+                                            });
+                                    } else {
+                                        addMessageToUI(message);
+                                        scrollToBottom();
+                                    }
                                 }
                             }
                         });
@@ -3248,7 +3343,8 @@
                         userId: currentUser.uid,
                         userName: currentUser.displayName || 'Usuário',
                         timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        userEmail: currentUser.email
+                        userEmail: currentUser.email,
+                        photoURL: currentUser.photoURL || ''
                     };
                     
                     // Salvar no Firestore
@@ -3278,12 +3374,43 @@
                 const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
                 const timeFormatted = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
                 
+                // Gerar conteúdo da foto de perfil
+                let photoContent = '';
+                
+                // Determinar foto de perfil
+                if (message.photoURL) {
+                    photoContent = `<div class="sender-photo" style="background-image: url('${message.photoURL}')"></div>`;
+                } else {
+                    // Se não tiver foto, mostrar as iniciais ou ícone
+                    if (message.userName && message.userName !== 'Usuário') {
+                        const initials = message.userName.split(' ').map(name => name[0]).join('').toUpperCase();
+                        photoContent = `<div class="sender-photo">${initials}</div>`;
+                    } else {
+                        photoContent = `<div class="sender-photo"><i class="fas fa-user" style="font-size: 0.7rem"></i></div>`;
+                    }
+                }
+                
                 // Criar HTML da mensagem
-                messageElement.innerHTML = `
-                    ${!isCurrentUser ? `<div class="sender-name">${message.userName || 'Usuário'}</div>` : ''}
-                    <p class="message-text">${escapeHtml(message.text)}</p>
-                    <div class="message-time">${timeFormatted}</div>
-                `;
+                if (isCurrentUser) {
+                    messageElement.innerHTML = `
+                        <div class="message-content">
+                            <p class="message-text">${escapeHtml(message.text)}</p>
+                            <div class="message-time">${timeFormatted}</div>
+                        </div>
+                        <div class="sender-info">
+                            ${photoContent}
+                        </div>
+                    `;
+                } else {
+                    messageElement.innerHTML = `
+                        <div class="sender-info">
+                            ${photoContent}
+                            <div class="sender-name">${message.userName || 'Usuário'}</div>
+                        </div>
+                        <p class="message-text">${escapeHtml(message.text)}</p>
+                        <div class="message-time">${timeFormatted}</div>
+                    `;
+                }
                 
                 // Adicionar ao container
                 chatMessages.appendChild(messageElement);
