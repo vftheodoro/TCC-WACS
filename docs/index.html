@@ -448,13 +448,13 @@
                 </div>
             </div>
             <div style="display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;margin-bottom:2.5rem;">
-                <button onclick="goToProtected('views/dashboard.html#chat')" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
+                <button id="btn-chat" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
                     <i class="fas fa-comments"></i> Chat Comunitário
                 </button>
-                <button onclick="goToProtected('views/dashboard.html#locais')" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
+                <button id="btn-locais" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
                     <i class="fas fa-map-marker-alt"></i> Locais Acessíveis
                 </button>
-                <button onclick="goToProtected('views/dashboard.html#contribua')" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
+                <button id="btn-contribua" style="background:#fff;color:#005BFF;font-weight:600;padding:1rem 2rem;border-radius:0.75rem;font-size:1.1rem;display:flex;align-items:center;gap:0.7rem;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.07);transition:all 0.2s;cursor:pointer;">
                     <i class="fas fa-plus-circle"></i> Contribua com Locais
                 </button>
             </div>
@@ -474,32 +474,42 @@
             </div>
 
             <script>
-            // Checagem centralizada de login
-            let currentUser = null;
+            // Função robusta para redirecionar apenas se autenticado
             function goToProtected(page) {
-                if (currentUser) {
+                // Checa o usuário atual do Firebase de modo confiável
+                const user = firebase.auth().currentUser;
+                if (user) {
                     window.location.href = page;
                 } else {
-                    window.location.href = 'views/login/login.html';
-                }
-            }
-            document.addEventListener('DOMContentLoaded', function() {
-                // Checar login
-                if (window.firebase && firebase.auth) {
-                    firebase.auth().onAuthStateChanged(function(user) {
-                        currentUser = user;
-                        if (user) {
-                            // Exibir card de boas-vindas
-                            document.getElementById('welcome-card').style.display = 'flex';
-                            document.getElementById('user-name').textContent = user.displayName || 'Bem-vindo!';
-                            document.getElementById('user-email').textContent = user.email || '';
-                            document.getElementById('user-photo').src = user.photoURL || 'public/images/logo.png';
+                    // Se o usuário ainda não está carregado, aguarde o onAuthStateChanged
+                    firebase.auth().onAuthStateChanged(function(authUser) {
+                        if (authUser) {
+                            window.location.href = page;
                         } else {
-                            document.getElementById('welcome-card').style.display = 'none';
+                            window.location.href = 'views/login/login.html';
                         }
                     });
                 }
-                // Botões de acesso rápido
+            }
+            // Exibir card de boas-vindas conforme login
+            function updateWelcomeCard(user) {
+                const card = document.getElementById('welcome-card');
+                if (user) {
+                    card.style.display = 'flex';
+                    document.getElementById('user-name').textContent = user.displayName || 'Bem-vindo!';
+                    document.getElementById('user-email').textContent = user.email || '';
+                    document.getElementById('user-photo').src = user.photoURL || 'public/images/logo.png';
+                } else {
+                    card.style.display = 'none';
+                }
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                if (window.firebase && firebase.auth) {
+                    firebase.auth().onAuthStateChanged(function(user) {
+                        updateWelcomeCard(user);
+                    });
+                }
+                // Botões de acesso rápido SEMPRE usam checagem de login instantânea
                 document.getElementById('btn-chat').onclick = function() { goToProtected('views/dashboard.html#chat'); };
                 document.getElementById('btn-locais').onclick = function() { goToProtected('views/dashboard.html#locais'); };
                 document.getElementById('btn-contribua').onclick = function() { goToProtected('views/dashboard.html#contribua'); };
