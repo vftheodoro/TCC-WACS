@@ -1,0 +1,131 @@
+# APP-WACS - Documentação
+
+## Visão Geral
+O APP-WACS é um aplicativo de navegação desenvolvido em React Native, focado em fornecer uma experiência de usuário intuitiva e eficiente para navegação em tempo real.
+
+## Tecnologias Principais
+- React Native
+- Expo
+- Redux Toolkit
+- Firebase
+- React Native Maps
+- Jest
+- React Native Testing Library
+
+## Estrutura do Projeto
+```
+src/
+├── app/                    # Configurações do app e ponto de entrada
+├── assets/                 # Recursos estáticos (imagens, fontes, etc)
+├── components/             # Componentes reutilizáveis
+│   ├── common/            # Componentes genéricos
+│   ├── maps/              # Componentes específicos de mapas
+│   └── navigation/        # Componentes de navegação
+├── config/                # Configurações globais
+├── constants/             # Constantes e enums
+├── hooks/                 # Custom hooks
+├── navigation/            # Configuração de navegação
+├── screens/               # Telas da aplicação
+├── services/              # Serviços e APIs
+│   ├── api/              # Integrações com APIs externas
+│   ├── firebase/         # Serviços do Firebase
+│   └── location/         # Serviços de localização
+├── store/                 # Gerenciamento de estado
+│   ├── slices/           # Redux slices
+│   └── selectors/        # Redux selectors
+├── theme/                 # Temas e estilos globais
+└── utils/                 # Funções utilitárias
+```
+
+## Funcionalidades Principais
+1. Navegação em tempo real
+2. Rastreamento de localização
+3. Cálculo de rotas
+4. Instruções de navegação
+5. Modos de transporte
+6. Histórico de rotas
+7. Favoritos
+8. Configurações personalizadas
+
+## Requisitos do Sistema
+- Node.js 16.x ou superior
+- npm 7.x ou superior
+- Expo CLI
+- Android Studio (para desenvolvimento Android)
+- Xcode (para desenvolvimento iOS)
+
+## Instalação
+1. Clone o repositório:
+   git clone https://github.com/seu-usuario/app-wacs.git
+
+2. Instale as dependências:
+   npm install
+
+3. Configure as variáveis de ambiente:
+   - Crie um arquivo .env na raiz do projeto
+   - Adicione as seguintes variáveis:
+     MAPBOX_ACCESS_TOKEN=seu_token
+     FIREBASE_API_KEY=sua_chave
+     FIREBASE_AUTH_DOMAIN=seu_dominio
+     FIREBASE_PROJECT_ID=seu_projeto
+     FIREBASE_STORAGE_BUCKET=seu_bucket
+     FIREBASE_MESSAGING_SENDER_ID=seu_sender_id
+     FIREBASE_APP_ID=seu_app_id
+
+4. Inicie o aplicativo:
+   npm start
+
+## Desenvolvimento
+1. Padrões de Código
+   - Usar componentes funcionais com hooks
+   - Separar lógica em custom hooks
+   - Manter componentes pequenos e focados
+   - Usar PropTypes para tipagem
+
+2. Estado
+   - Redux Toolkit para estado global
+   - Context API para estado de UI
+   - useState para estado local
+   - useReducer para estado complexo
+
+3. Estilização
+   - StyleSheet.create
+   - Temas centralizados
+   - Componentes de UI reutilizáveis
+   - Animações otimizadas
+
+## Testes
+1. Testes Unitários
+   - Jest para testes unitários
+   - React Native Testing Library para testes de componentes
+   - Cobertura mínima de 80%
+
+2. Testes de Integração
+   - Testes de fluxos de navegação
+   - Testes de integração com APIs
+   - Testes de integração com Firebase
+   - Testes de integração com mapas
+
+## Deploy
+1. Build
+   - npm run build:android
+   - npm run build:ios
+
+2. Publicação
+   - Expo publish
+   - Google Play Store
+   - Apple App Store
+
+## Contribuição
+1. Fork o projeto
+2. Crie uma branch feature (git checkout -b feature/AmazingFeature)
+3. Commit suas mudanças (git commit -m 'Add some AmazingFeature')
+4. Push para a branch (git push origin feature/AmazingFeature)
+5. Abra um Pull Request
+
+## Licença
+Este projeto está licenciado sob a licença MIT - veja o arquivo LICENSE para detalhes.
+
+## Contato
+Seu Nome - seu.email@exemplo.com
+Link do Projeto: https://github.com/seu-usuario/app-wacs 

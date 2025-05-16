@@ -1,0 +1,30 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Regra padrão - negar acesso a tudo a menos que explicitamente permitido
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+    
+    // Fotos de perfil
+    match /profile_pictures/{fileName} {
+      // Permitir leitura pública para imagens de perfil (para visualização)
+      allow read: if true;
+      
+      // Extrair ID do usuário do nome do arquivo (userid_nome_profile_timestamp.jpg)
+      function getUserIdFromFileName() {
+        return fileName.split('_')[0];
+      }
+      
+      // Permitir criação apenas por usuários autenticados e apenas para seu próprio ID
+      allow create: if request.auth != null && 
+                    request.auth.uid == getUserIdFromFileName() &&
+                    request.resource.contentType.matches('image/.*') && 
+                    request.resource.size < 5 * 1024 * 1024; // Máximo 5MB
+      
+      // Permitir atualização e exclusão apenas para o próprio usuário da foto
+      allow update, delete: if request.auth != null && 
+                            request.auth.uid == getUserIdFromFileName();
+    }
+  }
+} 

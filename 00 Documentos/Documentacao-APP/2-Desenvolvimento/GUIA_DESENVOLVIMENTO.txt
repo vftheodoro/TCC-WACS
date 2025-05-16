@@ -1,0 +1,204 @@
+# Guia de Desenvolvimento APP-WACS
+
+## Padrões de Código
+
+### Nomenclatura
+1. Arquivos
+   - Componentes: PascalCase (ex: NavigationScreen.js)
+   - Utilitários: camelCase (ex: formatDistance.js)
+   - Constantes: UPPER_SNAKE_CASE (ex: MAP_STYLE.js)
+   - Testes: [nome].test.js (ex: NavigationScreen.test.js)
+
+2. Componentes
+   - Nomes descritivos e em inglês
+   - Sufixo apropriado (Screen, Component, Container)
+   - Um componente por arquivo
+   - Props documentadas com PropTypes
+
+3. Funções e Variáveis
+   - camelCase para funções e variáveis
+   - Nomes descritivos e em inglês
+   - Prefixos apropriados (is, has, handle, on)
+
+### Estrutura de Componentes
+1. Imports
+   - React e React Native primeiro
+   - Bibliotecas de terceiros
+   - Componentes locais
+   - Utilitários e hooks
+   - Estilos
+
+2. Componente
+   - PropTypes
+   - Estado e hooks
+   - Funções auxiliares
+   - Renderização
+   - Estilos
+
+### Exemplo de Componente
+```javascript
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
+
+const MyComponent = ({ title, onPress }) => {
+  const [state, setState] = React.useState(null);
+
+  const handlePress = () => {
+    // Lógica aqui
+    onPress();
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>{title}</Text>
+    </View>
+  );
+};
+
+MyComponent.propTypes = {
+  title: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  title: {
+    fontSize: 16,
+  },
+});
+
+export default MyComponent;
+```
+
+## Gerenciamento de Estado
+
+### Redux
+1. Slices
+   - Um slice por domínio
+   - Estado inicial definido
+   - Reducers puros
+   - Actions tipadas
+
+2. Selectors
+   - Memoizados com reselect
+   - Um selector por slice
+   - Lógica de transformação
+
+### Context API
+1. Contextos
+   - Um contexto por domínio
+   - Provider com estado
+   - Custom hook para consumo
+
+### Hooks
+1. Custom Hooks
+   - Lógica reutilizável
+   - Nomes descritivos
+   - Documentação clara
+
+## Estilização
+
+### StyleSheet
+1. Organização
+   - Um arquivo de estilos por componente
+   - Nomes descritivos
+   - Reutilização de estilos comuns
+
+2. Temas
+   - Cores centralizadas
+   - Tipografia padronizada
+   - Espaçamentos consistentes
+
+### Animações
+1. Performance
+   - useNativeDriver quando possível
+   - Memoização de valores
+   - Otimização de re-renders
+
+## Navegação
+
+### Estrutura
+1. Tipos
+   - Stack Navigator
+   - Tab Navigator
+   - Drawer Navigator
+
+2. Rotas
+   - Nomes em constantes
+   - Parâmetros tipados
+   - Transições otimizadas
+
+## Testes
+
+### Unitários
+1. Componentes
+   - Renderização
+   - Interações
+   - Props
+   - Estado
+
+2. Redux
+   - Actions
+   - Reducers
+   - Selectors
+
+### Integração
+1. Fluxos
+   - Navegação
+   - Autenticação
+   - Dados
+
+## Performance
+
+### Otimizações
+1. Renderização
+   - useMemo
+   - useCallback
+   - React.memo
+
+2. Memória
+   - Limpeza de recursos
+   - Gerenciamento de estado
+   - Cache de dados
+
+## Segurança
+
+### Dados
+1. Validação
+   - Inputs
+   - Formulários
+   - APIs
+
+2. Armazenamento
+   - AsyncStorage seguro
+   - Tokens
+   - Credenciais
+
+## Debugging
+
+### Ferramentas
+1. React Native Debugger
+2. Flipper
+3. Logs estruturados
+4. Error boundaries
+
+## Deploy
+
+### Processo
+1. Versionamento
+   - SemVer
+   - Changelog
+   - Tags
+
+2. Build
+   - Configurações
+   - Assets
+   - Otimizações
+
+3. Publicação
+   - Expo
+   - Stores
+   - CI/CD 
