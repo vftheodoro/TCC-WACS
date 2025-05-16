@@ -26,12 +26,9 @@ const githubLoginBtn = document.getElementById('githubLogin');
 const registerLink = document.getElementById('registerLink');
 const alertDiv = document.getElementById('alert');
 
-// Configuração de persistência
-auth.setPersistence(
-    rememberCheckbox.checked 
-    ? firebase.auth.Auth.Persistence.LOCAL 
-    : firebase.auth.Auth.Persistence.SESSION
-);
+// Sempre persistente igual sites profissionais
+// (ignora checkbox, sempre LOCAL)
+auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
 
 // Função para atualizar dados do usuário no Firestore
 function updateUserData(user) {
@@ -270,12 +267,3 @@ auth.onAuthStateChanged((user) => {
         console.log('Nenhum usuário logado');
     }
 });
-
-// Atualizar a persistência quando o checkbox for alterado
-rememberCheckbox.addEventListener('change', () => {
-    auth.setPersistence(
-        rememberCheckbox.checked 
-        ? firebase.auth.Auth.Persistence.LOCAL 
-        : firebase.auth.Auth.Persistence.SESSION
-    );
-}); 
