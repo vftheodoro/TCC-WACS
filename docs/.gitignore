@@ -1,5 +1,8 @@
 # Arquivos de ambiente e configuração
-public/js/env-config.js
+# Ignore environment config
+env-config.js
+/public/js/env-config.js
+/public/js/env-config.js
 
 # Dependências
 node_modules/
