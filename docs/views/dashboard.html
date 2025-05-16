@@ -2996,11 +2996,14 @@
                         reviewCount: 0
                     };
                     
-                    // Salvar no Firestore
-                    const docRef = await firebase.firestore().collection('accessibleLocations').add(locationData);
+                    // Usar o nome do local como ID do documento
+                    const docId = name.trim();
+                    
+                    // Salvar no Firestore usando o nome como ID
+                    await firebase.firestore().collection('accessibleLocations').doc(docId).set(locationData);
                     
                     // Adicionar o ID do documento aos dados
-                    locationData.id = docRef.id;
+                    locationData.id = docId;
                     
                     // Atualizar a UI
                     addLocationToUI(locationData);
