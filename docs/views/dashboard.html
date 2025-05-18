@@ -1884,6 +1884,22 @@
             margin: 0;
             color: var(--text-color, #1f2937);
             font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .admin-badge {
+            margin-left: 8px;
+            padding: 2px 8px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        body.dark-theme .admin-badge {
+            background-color: #2E7D32;
         }
 
         .user-profile-info p {
@@ -3732,6 +3748,7 @@
                             currentUser = user;
                             loadChatMessages();
                             setupChatListeners();
+                            addDeleteAllButton(); // Adicionar botão de apagar todas as mensagens
                         } else {
                             // Usuário não logado
                             chatMessages.innerHTML = `
@@ -3891,19 +3908,36 @@
                     // Desabilitar botão para evitar envios duplicados
                     sendButton.disabled = true;
                     
-                    // Criar objeto de mensagem
-                    const message = {
-                        text: messageText,
-                        userId: currentUser.uid,
-                        userName: currentUser.displayName || 'Usuário',
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        userEmail: currentUser.email,
-                        photoURL: currentUser.photoURL || ''
-                    };
-                    
-                    // Salvar no Firestore
+                    // Primeiro, buscar o número da última mensagem
                     db.collection('chatMessages')
-                        .add(message)
+                        .orderBy('messageNumber', 'desc')
+                        .limit(1)
+                        .get()
+                        .then((querySnapshot) => {
+                            let nextMessageNumber = 1; // Valor padrão para primeira mensagem
+                            
+                            if (!querySnapshot.empty) {
+                                const lastMessage = querySnapshot.docs[0].data();
+                                nextMessageNumber = (lastMessage.messageNumber || 0) + 1;
+                            }
+                            
+                            // Criar objeto de mensagem
+                            const message = {
+                                text: messageText,
+                                userId: currentUser.uid,
+                                userName: currentUser.displayName || 'Usuário',
+                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                userEmail: currentUser.email,
+                                photoURL: currentUser.photoURL || '',
+                                messageNumber: nextMessageNumber
+                            };
+                            
+                            // Criar ID do documento com o número da mensagem
+                            const messageId = `mensagem${String(nextMessageNumber).padStart(2, '0')}`;
+                            
+                            // Salvar no Firestore com ID personalizado
+                            return db.collection('chatMessages').doc(messageId).set(message);
+                        })
                         .then(() => {
                             // Limpar input após envio bem-sucedido
                             messageInput.value = '';
@@ -4020,48 +4054,145 @@
             function deleteMessage(messageId) {
                 if (!messageId || !currentUser) return;
                 
-                // Buscar a mensagem primeiro para confirmar que é do usuário atual
+                // Buscar a mensagem primeiro para confirmar que é do usuário atual ou se é admin
                 db.collection('chatMessages').doc(messageId).get()
                     .then(doc => {
                         if (doc.exists) {
                             const message = doc.data();
                             
-                            // Verificar se a mensagem pertence ao usuário atual
-                            if (message.userId === currentUser.uid) {
-                                // Atualizar a mensagem como apagada ao invés de excluir
-                                return db.collection('chatMessages').doc(messageId).update({
-                                    deleted: true,
-                                    deletedAt: firebase.firestore.FieldValue.serverTimestamp()
+                            // Verificar se é admin
+                            return db.collection('users').doc(currentUser.uid).get()
+                                .then(userDoc => {
+                                    const userData = userDoc.data();
+                                    const isAdmin = userData && userData.ADM === 1;
+                                    
+                                    // Permitir apagar se for o dono da mensagem ou se for admin
+                                    if (message.userId === currentUser.uid || isAdmin) {
+                                        // Excluir completamente o documento do Firestore
+                                        return db.collection('chatMessages').doc(messageId).delete();
+                                    } else {
+                                        throw new Error('Você não tem permissão para apagar esta mensagem');
+                                    }
                                 });
-                            } else {
-                                throw new Error('Você só pode apagar suas próprias mensagens');
-                            }
                         } else {
                             throw new Error('Mensagem não encontrada');
                         }
                     })
                     .then(() => {
-                        console.log('Mensagem apagada com sucesso');
+                        console.log('Mensagem excluída com sucesso');
                         
-                        // Atualizar a UI - encontrar a mensagem na UI e marcar como apagada
+                        // Remover a mensagem da UI
                         const messageElement = document.getElementById(`message-${messageId}`);
                         if (messageElement) {
-                            const messageText = messageElement.querySelector('.message-text');
-                            if (messageText) {
-                                messageText.innerHTML = `<i class="fas fa-ban"></i> Esta mensagem foi apagada`;
-                                messageText.classList.add('deleted-message');
-                            }
-                            
-                            // Remover o botão de apagar
-                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
-                            if (deleteBtn) {
-                                deleteBtn.remove();
-                            }
+                            messageElement.remove();
                         }
                     })
                     .catch(error => {
-                        console.error('Erro ao apagar mensagem:', error);
-                        alert('Erro ao apagar mensagem: ' + error.message);
+                        console.error('Erro ao excluir mensagem:', error);
+                        alert('Erro ao excluir mensagem: ' + error.message);
+                    });
+            }
+            
+            // Função para apagar todas as mensagens (apenas para admins)
+            function deleteAllMessages() {
+                if (!currentUser) return;
+                
+                // Verificar se é admin
+                db.collection('users').doc(currentUser.uid).get()
+                    .then(userDoc => {
+                        const userData = userDoc.data();
+                        if (userData && userData.ADM === 1) {
+                            if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat? Esta ação não pode ser desfeita.')) {
+                                // Buscar todas as mensagens
+                                return db.collection('chatMessages').get()
+                                    .then(snapshot => {
+                                        const batch = db.batch();
+                                        snapshot.forEach(doc => {
+                                            batch.update(doc.ref, {
+                                                deleted: true,
+                                                deletedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                                                deletedBy: currentUser.uid
+                                            });
+                                        });
+                                        return batch.commit();
+                                    })
+                                    .then(() => {
+                                        showAlert('Todas as mensagens foram apagadas com sucesso!', 'success');
+                                    });
+                            }
+                        } else {
+                            throw new Error('Apenas administradores podem apagar todas as mensagens');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao apagar todas as mensagens:', error);
+                        showAlert('Erro ao apagar mensagens: ' + error.message, 'error');
+                    });
+            }
+
+            // Adicionar botão de apagar todas as mensagens para admins
+            function addDeleteAllButton() {
+                // Verificar se o usuário é admin
+                db.collection('users').doc(currentUser.uid).get()
+                    .then(userDoc => {
+                        const userData = userDoc.data();
+                        const isAdmin = userData && userData.ADM === 1;
+                        
+                        if (isAdmin) {
+                            // Criar botão de apagar todas as mensagens
+                            const deleteAllBtn = document.createElement('button');
+                            deleteAllBtn.className = 'delete-all-btn';
+                            deleteAllBtn.innerHTML = '<i class="fas fa-trash"></i> Apagar todas as mensagens';
+                            deleteAllBtn.style.marginTop = '1rem';
+                            deleteAllBtn.style.padding = '0.5rem 1rem';
+                            deleteAllBtn.style.backgroundColor = '#dc3545';
+                            deleteAllBtn.style.color = 'white';
+                            deleteAllBtn.style.border = 'none';
+                            deleteAllBtn.style.borderRadius = '4px';
+                            deleteAllBtn.style.cursor = 'pointer';
+                            
+                            // Adicionar evento de clique
+                            deleteAllBtn.addEventListener('click', function() {
+                                if (confirm('Tem certeza que deseja apagar TODAS as mensagens do chat? Esta ação não pode ser desfeita.')) {
+                                    deleteAllMessages();
+                                }
+                            });
+                            
+                            // Adicionar botão após o container do chat
+                            const chatContainer = document.querySelector('.chat-container');
+                            chatContainer.parentNode.insertBefore(deleteAllBtn, chatContainer.nextSibling);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao verificar permissões de admin:', error);
+                    });
+            }
+            
+            // Função para apagar todas as mensagens
+            function deleteAllMessages() {
+                // Buscar todas as mensagens
+                db.collection('chatMessages').get()
+                    .then(querySnapshot => {
+                        // Criar um array de promessas para excluir cada mensagem
+                        const deletePromises = querySnapshot.docs.map(doc => {
+                            return doc.ref.delete();
+                        });
+                        
+                        // Executar todas as exclusões
+                        return Promise.all(deletePromises);
+                    })
+                    .then(() => {
+                        console.log('Todas as mensagens foram excluídas com sucesso');
+                        // Limpar a UI
+                        chatMessages.innerHTML = `
+                            <div class="system-message">
+                                <p>Nenhuma mensagem no chat.</p>
+                            </div>
+                        `;
+                    })
+                    .catch(error => {
+                        console.error('Erro ao excluir todas as mensagens:', error);
+                        alert('Erro ao excluir todas as mensagens: ' + error.message);
                     });
             }
             
@@ -4128,6 +4259,21 @@
 
                 // Preencher informações básicas
                 modalUserName.textContent = userData.displayName || 'Usuário';
+                
+                // Adicionar badge de administrador se ADM === 1
+                if (userData.ADM === 1) {
+                    const adminBadge = document.createElement('span');
+                    adminBadge.className = 'admin-badge';
+                    adminBadge.textContent = 'Administrador';
+                    adminBadge.style.marginLeft = '8px';
+                    adminBadge.style.padding = '2px 8px';
+                    adminBadge.style.backgroundColor = '#4CAF50';
+                    adminBadge.style.color = 'white';
+                    adminBadge.style.borderRadius = '12px';
+                    adminBadge.style.fontSize = '12px';
+                    modalUserName.appendChild(adminBadge);
+                }
+                
                 modalUserEmail.textContent = userData.email || '';
 
                 // Configurar foto do usuário
