@@ -2238,6 +2238,36 @@
         body.dark-theme .stat-label {
             color: var(--dark-text-light, #94a3b8);
         }
+
+        .profile-roles {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            color: white;
+        }
+
+        .admin-badge {
+            background-color: #4CAF50;
+        }
+
+        .user-badge {
+            background-color: #2196F3;
+        }
+
+        body.dark-theme .admin-badge {
+            background-color: #2E7D32;
+        }
+
+        body.dark-theme .user-badge {
+            background-color: #1565C0;
+        }
     </style>
 </head>
 <body>
@@ -2604,6 +2634,7 @@
                 <div class="profile-photo" id="profilePhoto"></div>
                 <div class="profile-info">
                     <h2 class="profile-name" id="profileName"></h2>
+                    <div class="profile-roles" id="profileRoles"></div>
                     <p class="profile-email" id="profileEmail"></p>
                 </div>
             </div>
@@ -2821,6 +2852,11 @@
             // Fechar modal (X)
             closeModalBtn.addEventListener('click', function() {
                 modal.style.display = 'none';
+            });
+
+            // Fechar modal de avaliação (X)
+            closeRateModalBtn.addEventListener('click', function() {
+                rateModal.style.display = 'none';
             });
             
             // Fechar modal ao clicar fora do conteúdo
@@ -3716,6 +3752,7 @@
             const modal = document.getElementById('allReviewsModal');
             const reviewsList = document.getElementById('allReviewsList');
             const locationInfo = document.getElementById('locationReviewsInfo');
+            const closeModalBtn = modal.querySelector('.close-modal');
             
             // Limpar conteúdo anterior
             reviewsList.innerHTML = '<p>Carregando avaliações...</p>';
@@ -3728,6 +3765,11 @@
             
             // Abrir modal
             modal.style.display = 'block';
+            
+            // Adicionar evento de fechamento ao botão X
+            closeModalBtn.onclick = function() {
+                modal.style.display = 'none';
+            };
             
             // Buscar informações do local para obter os recursos de acessibilidade
             db.collection('accessibleLocations').doc(locationId).get()
@@ -4505,6 +4547,25 @@ if (chatImageBtn && chatImageInput) {
                 // Update modal content
                 profileName.textContent = userData.displayName || 'Usuário';
                 profileEmail.textContent = userData.email || '';
+
+                // Update roles
+                const rolesContainer = document.getElementById('profileRoles');
+                rolesContainer.innerHTML = ''; // Clear existing roles
+
+                // Add admin badge if user is admin
+                if (userData.ADM === 1) {
+                    const adminBadge = document.createElement('span');
+                    adminBadge.className = 'role-badge admin-badge';
+                    adminBadge.textContent = 'Administrador';
+                    rolesContainer.appendChild(adminBadge);
+                }
+
+                // Add user role badge
+                const userRole = userData.userRole || 'user';
+                const roleBadge = document.createElement('span');
+                roleBadge.className = 'role-badge user-badge';
+                roleBadge.textContent = userRole.charAt(0).toUpperCase() + userRole.slice(1);
+                rolesContainer.appendChild(roleBadge);
 
                 // Set profile photo
                 if (userData.photoURL) {
