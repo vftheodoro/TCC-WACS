@@ -93,7 +93,8 @@ function getUserData(user) {
           photoURL: user.photoURL || '',
           phoneNumber: user.phoneNumber || '',
           createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-          lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+          lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+          ADM: 0 // Valor padrão para novos usuários
         };
         
         // Salvar os dados do usuário
@@ -118,6 +119,20 @@ function updateUIWithUserData(user) {
       // Usar dados do Firestore se disponíveis, ou fallback para dados do Auth
       const displayName = (userData && userData.displayName) || user.displayName || 'Usuário';
       userNameElement.textContent = displayName;
+      
+      // Adicionar badge de administrador se ADM === 1
+      if (userData && userData.ADM === 1) {
+        const adminBadge = document.createElement('span');
+        adminBadge.className = 'admin-badge';
+        adminBadge.textContent = 'Administrador';
+        adminBadge.style.marginLeft = '8px';
+        adminBadge.style.padding = '2px 8px';
+        adminBadge.style.backgroundColor = '#4CAF50';
+        adminBadge.style.color = 'white';
+        adminBadge.style.borderRadius = '12px';
+        adminBadge.style.fontSize = '12px';
+        userNameElement.appendChild(adminBadge);
+      }
       
       // Modificar avatar para mostrar iniciais ou ícone padrão
       if (displayName !== 'Usuário') {

@@ -57,7 +57,8 @@ function updateUserData(user) {
                     ...userData,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                     accountStatus: 'active',
-                    userRole: 'user'
+                    userRole: 'user',
+                    ADM: 0 // Valor padrão para novos usuários
                 });
             }
         })

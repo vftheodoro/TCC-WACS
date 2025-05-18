@@ -57,6 +57,7 @@ function saveUserToFirestore(user, additionalData = {}) {
         phoneNumber: user.phoneNumber || '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+        ADM: 0, // Valor padrão para novos usuários
         // Dados adicionais que podem ser fornecidos durante o registro
         ...additionalData
     };
