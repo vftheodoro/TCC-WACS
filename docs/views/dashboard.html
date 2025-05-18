@@ -1213,6 +1213,8 @@
             max-width: 80%;
             position: relative;
             word-break: break-word;
+            display: flex;
+            flex-direction: column;
         }
         
         .chat-message.sent {
@@ -1221,9 +1223,6 @@
             align-self: flex-end;
             margin-left: auto;
             border-bottom-right-radius: 4px;
-            display: flex;
-            align-items: center;
-            flex-direction: row-reverse;
         }
         
         .chat-message.received {
@@ -1246,16 +1245,24 @@
         .chat-message .sender-info {
             display: flex;
             align-items: center;
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
         }
         
-        .chat-message.sent .sender-info {
-            margin-left: 0.75rem;
-            margin-bottom: 0;
+        .chat-message .message-content {
+            position: relative;
+            width: 100%;
         }
         
-        .chat-message.sent .message-content {
-            flex: 1;
+        .chat-message .message-text {
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .chat-message .message-time {
+            font-size: 0.75rem;
+            opacity: 0.8;
+            margin-top: 0.25rem;
+            text-align: right;
         }
         
         .chat-message .sender-photo {
@@ -1274,31 +1281,9 @@
             font-weight: 600;
         }
         
-        .chat-message.sent .sender-photo {
-            margin-right: 0;
-            background-color: white;
-            color: var(--primary-color, #0055b3);
-        }
-        
-        body.dark-theme .chat-message .sender-photo {
-            background-color: var(--dark-primary, #4A90E2);
-        }
-        
-        body.dark-theme .chat-message.sent .sender-photo {
-            background-color: white;
-            color: var(--dark-primary, #4A90E2);
-        }
-        
-        .chat-message .message-text {
-            margin: 0;
-            line-height: 1.4;
-        }
-        
-        .chat-message .message-time {
-            font-size: 0.7rem;
-            text-align: right;
-            margin-top: 0.25rem;
-            opacity: 0.8;
+        .chat-message .sender-name {
+            font-weight: 600;
+            font-size: 0.875rem;
         }
         
         .chat-loading {
@@ -3973,7 +3958,6 @@
                 // Gerar conteúdo da foto de perfil
                 let photoContent = '';
                 
-                // Determinar foto de perfil
                 if (message.photoURL) {
                     photoContent = `<div class="sender-photo" style="background-image: url('${message.photoURL}')"></div>`;
                 } else {
@@ -3992,28 +3976,25 @@
                     messageText = `<p class="message-text deleted-message"><i class="fas fa-ban"></i> Esta mensagem foi apagada</p>`;
                 } else if (message.type === 'image' && message.imageUrl) {
                     messageText = `<div class="message-image"><img src="${message.imageUrl}" alt="Imagem enviada" style="width:200px; height:200px; border-radius:10px; object-fit:cover; box-shadow:0 1px 8px #0002; background:#eee;" /></div>`;
-                    // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
-                    if (isCurrentUser) {
-                        messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
-                    }
                 } else {
                     messageText = `<p class="message-text">${escapeHtml(message.text)}</p>`;
-                    // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
-                    if (isCurrentUser) {
-                        messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
-                    }
+                }
+                
+                // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
+                if (!isDeleted && isCurrentUser) {
+                    messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
                 }
                 
                 // Criar HTML da mensagem
                 if (isCurrentUser) {
                     messageElement.innerHTML = `
-                        <div class="message-content">
-                            ${messageText}
-                            <div class="message-time">${timeFormatted}</div>
-                        </div>
                         <div class="sender-info">
                             ${photoContent}
                             <span class="user-link" data-user-id="${message.userId}">${message.userName || 'Usuário'}</span>
+                        </div>
+                        <div class="message-content">
+                            ${messageText}
+                            <div class="message-time">${timeFormatted}</div>
                         </div>
                     `;
                 } else {
@@ -4022,8 +4003,10 @@
                             ${photoContent}
                             <span class="user-link" data-user-id="${message.userId}">${message.userName || 'Usuário'}</span>
                         </div>
-                        ${messageText}
-                        <div class="message-time">${timeFormatted}</div>
+                        <div class="message-content">
+                            ${messageText}
+                            <div class="message-time">${timeFormatted}</div>
+                        </div>
                     `;
                 }
                 
