@@ -2296,6 +2296,10 @@
                             </div>
                         </div>
                         <div class="chat-input-container">
+                            <input type="file" id="chatImageInput" accept="image/*" style="display:none;">
+                            <button type="button" id="chatImageBtn" title="Enviar imagem" style="background:none;border:none;padding:0 10px;cursor:pointer;height: 38px; vertical-align: middle; margin-right: 5px; color: var(--text-color);">
+                                <i class="fas fa-paperclip" style="font-size: 18px;"></i>
+                            </button>
                             <textarea id="chatMessageInput" placeholder="Digite sua mensagem aqui..." rows="2"></textarea>
                             <button id="sendMessageBtn" class="chat-send-btn">
                                 <i class="fas fa-paper-plane"></i>
@@ -2747,7 +2751,7 @@
                     })
                     .catch((error) => {
                         console.error('Erro ao carregar avaliações:', error);
-                        container.innerHTML = '<p>Erro ao carregar avaliações. Por favor, tente novamente mais tarde.</p>';
+                        container.innerHTML = '<p>Erro ao carregar avaliações. Por favor, tente novamente.</p>';
                     });
             }
             
@@ -3986,9 +3990,14 @@
                 let messageText = '';
                 if (isDeleted) {
                     messageText = `<p class="message-text deleted-message"><i class="fas fa-ban"></i> Esta mensagem foi apagada</p>`;
+                } else if (message.type === 'image' && message.imageUrl) {
+                    messageText = `<div class="message-image"><img src="${message.imageUrl}" alt="Imagem enviada" style="width:200px; height:200px; border-radius:10px; object-fit:cover; box-shadow:0 1px 8px #0002; background:#eee;" /></div>`;
+                    // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
+                    if (isCurrentUser) {
+                        messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
+                    }
                 } else {
                     messageText = `<p class="message-text">${escapeHtml(message.text)}</p>`;
-                    
                     // Adicionar botão de apagar apenas se for do usuário atual e não estiver apagada
                     if (isCurrentUser) {
                         messageText += `<div class="message-delete-btn" data-message-id="${message.id}"><i class="fas fa-trash-alt"></i></div>`;
@@ -4200,200 +4209,95 @@
             if (window.firebase) {
                 initChat();
             }
-        });
-    </script>
 
-    <script>
-        // ... existing code ...
+// --- LÓGICA DE UPLOAD DE IMAGEM NO CHAT ---
+console.log('[Chat] Registrando lógica de upload de imagem no chat');
+
+// Referências aos elementos do DOM
+const chatImageInput = document.getElementById('chatImageInput');
+const chatImageBtn = document.getElementById('chatImageBtn');
+
+if (!chatImageBtn) {
+    console.warn('[Chat] Botão de anexar imagem (chatImageBtn) não encontrado!');
+}
+if (!chatImageInput) {
+    console.warn('[Chat] Input de imagem (chatImageInput) não encontrado!');
+}
+
+if (chatImageBtn && chatImageInput) {
+    console.log('[Chat] Botão e input de imagem encontrados. Configurando event listeners...');
+    
+    // Usar addEventListener em vez de onclick para melhor compatibilidade
+    chatImageBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('[Chat] Botão de anexar imagem clicado');
         
-        // Adicionar evento para fechar o modal de todas as avaliações
-        document.addEventListener('DOMContentLoaded', function() {
-            const allReviewsModal = document.getElementById('allReviewsModal');
-            const closeAllReviewsModal = allReviewsModal.querySelector('.close-modal');
-            
-            closeAllReviewsModal.addEventListener('click', function() {
-                allReviewsModal.style.display = 'none';
-            });
-            
-            window.addEventListener('click', function(event) {
-                if (event.target === allReviewsModal) {
-                    allReviewsModal.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // ... existing code ...
+        // Tenta abrir o seletor de arquivos
+        chatImageInput.click();
         
-        // Adicionar evento para fechar o modal de perfil do usuário
-        document.addEventListener('DOMContentLoaded', function() {
-            const userProfileModal = document.getElementById('userProfileModal');
-            const closeBtn = userProfileModal.querySelector('.close-modal');
-            
-            closeBtn.addEventListener('click', function() {
-                userProfileModal.style.display = 'none';
-            });
-            
-            window.addEventListener('click', function(event) {
-                if (event.target === userProfileModal) {
-                    userProfileModal.style.display = 'none';
-                }
-            });
-        });
-
-        // Adicionar função para abrir o modal de perfil
-        async function openUserProfileModal(userId) {
-            const modal = document.getElementById('userProfileModal');
-            const modalUserName = document.getElementById('modalUserName');
-            const modalUserEmail = document.getElementById('modalUserEmail');
-            const modalUserPhoto = document.querySelector('.user-profile-photo');
-            const modalUserLocations = document.getElementById('modalUserLocations');
-            const modalUserReviews = document.getElementById('modalUserReviews');
-            const modalUserContributions = document.getElementById('modalUserContributions');
-
-            try {
-                // Buscar dados do usuário
-                const userDoc = await firebase.firestore().collection('users').doc(userId).get();
-                const userData = userDoc.data() || {};
-
-                // Preencher informações básicas
-                modalUserName.textContent = userData.displayName || 'Usuário';
-                
-                // Adicionar badge de administrador se ADM === 1
-                if (userData.ADM === 1) {
-                    const adminBadge = document.createElement('span');
-                    adminBadge.className = 'admin-badge';
-                    adminBadge.textContent = 'Administrador';
-                    adminBadge.style.marginLeft = '8px';
-                    adminBadge.style.padding = '2px 8px';
-                    adminBadge.style.backgroundColor = '#4CAF50';
-                    adminBadge.style.color = 'white';
-                    adminBadge.style.borderRadius = '12px';
-                    adminBadge.style.fontSize = '12px';
-                    modalUserName.appendChild(adminBadge);
-                }
-                
-                modalUserEmail.textContent = userData.email || '';
-
-                // Configurar foto do usuário
-                if (userData.photoURL) {
-                    modalUserPhoto.innerHTML = `<img src="${userData.photoURL}" alt="${userData.displayName}" style="width: 100%; height: 100%; object-fit: cover;">`;
-                } else {
-                    modalUserPhoto.innerHTML = '<i class="fas fa-user"></i>';
-                }
-
-                // Buscar contribuições do usuário
-                const [locations, reviews] = await Promise.all([
-                    firebase.firestore().collection('accessibleLocations')
-                        .where('userId', '==', userId)
-                        .get(),
-                    firebase.firestore().collection('reviews')
-                        .where('userId', '==', userId)
-                        .get()
-                ]);
-
-                // Atualizar estatísticas
-                modalUserLocations.textContent = locations.size;
-                modalUserReviews.textContent = reviews.size;
-
-                // Limpar e preencher lista de contribuições
-                modalUserContributions.innerHTML = '';
-                
-                // Adicionar locais
-                locations.forEach(doc => {
-                    const location = doc.data();
-                    const div = document.createElement('div');
-                    div.className = 'contribution-item';
-                    div.innerHTML = `
-                        <i class="fas fa-map-marker-alt"></i>
-                        <div class="contribution-details">
-                            <strong>${location.name}</strong>
-                            <small>${location.address}</small>
-                        </div>
-                    `;
-                    modalUserContributions.appendChild(div);
-                });
-
-                // Adicionar avaliações
-                reviews.forEach(doc => {
-                    const review = doc.data();
-                    const div = document.createElement('div');
-                    div.className = 'contribution-item';
-                    div.innerHTML = `
-                        <i class="fas fa-star"></i>
-                        <div class="contribution-details">
-                            <strong>Avaliação: ${review.rating}/5</strong>
-                            <small>${review.comment || 'Sem comentário'}</small>
-                        </div>
-                    `;
-                    modalUserContributions.appendChild(div);
-                });
-
-                // Mostrar o modal
-                modal.style.display = 'block';
-            } catch (error) {
-                console.error('Erro ao carregar perfil do usuário:', error);
-                alert('Erro ao carregar perfil do usuário. Por favor, tente novamente.');
+        // Fallback: se após 1s o input não ganhar foco, exibe o input
+        setTimeout(function() {
+            if (document.activeElement !== chatImageInput) {
+                console.warn('[Chat] Fallback: chatImageInput não recebeu foco. Mostrando o input manualmente.');
+                chatImageInput.style.display = 'block';
+                chatImageInput.style.position = 'relative';
+                chatImageInput.style.zIndex = '9999';
+                alert('Não foi possível abrir o seletor automaticamente. Selecione o arquivo manualmente.');
             }
+        }, 1000);
+    });
+    
+    // Handler para quando um arquivo é selecionado
+    chatImageInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        const user = firebase.auth().currentUser;
+        if (!user) {
+            alert('É necessário estar logado para enviar imagens.');
+            return;
         }
-
-        // Adicionar event listeners para o modal
-        document.addEventListener('DOMContentLoaded', function() {
-            const userProfileModal = document.getElementById('userProfileModal');
-            const closeBtn = userProfileModal.querySelector('.close-modal');
+        
+        const sendButtonRef = document.getElementById('sendMessageBtn');
+        
+        // Desabilitar botões durante o upload
+        if(sendButtonRef) sendButtonRef.disabled = true;
+        chatImageBtn.disabled = true;
+        
+        try {
+            // Upload para o Firebase Storage
+            const storageRef = firebase.storage().ref(`chatImages/${user.uid}_${Date.now()}`);
+            await storageRef.put(file);
+            const imageUrl = await storageRef.getDownloadURL();
             
-            // Event listener para links de usuário
-            document.addEventListener('click', function(e) {
-                if (e.target.matches('.user-link')) {
-                    e.preventDefault();
-                    const userId = e.target.getAttribute('data-user-id');
-                    openUserProfileModal(userId);
-                }
+            // Adicionar mensagem com imagem ao Firestore
+            await firebase.firestore().collection('chatMessages').add({
+                type: 'image',
+                imageUrl,
+                userId: user.uid,
+                userName: user.displayName || user.email || 'Usuário',
+                userEmail: user.email || '',
+                photoURL: user.photoURL || '',
+                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
             });
-
-            // Fechar modal
-            closeBtn.addEventListener('click', function() {
-                userProfileModal.style.display = 'none';
-            });
-
-            // Fechar modal ao clicar fora
-            window.addEventListener('click', function(event) {
-                if (event.target === userProfileModal) {
-                    userProfileModal.style.display = 'none';
-                }
-            });
-        });
-    </script>
-
-    <script>
-        // ... existing code ...
-
-        // Função para mostrar alertas
-        function showAlert(message, type = 'success') {
-            // Remover alertas existentes
-            const existingAlerts = document.querySelectorAll('.alert');
-            existingAlerts.forEach(alert => alert.remove());
-
-            // Criar novo alerta
-            const alert = document.createElement('div');
-            alert.className = `alert ${type}`;
-            alert.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                ${message}
-            `;
-
-            // Adicionar ao DOM
-            document.body.appendChild(alert);
-
-            // Remover após 3 segundos
-            setTimeout(() => {
-                alert.style.animation = 'slideOut 0.3s ease forwards';
-                setTimeout(() => alert.remove(), 300);
-            }, 3000);
+            
+            console.log('[Chat] Imagem enviada com sucesso');
+        } catch (err) {
+            alert('Erro ao enviar imagem: ' + err.message);
+            console.error('[Chat] Erro no upload/salvamento da imagem:', err);
         }
+        
+        // Limpar e reabilitar
+        chatImageInput.value = '';
+        if(sendButtonRef) sendButtonRef.disabled = false;
+        chatImageBtn.disabled = false;
+    };
+} else {
+    console.error('[Chat] FALHA CRÍTICA: chatImageBtn ou chatImageInput não foram encontrados. O botão de upload de imagem NÃO FUNCIONARÁ.');
+}
 
-        // ... existing code ...
+}); // Fecha o document.addEventListener('DOMContentLoaded' do chat
     </script>
 </body>
-</html> 
+</html>
+
