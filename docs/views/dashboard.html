@@ -1985,18 +1985,18 @@
         }
 
         .user-link {
-            color: var(--primary-color, #0055b3);
-            text-decoration: none;
             cursor: pointer;
-            transition: color 0.3s ease;
+            color: inherit;
+            text-decoration: none;
+            transition: color 0.2s ease;
         }
 
         .user-link:hover {
-            color: var(--primary-hover, #0066d6);
+            color: var(--primary-color, #0055b3);
             text-decoration: underline;
         }
 
-        body.dark-theme .user-link {
+        body.dark-theme .user-link:hover {
             color: var(--dark-primary, #4A90E2);
         }
 
@@ -2093,6 +2093,150 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
+        }
+
+        /* Profile Modal Styles */
+        .profile-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .profile-modal.active {
+            display: flex;
+        }
+
+        .profile-modal-content {
+            background-color: var(--background-color, #fff);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        body.dark-theme .profile-modal-content {
+            background-color: var(--dark-card, #1e1e2d);
+        }
+
+        .profile-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-color, #1f2937);
+            padding: 0.5rem;
+            line-height: 1;
+            border-radius: 50%;
+            transition: background-color 0.2s ease;
+        }
+
+        .profile-modal-close:hover {
+            background-color: var(--accent-color, #e0eaff);
+        }
+
+        body.dark-theme .profile-modal-close {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        body.dark-theme .profile-modal-close:hover {
+            background-color: var(--dark-accent, #1E293B);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin-right: 1rem;
+            background-size: cover;
+            background-position: center;
+            background-color: var(--primary-color, #0055b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 600;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0 0 0.5rem 0;
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .profile-name {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .profile-email {
+            color: var(--text-light, #6b7280);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        body.dark-theme .profile-email {
+            color: var(--dark-text-light, #94a3b8);
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color, #d1d5db);
+        }
+
+        body.dark-theme .profile-stats {
+            border-color: var(--dark-border, #2d3748);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color, #0055b3);
+            margin: 0;
+        }
+
+        body.dark-theme .stat-value {
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light, #6b7280);
+            margin: 0.25rem 0 0 0;
+        }
+
+        body.dark-theme .stat-label {
+            color: var(--dark-text-light, #94a3b8);
         }
     </style>
 </head>
@@ -2447,6 +2591,30 @@
                 </div>
                 <div id="modalUserContributions" class="user-contributions-list">
                     <!-- Lista de contribuições será preenchida dinamicamente -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Profile Modal HTML -->
+    <div class="profile-modal" id="profileModal">
+        <div class="profile-modal-content">
+            <button class="profile-modal-close" id="profileModalClose">&times;</button>
+            <div class="profile-header">
+                <div class="profile-photo" id="profilePhoto"></div>
+                <div class="profile-info">
+                    <h2 class="profile-name" id="profileName"></h2>
+                    <p class="profile-email" id="profileEmail"></p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <p class="stat-value" id="profileMessages">0</p>
+                    <p class="stat-label">Mensagens</p>
+                </div>
+                <div class="stat-item">
+                    <p class="stat-value" id="profileContributions">0</p>
+                    <p class="stat-label">Contribuições</p>
                 </div>
             </div>
         </div>
@@ -4280,6 +4448,101 @@ if (chatImageBtn && chatImageInput) {
 }
 
 }); // Fecha o document.addEventListener('DOMContentLoaded' do chat
+    </script>
+
+    <script>
+        // ... existing code ...
+        
+        // Profile Modal Functionality
+        const profileModal = document.getElementById('profileModal');
+        const profileModalClose = document.getElementById('profileModalClose');
+        const profilePhoto = document.getElementById('profilePhoto');
+        const profileName = document.getElementById('profileName');
+        const profileEmail = document.getElementById('profileEmail');
+        const profileMessages = document.getElementById('profileMessages');
+        const profileContributions = document.getElementById('profileContributions');
+
+        // Close modal when clicking the close button or outside the modal
+        profileModalClose.addEventListener('click', () => {
+            profileModal.classList.remove('active');
+        });
+
+        profileModal.addEventListener('click', (e) => {
+            if (e.target === profileModal) {
+                profileModal.classList.remove('active');
+            }
+        });
+
+        // Function to show user profile
+        async function showUserProfile(userId) {
+            try {
+                // Get user data from Firestore
+                const userDoc = await db.collection('users').doc(userId).get();
+                if (!userDoc.exists) {
+                    throw new Error('Usuário não encontrado');
+                }
+
+                const userData = userDoc.data();
+
+                // Update modal content
+                profileName.textContent = userData.displayName || 'Usuário';
+                profileEmail.textContent = userData.email || '';
+
+                // Set profile photo
+                if (userData.photoURL) {
+                    profilePhoto.style.backgroundImage = `url('${userData.photoURL}')`;
+                    profilePhoto.textContent = '';
+                } else {
+                    profilePhoto.style.backgroundImage = '';
+                    const initials = (userData.displayName || 'U').split(' ').map(name => name[0]).join('').toUpperCase();
+                    profilePhoto.textContent = initials;
+                }
+
+                // Get message count
+                const messagesSnapshot = await db.collection('chatMessages')
+                    .where('userId', '==', userId)
+                    .get();
+                profileMessages.textContent = messagesSnapshot.size;
+
+                // Get locations count
+                const locationsSnapshot = await db.collection('locations')
+                    .where('addedBy', '==', userId)
+                    .get();
+                const locationsCount = locationsSnapshot.size;
+
+                // Get reviews count
+                const reviewsSnapshot = await db.collection('reviews')
+                    .where('userId', '==', userId)
+                    .get();
+                const reviewsCount = reviewsSnapshot.size;
+
+                // Update total contributions count
+                const totalContributions = locationsCount + reviewsCount;
+                profileContributions.textContent = totalContributions;
+
+                // Update locations and reviews counts in the modal
+                document.getElementById('modalUserLocations').textContent = locationsCount;
+                document.getElementById('modalUserReviews').textContent = reviewsCount;
+
+                // Show modal
+                profileModal.classList.add('active');
+            } catch (error) {
+                console.error('Erro ao carregar perfil:', error);
+                alert('Erro ao carregar perfil do usuário');
+            }
+        }
+
+        // Add click event listeners to user names
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('user-link')) {
+                const userId = e.target.getAttribute('data-user-id');
+                if (userId) {
+                    showUserProfile(userId);
+                }
+            }
+        });
+
+        // ... existing code ...
     </script>
 </body>
 </html>
