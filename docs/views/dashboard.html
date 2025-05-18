@@ -4421,8 +4421,25 @@ if (chatImageBtn && chatImageInput) {
             await storageRef.put(file);
             const imageUrl = await storageRef.getDownloadURL();
             
+            // Buscar a última mensagem para obter o próximo número
+            const lastMessageQuery = await firebase.firestore()
+                .collection('chatMessages')
+                .orderBy('messageNumber', 'desc')
+                .limit(1)
+                .get();
+
+            let nextMessageNumber = 1; // Valor padrão para primeira mensagem
+            
+            if (!lastMessageQuery.empty) {
+                const lastMessage = lastMessageQuery.docs[0].data();
+                nextMessageNumber = (lastMessage.messageNumber || 0) + 1;
+            }
+            
+            // Criar ID do documento com o número da mensagem
+            const messageId = `mensagem${String(nextMessageNumber).padStart(2, '0')}`;
+            
             // Adicionar mensagem com imagem ao Firestore
-            await firebase.firestore().collection('chatMessages').add({
+            await firebase.firestore().collection('chatMessages').doc(messageId).set({
                 type: 'image',
                 imageUrl,
                 userId: user.uid,
@@ -4430,6 +4447,7 @@ if (chatImageBtn && chatImageInput) {
                 userEmail: user.email || '',
                 photoURL: user.photoURL || '',
                 timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                messageNumber: nextMessageNumber
             });
             
             console.log('[Chat] Imagem enviada com sucesso');
