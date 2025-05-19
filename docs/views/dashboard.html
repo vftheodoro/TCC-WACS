@@ -2268,6 +2268,195 @@
         body.dark-theme .user-badge {
             background-color: #1565C0;
         }
+
+        .users-list-container {
+            background: var(--background-color, #fff);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        body.dark-theme .users-list-container {
+            background: var(--dark-card, #1e1e2d);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .users-list-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .search-box {
+            position: relative;
+            max-width: 300px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: var(--background-color, #fff);
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .search-box input {
+            background: var(--dark-card, #1e1e2d);
+            color: var(--dark-text, #e2e8f0);
+            border-color: var(--dark-border, #2d3748);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light, #6b7280);
+        }
+
+        .users-table-container {
+            overflow-x: auto;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color, #e5e7eb);
+            color: var(--text-color, #1f2937);
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        body.dark-theme .users-table th,
+        body.dark-theme .users-table td {
+            border-bottom-color: var(--dark-border, #2d3748);
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .users-table th {
+            background: var(--background-color, #f9fafb);
+            font-weight: 600;
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .users-table th {
+            background: var(--dark-card, #1e1e2d);
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .users-table td {
+            color: var(--text-color, #1f2937);
+        }
+
+        body.dark-theme .users-table td {
+            color: var(--dark-text, #e2e8f0);
+        }
+
+        .user-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem;
+            border-radius: 6px;
+            color: var(--text-light, #6b7280);
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .action-btn:hover {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        /* Estilos para o avatar do usuário na tabela */
+        .user-avatar-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar-img {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .user-avatar-img {
+            border-color: var(--dark-primary, #4A90E2);
+        }
+
+        .user-avatar-initials {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            border: 2px solid var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .user-avatar-initials {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+            border-color: var(--dark-primary, #4A90E2);
+        }
+
+        .users-table th:first-child,
+        .users-table td:first-child {
+            padding-left: 1.5rem;
+        }
+
+        .users-table th:last-child,
+        .users-table td:last-child {
+            padding-right: 1.5rem;
+        }
+
+        /* Removendo estilos não utilizados */
+        .remaining-users-container,
+        .remaining-users-scroll,
+        .remaining-users-list,
+        .remaining-user-card,
+        .remaining-user-avatar,
+        .remaining-user-name,
+        .remaining-user-email,
+        .remaining-user-status {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -2463,6 +2652,34 @@
                             <button id="sendMessageBtn" class="chat-send-btn">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h2>Usuários Registrados</h2>
+                    <div class="users-list-container">
+                        <div class="users-list-header">
+                            <div class="search-box">
+                                <input type="text" id="userSearch" placeholder="Buscar usuários...">
+                                <i class="fas fa-search"></i>
+                            </div>
+                        </div>
+                        <div class="users-table-container">
+                            <table class="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nome</th>
+                                        <th>Email</th>
+                                        <th>Data de Registro</th>
+                                        <th>Status</th>
+                                        <th>Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody">
+                                    <!-- Todos os usuários serão carregados aqui dinamicamente -->
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -4622,6 +4839,84 @@ if (chatImageBtn && chatImageInput) {
         });
 
         // ... existing code ...
+    </script>
+
+    <script>
+        // Função para carregar a lista de usuários
+        function loadUsers() {
+            const usersTableBody = document.getElementById('usersTableBody');
+            const db = firebase.firestore();
+
+            db.collection('users').orderBy('createdAt', 'desc').get()
+                .then((querySnapshot) => {
+                    usersTableBody.innerHTML = '';
+                    
+                    querySnapshot.forEach((doc) => {
+                        const userData = doc.data();
+                        const createdAt = userData.createdAt ? userData.createdAt.toDate() : new Date();
+                        const formattedDate = createdAt.toLocaleDateString('pt-BR', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        });
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${userData.displayName || 'Usuário'}</td>
+                            <td>
+                                <div class="user-avatar-cell">
+                                    ${userData.photoURL ? 
+                                        `<img src="${userData.photoURL}" alt="${userData.displayName || 'Usuário'}" class="user-avatar-img">` :
+                                        `<div class="user-avatar-initials">${getInitials(userData.displayName || 'Usuário')}</div>`
+                                    }
+                                </div>
+                            </td>
+                            <td>${formattedDate}</td>
+                            <td>
+                                <span class="user-status ${userData.ADM === 1 ? 'status-active' : 'status-inactive'}">
+                                    ${userData.ADM === 1 ? 'Administrador' : 'Usuário'}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="user-actions">
+                                    <button onclick="viewUser('${doc.id}')" class="action-btn">
+                                        <i class="fas fa-eye"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        usersTableBody.appendChild(row);
+                    });
+                })
+                .catch((error) => {
+                    console.error("Erro ao carregar usuários:", error);
+                });
+        }
+
+        // Função para buscar usuários
+        document.getElementById('userSearch').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const rows = document.querySelectorAll('#usersTableBody tr');
+
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            });
+        });
+
+        // Funções para ações de usuário
+        function viewUser(userId) {
+            // Implementar visualização detalhada do usuário
+            console.log('Ver usuário:', userId);
+        }
+
+        function editUser(userId) {
+            // Implementar edição do usuário
+            console.log('Editar usuário:', userId);
+        }
+
+        // Carregar usuários quando a página carregar
+        document.addEventListener('DOMContentLoaded', loadUsers);
     </script>
 </body>
 </html>
