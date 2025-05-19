@@ -94,6 +94,7 @@
         .dashboard-header {
             background: var(--accent-color, #e0eaff);
             padding: 2rem 0;
+            position: relative;
         }
         
         body.dark-theme .dashboard-header {
@@ -2457,6 +2458,38 @@
         .remaining-user-status {
             display: none;
         }
+
+        .chat-quick-access {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: var(--primary-color, #0055b3);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        
+        .chat-quick-access:hover {
+            background: var(--primary-dark, #004494);
+            transform: translateY(-2px);
+        }
+        
+        body.dark-theme .chat-quick-access {
+            background: var(--dark-primary, #4A90E2);
+        }
+        
+        body.dark-theme .chat-quick-access:hover {
+            background: var(--dark-primary-dark, #357ABD);
+        }
     </style>
 </head>
 <body>
@@ -2516,6 +2549,12 @@
     <div class="dashboard-container">
         <div class="dashboard-header">
             <div class="container">
+                <a href="chat.html" class="chat-quick-access">
+                    <i class="fas fa-comments"></i>
+                    Ir para o Chat
+                </a>
+                <h1>Bem-vindo ao WACS</h1>
+                <p>Seu assistente para locais acessíveis</p>
                 <div class="user-info">
                     <a href="profile.html" class="user-avatar" id="userAvatar" title="Editar perfil">
                         <i class="fas fa-user"></i>
