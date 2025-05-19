@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WACS - Wheelchair Automation Control System</title>
+    <title>WACS - Versão Beta</title>
     <link rel="stylesheet" href="public/css/styles.css">
     <link rel="stylesheet" href="public/css/animations.css">
     <link rel="stylesheet" href="public/css/navbar-modern.css">
@@ -120,6 +120,11 @@
   transform: translate(20px, -20px);
 }
 .instagramSVG {
+  box-shadow: 0 4px 24px 0 #bc1888a0, 0 1.5px 5px 0 #0006;
+  border-radius: 50%;
+  padding: 8px;
+  animation: ig-glow 2.8s infinite alternate cubic-bezier(.7,-0.01,.4,1);
+
   font-size: 25px;
   display: flex;
   align-items: center;
@@ -301,28 +306,7 @@
     </div>
   </div>
   <div class="text">
-    <a class="icon" href="https://www.instagram.com/wacs_etec/" target="_blank" rel="noopener">
-      <div class="layer">
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span class="instagramSVG">
-          <svg
-            fill="white"
-            class="svgIcon"
-            viewBox="0 0 448 512"
-            height="1.5em"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M224.1 141c-63.6 0-114.9 51.3-114.9 114.9s51.3 114.9 114.9 114.9S339 319.5 339 255.9 287.7 141 224.1 141zm0 189.6c-41.1 0-74.7-33.5-74.7-74.7s33.5-74.7 74.7-74.7 74.7 33.5 74.7 74.7-33.6 74.7-74.7 74.7zm146.4-194.3c0 14.9-12 26.8-26.8 26.8-14.9 0-26.8-12-26.8-26.8s12-26.8 26.8-26.8 26.8 12 26.8 26.8zm76.1 27.2c-1.7-35.9-9.9-67.7-36.2-93.9-26.2-26.2-58-34.4-93.9-36.2-37-2.1-147.9-2.1-184.9 0-35.8 1.7-67.6 9.9-93.9 36.1s-34.4 58-36.2 93.9c-2.1 37-2.1 147.9 0 184.9 1.7 35.9 9.9 67.7 36.2 93.9s58 34.4 93.9 36.2c37 2.1 147.9 2.1 184.9 0 35.9-1.7 67.7-9.9 93.9-36.2 26.2-26.2 34.4-58 36.2-93.9 2.1-37 2.1-147.8 0-184.8zM398.8 388c-7.8 19.6-22.9 34.7-42.6 42.6-29.5 11.7-99.5 9-132.1 9s-102.7 2.6-132.1-9c-19.6-7.8-34.7-22.9-42.6-42.6-11.7-29.5-9-99.5-9-132.1s-2.6-102.7 9-132.1c7.8-19.6 22.9-34.7 42.6-42.6 29.5-11.7 99.5-9 132.1-9s102.7-2.6 132.1 9c19.6 7.8 34.7 22.9 42.6 42.6 11.7 29.5 9 99.5 9 132.1s2.7 102.7-9 132.1z"
-            ></path>
-          </svg>
-        </span>
-      </div>
-      <div class="text">Instagram</div>
-    </a>
+
   </div>
 </div>
 
@@ -398,6 +382,7 @@ window.addEventListener('DOMContentLoaded',function(){
                     </a>
                 </li>
                 <li><a href="views/login/login.html" class="navbar-link login-link-btn" id="loginLink">Login</a></li>
+                <li><span style="background: #ffd600; color: #333; font-size: 0.7rem; font-weight: 700; padding: 0.2em 0.5em; border-radius: 0.3em; margin-left: 0.8em;">BETA</span></li>
             </ul>
             
             <div class="navbar-actions">
@@ -718,7 +703,8 @@ window.addEventListener('DOMContentLoaded',function(){
                 </button>
             </div>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; animation: fadeIn 1.6s ease-out;">
-                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease;">
+                <div style="background-color: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); padding: 1.5rem; border-radius: 1rem; border: 1px solid rgba(255, 255, 255, 0.2); transition: transform 0.3s ease; position: relative;">
+                    <div style="position: absolute; top: -8px; right: -8px; background: #ffd600; color: #333; font-size: 0.65rem; font-weight: 700; padding: 0.2em 0.5em; border-radius: 0.3em; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">BETA</div>
                     <h3 style="color: white; font-size: 1.25rem; margin-bottom: 0.5rem;">Mobilidade Autônoma</h3>
                     <p style="color: rgba(255, 255, 255, 0.8); font-size: 0.875rem; margin-bottom: 0;">Controle total da cadeira de rodas através do seu smartphone</p>
                 </div>
@@ -1256,6 +1242,7 @@ window.addEventListener('DOMContentLoaded',function(){
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+                <p style="margin-top: 0.5rem; font-size: 0.85rem; color: #ffd600; font-weight: 500;">Versão Beta - Em desenvolvimento</p>
             </div>
         </div>
     </footer>

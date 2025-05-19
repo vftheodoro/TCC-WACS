@@ -1,37 +1,87 @@
-# <span style="color:#2A9D8F;">Projeto de TCC - WACS</span> – Wheelchair Automation Control System
+<div align="center">
+  <img src="public/images/logos-wacs/logo_padrao_com_nome.png" alt="Logo WACS" width="220"/>
+</div>
 
-<div style="display: flex; align-items: center; padding: 1rem;">
-  <img src="WACS LOGO.jpg" alt="LOGO DO PROJETO" width="150" style="margin-right: 1rem;">
-  <p style="font-size: 1.1rem; color:#264653;">
-    Este repositório contém o desenvolvimento do nosso projeto de TCC na Etec de Registro. Nosso objetivo é criar uma cadeira de rodas automatizada, de baixo custo e com alta tecnologia, para melhorar a mobilidade e segurança de pessoas com deficiência.
-  </p>
+# <span style="color:#2A9D8F;">WACS</span> – Wheelchair Automation Control System
+
+<div align="center" style="font-size:1.1rem;color:#264653;max-width:800px;">
+  <strong>Projeto de TCC desenvolvido na Etec de Registro</strong><br>
+  Nosso objetivo é criar uma cadeira de rodas automatizada, acessível e inteligente, promovendo mobilidade e segurança para pessoas com deficiência.
 </div>
 
 ---
 
-## <span style="color:#E76F51;">Visão Geral</span>
+## 🚀 <span style="color:#E76F51;">Visão Geral</span>
 
 <div style="background-color:#F4A261; padding: 1rem; border-radius: 8px; color:#264653;">
-  <p><strong>Objetivo:</strong> Desenvolver uma solução inovadora, totalmente automatizada e acessível para a mobilidade de PCDs, utilizando tecnologias modernas e uma abordagem colaborativa através de um aplicativo.</p>
-  <p><strong>Funcionalidades Principais:</strong></p>
   <ul>
-    <li>Controle dos movimentos (frente, trás, esquerda, direita) via <strong>Bluetooth</strong> e comando direto pelo celular.</li>
-    <li>Estrutura otimizada com <strong>cano PVC</strong> para redução de custos.</li>
-    <li>Sistema totalmente automatizado, com integração de <strong>Inteligência Artificial</strong> para desempenho inteligente.</li>
-    <li>Gerenciamento centralizado via <strong>Arduino Uno 3</strong>.</li>
-    <li>Sensores de distância para monitoramento de obstáculos e segurança do usuário.</li>
+    <li><strong>Mobilidade Inteligente:</strong> Controle total da cadeira via aplicativo móvel (Bluetooth e comandos remotos).</li>
+    <li><strong>Estrutura de Baixo Custo:</strong> Construção com cano PVC e componentes acessíveis.</li>
+    <li><strong>Automação e IA:</strong> Integração de sensores e inteligência artificial para navegação e segurança.</li>
+    <li><strong>Centralização:</strong> Gerenciamento por Arduino Uno 3 e interface intuitiva.</li>
+    <li><strong>Monitoramento:</strong> Sensores de distância para evitar obstáculos e garantir a segurança do usuário.</li>
   </ul>
 </div>
 
 ---
 
-## <span style="color:#E9C46A;">Aplicativo Móvel</span>
+## 📱 <span style="color:#E9C46A;">Aplicativo Móvel & Funcionalidades</span>
 
 <div style="background-color:#F4A261; padding: 1rem; border-radius: 8px; color:#264653;">
-  <p>O sistema conta com um aplicativo móvel robusto, pensado para oferecer uma experiência personalizada e colaborativa:</p>
-  
   <ul>
-    <li>
+    <li><strong>Controles Detalhados:</strong> Ajuste fino dos parâmetros, status em tempo real e controle total da cadeira.</li>
+    <li><strong>Mapa Colaborativo de Acessibilidade:</strong> Avaliação e marcação de locais acessíveis (restaurantes, banheiros, calçadas, pontos de ônibus, etc).</li>
+    <li><strong>GPS e Rotas Adaptadas:</strong> Sugestão de caminhos acessíveis, com avaliações da comunidade.</li>
+    <li><strong>Fotos e Comentários:</strong> Compartilhamento de experiências para fortalecer a rede de acessibilidade.</li>
+    <li><strong>Notificações Push:</strong> Alertas e atualizações em tempo real.</li>
+    <li><strong>Sistema de Perfis:</strong> Criação e personalização de perfis, interação entre usuários.</li>
+  </ul>
+</div>
+
+---
+
+## 🛠️ <span style="color:#2A9D8F;">Tecnologias & Ferramentas</span>
+
+<div align="center" style="padding:1rem;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/arduino/arduino-original.svg" width="50" title="Arduino"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg" width="50" title="C++"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg" width="50" title="PHP"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg" width="50" title="React Native"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-plain.svg" width="50" title="Firebase"/>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/4/4f/Bluetooth.svg" width="50" title="Bluetooth"/>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/7/75/Google_Maps_icon.svg" width="50" title="Google Maps"/>
+  <img src="https://cdn-icons-png.flaticon.com/512/5968/5968520.png" width="50" title="Inteligência Artificial"/>
+</div>
+
+---
+
+## 👨‍💻 <span style="color:#E76F51;">Equipe</span>
+
+<div align="center">
+  <img src="docs/public/images/fotos-perfil/imagem ramon.png" alt="Ramon Alves Trigo" width="90" style="border-radius:50%;margin:0 1rem;"/>
+  <img src="docs/public/images/fotos-perfil/pedro gpt.png" alt="Pedro Henrique Dias Santos" width="90" style="border-radius:50%;margin:0 1rem;"/>
+  <img src="docs/public/images/fotos-perfil/leaf gpt.png" alt="Luiz Alberto Iha Lima" width="90" style="border-radius:50%;margin:0 1rem;"/>
+  <img src="docs/public/images/fotos-perfil/theodoro gpt.png" alt="Victor Gabriel Ferreira Theodoro" width="90" style="border-radius:50%;margin:0 1rem;"/>
+  <img src="docs/public/images/fotos-perfil/mario gpt.png" alt="Mario Armando Takahashi Martins Dias" width="90" style="border-radius:50%;margin:0 1rem;"/>
+</div>
+
+- **Orientador:** [Ramon Trigo](https://github.com/ramtrigodev)
+- **Desenvolvedores:** Pedro Henrique Dias Santos, Luiz Alberto Iha Lima, Victor Gabriel Ferreira Theodoro, Mario Armando Takahashi Martins Dias
+
+---
+
+## 💡 <span style="color:#F4A261;">Sobre o Projeto</span>
+
+O WACS é uma solução inovadora para mobilidade assistida, combinando hardware acessível, automação, inteligência artificial e uma experiência digital colaborativa. Nosso foco é democratizar o acesso à tecnologia e promover a inclusão.
+
+> "A tecnologia só faz sentido se for para melhorar a vida das pessoas."
+
+---
+
+<div align="center" style="font-size:1rem;color:#888;">
+  <em>Este documento será atualizado conforme o projeto evolui.</em>
+</div>
+
       <strong>Controles e Configurações Detalhadas:</strong>  
       Permite ajustes precisos dos parâmetros da cadeira, visualização em tempo real do status e controle completo da mobilidade.
     </li>
