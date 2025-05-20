@@ -3634,7 +3634,6 @@
             function loadLocations() {
                 firebase.firestore().collection('accessibleLocations')
                     .orderBy('createdAt', 'desc')
-                    .limit(6)
                     .get()
                     .then((querySnapshot) => {
                         // Limpar o container de locais
