@@ -1987,22 +1987,24 @@
 
         .user-link {
             cursor: pointer;
-            color: inherit;
+            color: var(--primary-color, #0055b3);
             text-decoration: none;
-            transition: color 0.2s ease;
+            transition: all 0.2s ease;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
 
         .user-link:hover {
-            color: var(--primary-color, #0055b3);
-            text-decoration: underline;
+            background-color: var(--accent-color, #e0eaff);
+            text-decoration: none;
         }
 
-        body.dark-theme .user-link:hover {
+        body.dark-theme .user-link {
             color: var(--dark-primary, #4A90E2);
         }
 
         body.dark-theme .user-link:hover {
-            color: var(--dark-primary-hover, #5AA0F2);
+            background-color: var(--dark-accent, #1E293B);
         }
 
         .location-header {
@@ -4901,7 +4903,11 @@ if (chatImageBtn && chatImageInput) {
 
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${userData.displayName || 'Usuário'}</td>
+                            <td>
+                                <span class="user-link" data-user-id="${doc.id}" style="cursor: pointer; color: var(--primary-color);">
+                                    ${userData.displayName || 'Usuário'}
+                                </span>
+                            </td>
                             <td>
                                 <div class="user-avatar-cell">
                                     ${userData.photoURL ? 
@@ -4945,13 +4951,7 @@ if (chatImageBtn && chatImageInput) {
 
         // Funções para ações de usuário
         function viewUser(userId) {
-            // Implementar visualização detalhada do usuário
-            console.log('Ver usuário:', userId);
-        }
-
-        function editUser(userId) {
-            // Implementar edição do usuário
-            console.log('Editar usuário:', userId);
+            showUserProfile(userId);
         }
 
         // Carregar usuários quando a página carregar
