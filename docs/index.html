@@ -285,87 +285,13 @@
     </style>
 </head>
 <body>
-<!-- AVISO BETA SITE -->
-<div id="beta-banner" style="position:fixed;top:0;left:0;width:100vw;z-index:9999;display:flex;align-items:center;justify-content:center;padding:0;">
-  <div style="background:rgba(0,91,255,0.97);color:#fff;border-radius:0 0 1.5rem 1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.10);padding:1rem 2.5rem 1rem 2.5rem;display:flex;align-items:center;gap:1.5rem;max-width:95vw;flex-wrap:wrap;animation:slideDownBeta 0.7s cubic-bezier(.4,2,.6,1);">
-    <i class="fas fa-flask" style="font-size:1.5rem;color:#fff;background:#005BFF33;padding:0.5rem 0.7rem;border-radius:1rem;"></i>
-    <span style="font-size:1.1rem;font-weight:500;letter-spacing:0.01em;">Este site está em <b style='color:#ffd600;'>versão beta</b>. Envie sugestões ou relate bugs pelo Instagram!</span>
-    <div class="tooltip-container" style="margin-left:0.5rem;">
-  <div class="tooltip">
-    <div class="profile">
-      <div class="user">
-        <div class="img" style="padding:0;background:transparent;">
-  <img src="public/images/logo-light.png" alt="Logo WACS" style="width:100%;height:100%;object-fit:contain;border-radius:8px;background:transparent;">
-</div>
-        <div class="details">
-          <div class="name">WACS</div>
-          <div class="username">@wacs_etec</div>
-        </div>
-      </div>
-      <div class="about">+20 seguidores</div>
-    </div>
-  </div>
-  <div class="text">
-
-  </div>
-</div>
-
-  </div>
-</div>
-<style>
-#beta-banner {
-  transition: transform 0.45s cubic-bezier(.7,-0.01,.4,1), opacity 0.35s cubic-bezier(.7,-0.01,.4,1);
-}
-#beta-banner.beta-banner-hide {
-  transform: translateY(-120%);
-  opacity: 0;
-  pointer-events: none;
-}
-@keyframes slideDownBeta {
-  0% { transform: translateY(-80px); opacity:0; }
-  80% { transform: translateY(8px); opacity:1; }
-  100% { transform: translateY(0); opacity:1; }
-}
-@media (max-width: 600px) {
-  #beta-banner div { flex-direction:column; align-items:flex-start; padding:1.1rem 1rem; gap:0.8rem; }
-  #beta-banner span { font-size:1rem; }
-  #beta-banner a { width:100%; justify-content:center; font-size:1rem; }
-}
-body { padding-top: 4.5rem !important; }
-</style>
-<script>
-// Ajuste para não sobrepor navbar
-window.addEventListener('DOMContentLoaded',function(){
-  var banner=document.getElementById('beta-banner');
-  if(banner){
-    var mainNav=document.getElementById('navbar')||document.querySelector('nav');
-    if(mainNav){
-      var navHeight=mainNav.offsetHeight;
-      banner.style.top=navHeight+'px';
-      document.body.style.paddingTop=(navHeight+banner.offsetHeight)+'px';
-    }
-    // Esconde banner ao rolar
-    var lastScrollTop = 0;
-    window.addEventListener('scroll',function(){
-      var st = window.scrollY || document.documentElement.scrollTop;
-      if(st > 30){
-        banner.classList.add('beta-banner-hide');
-      }else{
-        banner.classList.remove('beta-banner-hide');
-      }
-      lastScrollTop = st;
-    });
-  }
-});
-</script>
-<!-- FIM AVISO BETA -->
 
     <!-- Navigation (Navbar Moderna) -->
     <nav class="modern-navbar" id="navbar">
         <div class="navbar-container">
             <a href="#" class="navbar-logo">
-                <img src="public/images/logo.png" alt="WACS Logo" class="logo-dark">
-                <img src="public/images/logo-light.png" alt="WACS Logo" class="logo-light">
+                <img src="public/images/logos-wacs/logo_padrao.png" alt="WACS Logo" class="logo-dark">
+                <img src="public/images/logos-wacs/logo_preta.png" alt="WACS Logo" class="logo-light">
                 <span class="navbar-logo-text">WACS</span>
             </a>
             
@@ -672,7 +598,7 @@ window.addEventListener('DOMContentLoaded',function(){
 
         <div style="position: relative; z-index: 2; text-align: center; max-width: 900px; padding: 0 1rem;">
             <div style="margin-bottom: 2rem; display: flex; justify-content: center; animation: fadeIn 0.8s ease-out;">
-                <img src="public/images/logo.png" alt="WACS Logo" style="width: 150px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
+                <img src="public/images/logos-wacs/logo_padrao.png" alt="WACS Logo" style="width: 200px; height: auto; filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.2)); transition: transform 0.3s ease;">
             </div>
             <h1 class="animate-fade-in" style="font-size: 3rem; font-weight: 700; color: white; margin-bottom: 1.5rem; line-height: 1.2;">
                 <span>WACS - Wheelchair Automation Control System</span>
@@ -1172,34 +1098,9 @@ window.addEventListener('DOMContentLoaded',function(){
     <!-- GitHub Section -->
     <section id="github" class="github">
         <div class="container">
-            <h2>Código Aberto no GitHub</h2>
             <div class="github-content">
                 <div class="github-info">
-                    <p>O WACS é um projeto de código aberto, disponível para toda a comunidade. Acreditamos que juntos podemos criar uma solução ainda melhor para mobilidade acessível.</p>
-                    <div class="github-features">
-                        <div class="feature">
-                            <i class="fab fa-github"></i>
-                            <h3>Código Fonte Completo</h3>
-                            <p>Acesse todo o código fonte do projeto, incluindo o controle da cadeira e o aplicativo móvel.</p>
-                        
-                        </div>
-                        <div class="feature">
-                            <a href="views/dashboard.html">
-                                <i class="fas fa-map-marked-alt"></i>
-                                <h3>Locais Acessíveis</h3>
-                                <p>Encontre estabelecimentos e locais com acessibilidade verificada pela comunidade.</p>
-                            </a>
-                        </div>
-                        <div class="feature">
-                            <a href="views/dashboard.html">
-                                <i class="fas fa-comments"></i>
-                                <h3>Chat Comunitário</h3>
-                                <p>Conecte-se com outros usuários, compartilhe experiências e receba suporte em tempo real.</p>
-                            </a>
-                        </div>
-                       
-                        
-                    </div>
+
                     <a href="https://github.com/VTheodoro/TCC-WACS" target="_blank" class="button-icon">
                         <div class="icon">
                             <svg viewBox="0 0 24 24">
@@ -1349,5 +1250,136 @@ window.addEventListener('DOMContentLoaded',function(){
             });
         });
     </script>
+
+    <!-- Script para o Carrossel 3D -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const carouselContainer = document.querySelector('.carousel-container');
+            const carouselItems = document.querySelectorAll('.carousel-item');
+            let currentIndex = 0;
+
+            console.log(`Encontrados ${carouselItems.length} itens de carrossel.`);
+
+            function updateCarousel() {
+                carouselItems.forEach((item, index) => {
+                    item.classList.remove('active', 'prev', 'next');
+                    let transform = '';
+                    let opacity = 0;
+                    let visibility = 'hidden';
+
+                    if (index === currentIndex) {
+                        item.classList.add('active');
+                        // Transformação para o item ativo no centro
+                        transform = 'rotateY(0deg) translateZ(0)';
+                        opacity = 1;
+                        visibility = 'visible';
+                    } else if (index === (currentIndex - 1 + carouselItems.length) % carouselItems.length) {
+                        item.classList.add('prev');
+                        // Transformação para o item anterior (à esquerda no 3D)
+                        transform = 'rotateY(15deg) translateZ(-300px) translateX(-100px)'; // Exemplo de transformação
+                        opacity = 0.6;
+                        visibility = 'visible';
+                    } else if (index === (currentIndex + 1) % carouselItems.length) {
+                        item.classList.add('next');
+                        // Transformação para o item seguinte (à direita no 3D)
+                        transform = 'rotateY(-15deg) translateZ(-300px) translateX(100px)'; // Exemplo de transformação
+                        opacity = 0.6;
+                        visibility = 'visible';
+                    } else {
+                         // Itens distantes, fora de vista ou muito desfocados no 3D
+                         transform = 'rotateY(0deg) translateZ(-500px)';
+                         opacity = 0;
+                         visibility = 'hidden';
+                    }
+
+                    item.style.transform = transform;
+                    item.style.opacity = opacity;
+                    item.style.visibility = visibility;
+                });
+            }
+
+            // Funções de navegação (necessitam de botões ou clique nos itens)
+            function goToPrevItem() {
+                currentIndex = (currentIndex - 1 + carouselItems.length) % carouselItems.length;
+                updateCarousel();
+            }
+
+            function goToNextItem() {
+                currentIndex = (currentIndex + 1) % carouselItems.length;
+                updateCarousel();
+            }
+
+            // Inicializar carrossel
+            if (carouselItems.length > 0) {
+                 currentIndex = 0; // Começa no primeiro item
+                 updateCarousel();
+
+                // Adicionar navegação manual pelos botões
+                // const prevButton = document.querySelector('.carousel-control.prev');
+                // const nextButton = document.querySelector('.carousel-control.next');
+
+                // if(prevButton) {
+                //     prevButton.addEventListener('click', function() {
+                //         console.log('Botão Anterior clicado.');
+                //         goToPrevItem();
+                //         resetAutoScroll(); // Reinicia o timer ao navegar manualmente
+                //     });
+                // }
+                // if(nextButton) {
+                //     nextButton.addEventListener('click', function() {
+                //         console.log('Botão Próximo clicado.');
+                //         goToNextItem();
+                //         resetAutoScroll(); // Reinicia o timer ao navegar manualmente
+                //     });
+                // }
+
+                // Implementar navegação ao clicar nos itens prev/next
+                carouselContainer.addEventListener('click', function(event) {
+                    const clickedItem = event.target.closest('.carousel-item');
+                    if (clickedItem) {
+                        if (clickedItem.classList.contains('prev')) {
+                            goToPrevItem();
+                            resetAutoScroll(); // Reinicia o timer ao navegar manualmente
+                        } else if (clickedItem.classList.contains('next')) {
+                            goToNextItem();
+                            resetAutoScroll(); // Reinicia o timer ao navegar manualmente
+                        } else if (clickedItem.classList.contains('active')) {
+                            // Opcional: Lidar com o clique no item ativo, talvez abrir modal ou link
+                            console.log('Item ativo clicado.', clickedItem);
+                        }
+                    } else {
+                        // Opcional: Lidar com o clique fora de um item do carrossel, talvez fechar modal
+                         console.log('Clique fora de um item do carrossel.');
+                    }
+                     // Sempre parar a troca automática ao clicar para navegação manual
+                    stopAutoScroll();
+                });
+
+                // Implementar troca automática a cada 5 segundos
+                let autoScrollInterval;
+
+                function startAutoScroll() {
+                    autoScrollInterval = setInterval(goToNextItem, 5000); // Troca a cada 5 segundos
+                }
+
+                function stopAutoScroll() {
+                    clearInterval(autoScrollInterval);
+                }
+
+                function resetAutoScroll() {
+                    stopAutoScroll();
+                    startAutoScroll();
+                }
+
+                // Iniciar a troca automática
+                startAutoScroll();
+
+                // Parar troca automática ao passar o mouse (opcional)
+                carouselContainer.addEventListener('mouseenter', stopAutoScroll);
+                carouselContainer.addEventListener('mouseleave', startAutoScroll);
+            }
+        });
+    </script>
+
 </body>
 </html>
