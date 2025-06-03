@@ -1,0 +1,382 @@
+/* Instagram Button Style from Uiverse.io by vinodjangid07 */
+.tooltip-container {
+  position: relative;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 17px;
+  border-radius: 10px;
+}
+.tooltip {
+  position: absolute;
+  left: 50%;
+  top: 105%; /* Muda para aparecer abaixo do botão */
+  transform: translateX(-50%);
+  padding: 10px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s;
+  border-radius: 15px;
+  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2),
+    inset -5px -5px 15px rgba(255, 255, 255, 0.1),
+    5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.1);
+  background: #232327;
+  z-index: 10000;
+}
+.profile {
+  background: #2a2b2f;
+  border-radius: 10px 15px;
+  padding: 10px;
+  border: 1px solid #005BFF;
+}
+.tooltip-container:hover .tooltip {
+  top: 105%; /* Aparece para baixo */
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+.icon {
+  text-decoration: none;
+  color: #fff;
+  display: block;
+  position: relative;
+}
+.layer {
+  width: 55px;
+  height: 55px;
+  transition: transform 0.3s;
+}
+.icon:hover .layer {
+  transform: rotate(-35deg) skew(20deg);
+}
+.layer span {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  border: 1px solid #fff;
+  border-radius: 15px;
+  transition: all 0.3s;
+}
+.layer span,
+.text {
+  color: #005BFF;
+  border-color: #005BFF;
+}
+.icon:hover.layer span {
+  box-shadow: -1px 1px 3px #e6683c;
+}
+.icon .text {
+  position: absolute;
+  left: 50%;
+  bottom: -5px;
+  opacity: 0;
+  font-weight: 500;
+  transform: translateX(-50%);
+  transition: bottom 0.3s ease, opacity 0.3s ease;
+}
+.icon:hover .text {
+  bottom: -35px;
+  opacity: 1;
+}
+.icon:hover .layer span:nth-child(1) {
+  opacity: 0.2;
+}
+.icon:hover .layer span:nth-child(2) {
+  opacity: 0.4;
+  transform: translate(5px, -5px);
+}
+.icon:hover .layer span:nth-child(3) {
+  opacity: 0.6;
+  transform: translate(10px, -10px);
+}
+.icon:hover .layer span:nth-child(4) {
+  opacity: 0.8;
+  transform: translate(15px, -15px);
+}
+.icon:hover .layer span:nth-child(5) {
+  opacity: 1;
+  transform: translate(20px, -20px);
+}
+.instagramSVG {
+  box-shadow: 0 4px 24px 0 #bc1888a0, 0 1.5px 5px 0 #0006;
+  border-radius: 50%;
+  padding: 8px;
+  animation: ig-glow 2.8s infinite alternate cubic-bezier(.7,-0.01,.4,1);
+
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: -webkit-linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+  background: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
+}
+.user {
+  display: flex;
+  gap: 10px;
+}
+.img {
+  width: 50px;
+  height: 50px;
+  font-size: 25px;
+  font-weight: 700;
+  border: 1px solid #005BFF;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+}
+.name {
+  font-size: 17px;
+  font-weight: 700;
+  color: #005BFF;
+}
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  color: #005BFF;
+}
+.about {
+  color: #005BFF;
+  padding-top: 5px;
+}
+@media (max-width: 600px) {
+  .tooltip-container { font-size: 15px; }
+  .tooltip { top: -120px; }
+  .img { width: 40px; height: 40px; font-size: 20px; }
+}
+
+.gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--background-color, #fff);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    aspect-ratio: 4/3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.gallery-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+.gallery-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top,
+        rgba(0, 0, 0, 0.95) 0%,
+        rgba(0, 0, 0, 0.85) 50%,
+        rgba(0, 0, 0, 0.7) 100%);
+    padding: 2rem 1.5rem 1.5rem;
+    color: #ffffff;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay {
+    transform: translateY(0);
+}
+
+.gallery-overlay h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+.gallery-overlay p {
+    margin: 0;
+    font-size: 0.875rem;
+    opacity: 1;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+    color: #ffffff;
+}
+
+body.dark-theme .gallery-item {
+    background: var(--dark-card, #1e1e2d);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.dark-theme .gallery-item img {
+    background-color: var(--dark-card, #1e1e2d);
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Proporção 16:9 */
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+body.dark-theme .video-container {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos para botão de login */
+.navbar-login {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color, #0055b3);
+    color: white;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 0.75rem;
+    border: none;
+    cursor: pointer;
+}
+
+.navbar-login:hover {
+    background-color: var(--primary-hover, #0066d6);
+    transform: translateY(-2px);
+}
+
+body.dark-theme .navbar-login {
+    background-color: var(--dark-primary, #4A90E2);
+}
+
+.navbar-dashboard {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background-color: var(--primary-color, #0055b3);
+    color: white;
+    border-radius: 0.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    margin-right: 0.75rem;
+}
+
+.navbar-dashboard:hover {
+    background-color: var(--primary-hover, #0066d6);
+    transform: translateY(-2px);
+}
+
+body.dark-theme .navbar-dashboard {
+    background-color: var(--dark-primary, #4A90E2);
+}
+
+.login-link-btn {
+    color: var(--primary-color, #0055b3) !important;
+    font-weight: 500;
+}
+
+body.dark-theme .login-link-btn {
+    color: var(--dark-primary, #4A90E2) !important;
+}
+
+.profile-link-btn, .dashboard-link-btn {
+    color: var(--primary-color, #0055b3) !important;
+    font-weight: 500;
+}
+
+body.dark-theme .profile-link-btn,
+body.dark-theme .dashboard-link-btn {
+    color: var(--dark-primary, #4A90E2) !important;
+}
+
+.login-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    background-color: rgba(0, 85, 179, 0.1);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+}
+
+.profile-mobile, .dashboard-mobile, .logout-mobile {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 500;
+    margin-top: 0.5rem;
+    background-color: rgba(0, 85, 179, 0.1);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    width: 100%;
+    text-align: left;
+    border: none;
+    cursor: pointer;
+}
+
+body.dark-theme .login-mobile,
+body.dark-theme .profile-mobile,
+body.dark-theme .dashboard-mobile,
+body.dark-theme .logout-mobile {
+    background-color: rgba(74, 144, 226, 0.1);
+}
+
+.hidden {
+    display: none !important;
+}
+
+.hero-section {
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: linear-gradient(to bottom right, var(--color-primary, #005BFF), #002d80);
+    padding-top: 80px;
+}
+
+[data-theme="dark"] .hero-section,
+body.dark-theme .hero-section {
+    background: linear-gradient(to bottom right, #001a3f, #000c1a);
+}

@@ -6,7 +6,6 @@
     <title>WACS - Versão Beta</title>
     <link rel="stylesheet" href="public/css/styles.css">
     <link rel="stylesheet" href="public/css/animations.css">
-    <link rel="stylesheet" href="public/css/navbar-modern.css">
     <link rel="stylesheet" href="public/css/modern-navbar.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="public/css/core.css">
@@ -17,272 +16,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="./public/images/logo-light.png" type="image/png">
+    <link rel="stylesheet" href="public/css/custom-inline.css">
 
 <!-- Instagram Button Style from Uiverse.io by vinodjangid07 -->
-<style>
-.tooltip-container {
-  position: relative;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-size: 17px;
-  border-radius: 10px;
-}
-.tooltip {
-  position: absolute;
-  left: 50%;
-  top: 105%; /* Muda para aparecer abaixo do botão */
-  transform: translateX(-50%);
-  padding: 10px;
-  opacity: 0;
-  pointer-events: none;
-  transition: all 0.3s;
-  border-radius: 15px;
-  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2),
-    inset -5px -5px 15px rgba(255, 255, 255, 0.1),
-    5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.1);
-  background: #232327;
-  z-index: 10000;
-}
-.profile {
-  background: #2a2b2f;
-  border-radius: 10px 15px;
-  padding: 10px;
-  border: 1px solid #005BFF;
-}
-.tooltip-container:hover .tooltip {
-  top: 105%; /* Aparece para baixo */
-  opacity: 1;
-  visibility: visible;
-  pointer-events: auto;
-}
-.icon {
-  text-decoration: none;
-  color: #fff;
-  display: block;
-  position: relative;
-}
-.layer {
-  width: 55px;
-  height: 55px;
-  transition: transform 0.3s;
-}
-.icon:hover .layer {
-  transform: rotate(-35deg) skew(20deg);
-}
-.layer span {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-  border: 1px solid #fff;
-  border-radius: 15px;
-  transition: all 0.3s;
-}
-.layer span,
-.text {
-  color: #005BFF;
-  border-color: #005BFF;
-}
-.icon:hover.layer span {
-  box-shadow: -1px 1px 3px #e6683c;
-}
-.icon .text {
-  position: absolute;
-  left: 50%;
-  bottom: -5px;
-  opacity: 0;
-  font-weight: 500;
-  transform: translateX(-50%);
-  transition: bottom 0.3s ease, opacity 0.3s ease;
-}
-.icon:hover .text {
-  bottom: -35px;
-  opacity: 1;
-}
-.icon:hover .layer span:nth-child(1) {
-  opacity: 0.2;
-}
-.icon:hover .layer span:nth-child(2) {
-  opacity: 0.4;
-  transform: translate(5px, -5px);
-}
-.icon:hover .layer span:nth-child(3) {
-  opacity: 0.6;
-  transform: translate(10px, -10px);
-}
-.icon:hover .layer span:nth-child(4) {
-  opacity: 0.8;
-  transform: translate(15px, -15px);
-}
-.icon:hover .layer span:nth-child(5) {
-  opacity: 1;
-  transform: translate(20px, -20px);
-}
-.instagramSVG {
-  box-shadow: 0 4px 24px 0 #bc1888a0, 0 1.5px 5px 0 #0006;
-  border-radius: 50%;
-  padding: 8px;
-  animation: ig-glow 2.8s infinite alternate cubic-bezier(.7,-0.01,.4,1);
-
-  font-size: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: -webkit-linear-gradient(
-    45deg,
-    #f09433 0%,
-    #e6683c 25%,
-    #dc2743 50%,
-    #cc2366 75%,
-    #bc1888 100%
-  );
-  background: linear-gradient(
-    45deg,
-    #f09433 0%,
-    #e6683c 25%,
-    #dc2743 50%,
-    #cc2366 75%,
-    #bc1888 100%
-  );
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f09433', endColorstr='#bc1888',GradientType=1 );
-}
-.user {
-  display: flex;
-  gap: 10px;
-}
-.img {
-  width: 50px;
-  height: 50px;
-  font-size: 25px;
-  font-weight: 700;
-  border: 1px solid #005BFF;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-}
-.name {
-  font-size: 17px;
-  font-weight: 700;
-  color: #005BFF;
-}
-.details {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  color: #005BFF;
-}
-.about {
-  color: #005BFF;
-  padding-top: 5px;
-}
-@media (max-width: 600px) {
-  .tooltip-container { font-size: 15px; }
-  .tooltip { top: -120px; }
-  .img { width: 40px; height: 40px; font-size: 20px; }
-}
-</style>
-
-    <style>
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .gallery-item {
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            background: var(--background-color, #fff);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            aspect-ratio: 4/3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-        
-        .gallery-item:hover img {
-            transform: scale(1.05);
-        }
-        
-        .gallery-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(to top, 
-                rgba(0, 0, 0, 0.95) 0%,
-                rgba(0, 0, 0, 0.85) 50%,
-                rgba(0, 0, 0, 0.7) 100%);
-            padding: 2rem 1.5rem 1.5rem;
-            color: #ffffff;
-            transform: translateY(100%);
-            transition: transform 0.3s ease;
-        }
-        
-        .gallery-item:hover .gallery-overlay {
-            transform: translateY(0);
-        }
-        
-        .gallery-overlay h3 {
-            margin: 0 0 0.5rem 0;
-            font-size: 1.25rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            color: #ffffff;
-        }
-        
-        .gallery-overlay p {
-            margin: 0;
-            font-size: 0.875rem;
-            opacity: 1;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            font-weight: 500;
-            color: #ffffff;
-        }
-        
-        body.dark-theme .gallery-item {
-            background: var(--dark-card, #1e1e2d);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-        
-        body.dark-theme .gallery-item img {
-            background-color: var(--dark-card, #1e1e2d);
-        }
-
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%; /* Proporção 16:9 */
-            border-radius: 12px;
-            overflow: hidden;
-        }
-
-        .video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        body.dark-theme .video-container {
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-    </style>
 </head>
 <body>
 
@@ -442,130 +178,9 @@
         });
     </script>
 
+<main>
     <!-- Hero Section com gradiente -->
     <section id="home" class="hero-section">
-        <style>
-            /* Estilos para botão de login */
-            .navbar-login {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem 1rem;
-                background-color: var(--primary-color, #0055b3);
-                color: white;
-                border-radius: 0.5rem;
-                text-decoration: none;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                margin-right: 0.75rem;
-                border: none;
-                cursor: pointer;
-            }
-            
-            .navbar-login:hover {
-                background-color: var(--primary-hover, #0066d6);
-                transform: translateY(-2px);
-            }
-            
-            body.dark-theme .navbar-login {
-                background-color: var(--dark-primary, #4A90E2);
-            }
-            
-            .navbar-dashboard {
-                display: inline-flex;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.5rem 1rem;
-                background-color: var(--primary-color, #0055b3);
-                color: white;
-                border-radius: 0.5rem;
-                text-decoration: none;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                margin-right: 0.75rem;
-            }
-            
-            .navbar-dashboard:hover {
-                background-color: var(--primary-hover, #0066d6);
-                transform: translateY(-2px);
-            }
-            
-            body.dark-theme .navbar-dashboard {
-                background-color: var(--dark-primary, #4A90E2);
-            }
-            
-            .login-link-btn {
-                color: var(--primary-color, #0055b3) !important;
-                font-weight: 500;
-            }
-            
-            body.dark-theme .login-link-btn {
-                color: var(--dark-primary, #4A90E2) !important;
-            }
-            
-            .profile-link-btn, .dashboard-link-btn {
-                color: var(--primary-color, #0055b3) !important;
-                font-weight: 500;
-            }
-            
-            body.dark-theme .profile-link-btn, 
-            body.dark-theme .dashboard-link-btn {
-                color: var(--dark-primary, #4A90E2) !important;
-            }
-            
-            .login-mobile {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-weight: 500;
-                margin-top: 0.5rem;
-                background-color: rgba(0, 85, 179, 0.1);
-                padding: 0.75rem 1rem;
-                border-radius: 0.5rem;
-            }
-            
-            .profile-mobile, .dashboard-mobile, .logout-mobile {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-weight: 500;
-                margin-top: 0.5rem;
-                background-color: rgba(0, 85, 179, 0.1);
-                padding: 0.75rem 1rem;
-                border-radius: 0.5rem;
-                width: 100%;
-                text-align: left;
-                border: none;
-                cursor: pointer;
-            }
-            
-            body.dark-theme .login-mobile,
-            body.dark-theme .profile-mobile,
-            body.dark-theme .dashboard-mobile,
-            body.dark-theme .logout-mobile {
-                background-color: rgba(74, 144, 226, 0.1);
-            }
-            
-            .hidden {
-                display: none !important;
-            }
-            
-            .hero-section {
-                position: relative;
-                min-height: 90vh;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                overflow: hidden;
-                background: linear-gradient(to bottom right, var(--color-primary, #005BFF), #002d80);
-                padding-top: 80px;
-            }
-            
-            [data-theme="dark"] .hero-section,
-            body.dark-theme .hero-section {
-                background: linear-gradient(to bottom right, #001a3f, #000c1a);
-            }
-        </style>
         <!-- Fundo com padrão e efeitos -->
         <div style="position: absolute; inset: 0; background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMwMDAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djJoLTJ2LTJoMnptMC00aDJ2MmgtMnYtMmgyem0tNCAtNGgydjJoLTJ2LTJ6bTIgNHYyaC0ydi0yaDJ6bS0yIDR2MmgtMnYtMmgyem0wIDJ2MmgtMnYtMmgyem0yIDJ2MmgtMnYtMmgyeiIvPjwvZz48L2c+PC9zdmc+'); opacity: 0.1;"></div>
         
@@ -888,13 +503,13 @@
                           <path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016a5.54 5.54 0 0 1 .016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/>
                         </svg>
                         
-                        <a href="" target="_blank" style="color: inherit; text-decoration: none;">
+                        <a href="https://github.com/username" target="_blank" style="color: inherit; text-decoration: none;">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16">
                             <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
                           </svg>
                         </a>
                         
-                        <a href="https://www.instagram.com/iha.leaf/ target="_blank" style="color: inherit; text-decoration: none;">
+                        <a href="https://www.instagram.com/iha.leaf/" target="_blank" style="color: inherit; text-decoration: none;">
                           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-instagram" viewBox="0 0 16 16">
                             <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.917 3.917 0 0 0-1.417.923A3.927 3.927 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.916 3.916 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.926 3.926 0 0 0-.923-1.417A3.911 3.911 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0h.003zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599.28.28.453.546.598.92.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.47 2.47 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.478 2.478 0 0 1-.92-.598 2.48 2.48 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233 0-2.136.008-2.388.046-3.231.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92.28-.28.546-.453.92-.598.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045v.002zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92zm-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217zm0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334z"></path>
                           </svg>
@@ -1018,21 +633,21 @@
                 <h3>Linha do Tempo do Projeto</h3>
                 <ul class="timeline-modern">
                     <li>
-                        <span class="timeline-year">2025</span>
+                        <span class="timeline-year">Fase 1</span>
                         <div class="timeline-content-modern">
                             <strong>Início do Projeto</strong>
                             <p>Definição do escopo, pesquisa e planejamento inicial.</p>
                         </div>
                     </li>
                     <li>
-                        <span class="timeline-year">2025</span>
+                        <span class="timeline-year">Fase 2</span>
                         <div class="timeline-content-modern">
                             <strong>Desenvolvimento</strong>
                             <p>Implementação do hardware, software e testes internos.</p>
                         </div>
                     </li>
                     <li>
-                        <span class="timeline-year">2025</span>
+                        <span class="timeline-year">Fase 3</span>
                         <div class="timeline-content-modern">
                             <strong>Testes e Validação</strong>
                             <p>Testes com usuários PCDs, ajustes finais e entrega do projeto.</p>
@@ -1049,21 +664,21 @@
             <h2>Galeria</h2>
             <div class="gallery-grid">
                 <div class="gallery-item">
-                    <img src="public/images/fotos-projeto/pintandocadeira.jpeg" alt="Cadeira de Rodas Automatizada">
+                    <img src="public/images/fotos-projeto/pintandocadeira.jpeg" alt="Team member painting the WACS wheelchair prototype">
                     <div class="gallery-overlay">
                         <h3>Produção da Cadeira de Rodas física</h3>
                         <p>Design moderno e acessível</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="public/images/fotos-projeto/medindocadeira.jpeg" alt="Interface do Aplicativo">
+                    <img src="public/images/fotos-projeto/medindocadeira.jpeg" alt="Team member measuring components on the WACS wheelchair prototype">
                     <div class="gallery-overlay">
                         <h3>Medição da Cadeira de Rodas</h3>
                         <p>Design moderno e acessível</p>
                     </div>
                 </div>
                 <div class="gallery-item">
-                    <img src="public/images/fotos-projeto/selfiegrupo.jpeg" alt="Sensores e Hardware">
+                    <img src="public/images/fotos-projeto/selfiegrupo.jpeg" alt="Group photo of the WACS development team">
                     <div class="gallery-overlay">
                         <h3>Foto da equipe</h3>
                         <p>Foto da equipe que está desenvolvendo o projeto</p>
@@ -1116,7 +731,7 @@
             </div>
         </div>
     </section>
-
+</main>
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -1128,12 +743,14 @@
                 </div>
                 <div class="footer-links">
                     <h4>Links Rápidos</h4>
-                    <ul>
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#visao-geral">Visão Geral</a></li>
-                        <li><a href="#funcionalidades">Funcionalidades</a></li>
-                        <li><a href="#tecnologias">Tecnologias</a></li>
-                    </ul>
+                    <nav aria-label="Footer Quick Links">
+                        <ul>
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#visao-geral">Visão Geral</a></li>
+                            <li><a href="#funcionalidades">Funcionalidades</a></li>
+                            <li><a href="#tecnologias">Tecnologias</a></li>
+                        </ul>
+                    </nav>
                 </div>
                 <div class="footer-contact">
                     <h4>Contato</h4>
@@ -1258,8 +875,6 @@
             const carouselItems = document.querySelectorAll('.carousel-item');
             let currentIndex = 0;
 
-            console.log(`Encontrados ${carouselItems.length} itens de carrossel.`);
-
             function updateCarousel() {
                 carouselItems.forEach((item, index) => {
                     item.classList.remove('active', 'prev', 'next');
@@ -1314,25 +929,6 @@
                  currentIndex = 0; // Começa no primeiro item
                  updateCarousel();
 
-                // Adicionar navegação manual pelos botões
-                // const prevButton = document.querySelector('.carousel-control.prev');
-                // const nextButton = document.querySelector('.carousel-control.next');
-
-                // if(prevButton) {
-                //     prevButton.addEventListener('click', function() {
-                //         console.log('Botão Anterior clicado.');
-                //         goToPrevItem();
-                //         resetAutoScroll(); // Reinicia o timer ao navegar manualmente
-                //     });
-                // }
-                // if(nextButton) {
-                //     nextButton.addEventListener('click', function() {
-                //         console.log('Botão Próximo clicado.');
-                //         goToNextItem();
-                //         resetAutoScroll(); // Reinicia o timer ao navegar manualmente
-                //     });
-                // }
-
                 // Implementar navegação ao clicar nos itens prev/next
                 carouselContainer.addEventListener('click', function(event) {
                     const clickedItem = event.target.closest('.carousel-item');
@@ -1345,11 +941,9 @@
                             resetAutoScroll(); // Reinicia o timer ao navegar manualmente
                         } else if (clickedItem.classList.contains('active')) {
                             // Opcional: Lidar com o clique no item ativo, talvez abrir modal ou link
-                            console.log('Item ativo clicado.', clickedItem);
                         }
                     } else {
                         // Opcional: Lidar com o clique fora de um item do carrossel, talvez fechar modal
-                         console.log('Clique fora de um item do carrossel.');
                     }
                      // Sempre parar a troca automática ao clicar para navegação manual
                     stopAutoScroll();
