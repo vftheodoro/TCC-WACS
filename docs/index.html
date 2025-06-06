@@ -302,7 +302,7 @@
                     <a href="views/dashboard.html" class="navbar-link dashboard-link-btn" id="dashboardLink">
                         <i class="fas fa-tachometer-alt"></i> Dashboard
                     </a>
-                    <a href="views/profile.html" class="navbar-link profile-link-btn" id="profileLink">
+                    <a href="views/profile.html" class="navbar-link profile-link-btn" id="profileLinkNav">
                         <span id="navbarUserAvatar" class="navbar-user-avatar"><i class="fas fa-user"></i></span>
                         <span id="navbarUserName" style="display:none"></span>
                     </a>
@@ -320,8 +320,10 @@
                         <span class="slider"></span>
                     </label>
                 </div>
-                <a href="#github" class="navbar-download">
-                    <i class="fas fa-download"></i> Download
+                <!-- User Info in Navbar -->
+                <a href="views/profile.html" class="navbar-user-info hidden" id="navbarUserInfo">
+                    <span id="navbarUserAvatar" class="navbar-user-avatar"><i class="fas fa-user-circle"></i></span>
+                    <span id="navbarUserName"></span>
                 </a>
                 <a href="views/dashboard.html" class="navbar-dashboard hidden" id="navDashboardBtn">
                     <i class="fas fa-tachometer-alt"></i> Dashboard
@@ -763,15 +765,15 @@
 
     <!-- Seção Vídeo Apresentação do Projeto (destacada) -->
     <section id="video-apresentacao" class="video-apresentacao">
-        <div class="container" style="max-width: 950px; margin: 0 auto; padding: 3rem 1rem 3.5rem 1rem;">
-            <div style="background: linear-gradient(120deg, #005BFF 60%, #e0eaff 100%); border-radius: 2rem; box-shadow: 0 8px 32px rgba(0,91,255,0.13); padding: 3rem 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 2.2rem; border: 2px solid #005BFF;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 12px #005BFF55;">Assista à Apresentação do WACS</h2>
-                <p style="font-size: 1.25rem; color: #f5f5f5; text-align: center; max-width: 700px; margin-bottom: 1.5rem; font-weight: 500; text-shadow: 0 1px 8px #005BFF33;">
+        <div class="container">
+            <div class="video-content">
+                <h2 class="video-title">Assista à Apresentação do WACS</h2>
+                <p class="video-description">
                     Conheça o projeto WACS diretamente com a nossa equipe!<br>
-                    <span style="color: #ffd600; font-weight: 700;">Tecnologia, inclusão e autonomia para a mobilidade.</span>
+                    <span>Tecnologia, inclusão e autonomia para a mobilidade.</span>
                 </p>
-                <div class="video-container" style="width: 100%; max-width: 720px; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 8px 32px rgba(0,91,255,0.18); border: 2px solid #ffd600;">
-                    <iframe width="100%" height="400" src="https://www.youtube.com/embed/ycuClDTIFHM" title="Apresentação do Projeto WACS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 1.2rem;"></iframe>
+                <div class="video-container">
+                    <iframe width="100%" height="400" src="https://www.youtube.com/embed/ycuClDTIFHM" title="Apresentação do Projeto WACS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 </div>
             </div>
         </div>
@@ -1040,111 +1042,61 @@
                     </div>
                 </div>
             </div>
-            <div class="timeline">
-                <h3>Linha do Tempo do Projeto</h3>
-                <ul class="timeline-modern">
-                    <li>
-                        <span class="timeline-year">2025</span>
-                        <div class="timeline-content-modern">
-                            <strong>Início do Projeto</strong>
-                            <p>Definição do escopo, pesquisa e planejamento inicial.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="timeline-year">2025</span>
-                        <div class="timeline-content-modern">
-                            <strong>Desenvolvimento</strong>
-                            <p>Implementação do hardware, software e testes internos.</p>
-                        </div>
-                    </li>
-                    <li>
-                        <span class="timeline-year">2025</span>
-                        <div class="timeline-content-modern">
-                            <strong>Testes e Validação</strong>
-                            <p>Testes com usuários PCDs, ajustes finais e entrega do projeto.</p>
-                        </div>
-                    </li>
-                </ul>
-            </div>
         </div>
-    </section>
-
-    <!-- Seção Vídeo Apresentação do Projeto (destacada) -->
-    <section id="video-apresentacao" class="video-apresentacao">
-        <div class="container" style="max-width: 950px; margin: 0 auto; padding: 3rem 1rem 3.5rem 1rem;">
-            <div style="background: linear-gradient(120deg, #005BFF 60%, #e0eaff 100%); border-radius: 2rem; box-shadow: 0 8px 32px rgba(0,91,255,0.13); padding: 3rem 2.5rem; display: flex; flex-direction: column; align-items: center; gap: 2.2rem; border: 2px solid #005BFF;">
-                <h2 style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; text-align: center; letter-spacing: 0.5px; text-shadow: 0 2px 12px #005BFF55;">Assista à Apresentação do WACS</h2>
-                <p style="font-size: 1.25rem; color: #f5f5f5; text-align: center; max-width: 700px; margin-bottom: 1.5rem; font-weight: 500; text-shadow: 0 1px 8px #005BFF33;">
-                    Conheça o projeto WACS diretamente com a nossa equipe!<br>
-                    <span style="color: #ffd600; font-weight: 700;">Tecnologia, inclusão e autonomia para a mobilidade.</span>
-                </p>
-                <div class="video-container" style="width: 100%; max-width: 720px; border-radius: 1.2rem; overflow: hidden; box-shadow: 0 8px 32px rgba(0,91,255,0.18); border: 2px solid #ffd600;">
-                    <iframe width="100%" height="400" src="https://www.youtube.com/embed/ycuClDTIFHM" title="Apresentação do Projeto WACS" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen style="border-radius: 1.2rem;"></iframe>
-                </div>
-            </div>
-        </div>
-        <style>
-            .video-apresentacao .container {
-                animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
-            }
-            @media (max-width: 900px) {
-                .video-apresentacao .container { padding: 2rem 0.5rem 2.5rem 0.5rem; }
-                .video-apresentacao .video-container { height: 220px; }
-                .video-apresentacao iframe { height: 220px !important; }
-            }
-        </style>
     </section>
 
     <!-- Galeria Section -->
     <section id="galeria" class="galeria">
         <div class="container">
-            <h2>Galeria</h2>
-            <div class="gallery-grid">
-                <div class="gallery-item">
+            <!-- Carousel Container -->
+            <div class="carousel-container">
+                <!-- Gallery Item 1 -->
+                <div class="carousel-item">
                     <img src="public/images/fotos-projeto/pintandocadeira.jpeg" alt="Cadeira de Rodas Automatizada">
                     <div class="gallery-overlay">
                         <h3>Produção da Cadeira de Rodas física</h3>
                         <p>Design moderno e acessível</p>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <!-- Gallery Item 2 -->
+                <div class="carousel-item">
                     <img src="public/images/fotos-projeto/medindocadeira.jpeg" alt="Interface do Aplicativo">
                     <div class="gallery-overlay">
                         <h3>Medição da Cadeira de Rodas</h3>
                         <p>Design moderno e acessível</p>
                     </div>
                 </div>
-                <div class="gallery-item">
+                <!-- Gallery Item 3 -->
+                <div class="carousel-item">
                     <img src="public/images/fotos-projeto/selfiegrupo.jpeg" alt="Sensores e Hardware">
                     <div class="gallery-overlay">
                         <h3>Foto da equipe</h3>
                         <p>Foto da equipe que está desenvolvendo o projeto</p>
                     </div>
                 </div>
+                <!-- Add more items as needed -->
             </div>
+            <!-- Numeração do Carrossel -->
+            <div class="carousel-pagination">
+                <span id="current-slide">1</span> / <span id="total-slides"></span>
+            </div>
+            <!-- Navigation Buttons (Optional - can be added later) -->
+            <!-- <button class="carousel-control prev">❮</button> -->
+            <!-- <button class="carousel-control next">❯</button> -->
         </div>
+        <style>
+    .video-apresentacao .container {
+        animation: fadeIn 1.2s cubic-bezier(.4,0,.2,1);
+    }
+    @media (max-width: 900px) {
+        .video-apresentacao .container { padding: 2rem 0.5rem 2.5rem 0.5rem; }
+        .video-apresentacao .video-container { height: 220px; }
+        .video-apresentacao iframe { height: 220px !important; }
+    }
+</style>
     </section>
 
-    <!-- FAQ Section -->
-    <section id="faq" class="faq">
-        <div class="container">
-            <h2>Perguntas Frequentes</h2>
-            <div class="faq-grid">
-                <div class="faq-item">
-                    <h3>Como funciona o controle da cadeira?</h3>
-                    <p>O controle é feito através de um aplicativo mobile que se comunica com a cadeira via Bluetooth, permitindo movimentos precisos e seguros.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>O mapa colaborativo é gratuito?</h3>
-                    <p>Sim, o mapa colaborativo é totalmente gratuito e aberto para contribuições de todos os usuários.</p>
-                </div>
-                <div class="faq-item">
-                    <h3>Como posso contribuir com o projeto?</h3>
-                    <p>Você pode contribuir cadastrando locais acessíveis, avaliando estabelecimentos ou participando do desenvolvimento através do GitHub.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+  
 
 
     <!-- GitHub Section -->
@@ -1240,6 +1192,11 @@
             const dashboardLinkMobile = document.getElementById('dashboardLinkMobile');
             const logoutBtnMobile = document.getElementById('logoutBtnMobile');
             
+            // New DOM Elements for User Info in Navbar
+            const navbarUserInfo = document.getElementById('navbarUserInfo');
+            const navbarUserAvatar = document.getElementById('navbarUserAvatar');
+            const navbarUserName = document.getElementById('navbarUserName');
+
             // Logout function
             function handleLogout() {
                 auth.signOut()
@@ -1257,13 +1214,33 @@
             if (logoutBtnMobile) logoutBtnMobile.addEventListener('click', handleLogout);
             
             // Update UI for logged in user
-            function updateUIForLoggedInUser() {
+            function updateUIForLoggedInUser(user) { // Pass user object here
+                console.log("updateUIForLoggedInUser chamado com user:", user); // Log para verificar o objeto user dentro da função
                 // Desktop menu
                 loginLink.classList.add('hidden');
-                profileLink.classList.remove('hidden');
+                // Use the new profileLinkNav ID
+                const profileLinkNav = document.getElementById('profileLinkNav');
+                if (profileLinkNav) profileLinkNav.classList.remove('hidden');
+
                 dashboardLink.classList.remove('hidden');
                 logoutBtn.classList.remove('hidden');
                 navDashboardBtn.classList.remove('hidden');
+
+                // Display user info in navbar
+                if (navbarUserInfo) navbarUserInfo.classList.remove('hidden');
+                if (user) {
+                    if (navbarUserAvatar) {
+                        // If user has a photoURL, use it, otherwise show the icon
+                        if (user.photoURL) {
+                            navbarUserAvatar.innerHTML = `<img src="${user.photoURL}" alt="User Avatar">`;
+                        } else {
+                            // Ensure the correct icon class is used if no photo
+                            navbarUserAvatar.innerHTML = `<i class="fas fa-user-circle"></i>`;
+                        }
+                    }
+                    // Use user.displayName for name, fallback to email or 'Usuário'
+                    if (navbarUserName) navbarUserName.textContent = user.displayName || user.email || 'Usuário';
+                }
                 
                 // Mobile menu
                 loginLinkMobile.classList.add('hidden');
@@ -1276,10 +1253,20 @@
             function updateUIForLoggedOutUser() {
                 // Desktop menu
                 loginLink.classList.remove('hidden');
-                profileLink.classList.add('hidden');
+                 // Use the new profileLinkNav ID
+                const profileLinkNav = document.getElementById('profileLinkNav');
+                if (profileLinkNav) profileLinkNav.classList.add('hidden');
+                
                 dashboardLink.classList.add('hidden');
                 logoutBtn.classList.add('hidden');
                 navDashboardBtn.classList.add('hidden');
+
+                 // Hide user info in navbar and reset
+                if (navbarUserInfo) navbarUserInfo.classList.add('hidden');
+                // Reset avatar to default icon
+                if (navbarUserAvatar) navbarUserAvatar.innerHTML = `<i class="fas fa-user-circle"></i>`;
+                 // Clear name
+                if (navbarUserName) navbarUserName.textContent = '';
                 
                 // Mobile menu
                 loginLinkMobile.classList.remove('hidden');
@@ -1290,10 +1277,11 @@
             
             // Auth state observer
             auth.onAuthStateChanged(function(user) {
+                console.log("onAuthStateChanged disparado. User:", user); // Log para verificar o objeto user
                 if (user) {
                     // User is signed in
                     console.log('Usuário logado:', user.email);
-                    updateUIForLoggedInUser();
+                    updateUIForLoggedInUser(user); // Pass user object
                 } else {
                     // User is signed out
                     console.log('Nenhum usuário logado');
@@ -1429,6 +1417,24 @@
                 // Parar troca automática ao passar o mouse (opcional)
                 carouselContainer.addEventListener('mouseenter', stopAutoScroll);
                 carouselContainer.addEventListener('mouseleave', startAutoScroll);
+
+                 // Adicionar numeração
+                const currentSlideSpan = document.getElementById('current-slide');
+                const totalSlidesSpan = document.getElementById('total-slides');
+
+                if (carouselItems.length > 0 && currentSlideSpan && totalSlidesSpan) {
+                    totalSlidesSpan.textContent = carouselItems.length;
+
+                    // Modificar a função updateCarousel para atualizar a numeração
+                    const originalUpdateCarousel = updateCarousel;
+                    updateCarousel = function() {
+                        originalUpdateCarousel();
+                        currentSlideSpan.textContent = currentIndex + 1;
+                    };
+
+                    // Chamar updateCarousel uma vez para inicializar a numeração
+                    updateCarousel();
+                }
             }
         });
     </script>

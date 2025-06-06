@@ -302,15 +302,16 @@ body:not(.dark-theme) .logo-dark {
 
 /* Visão Geral Section */
 .visao-geral {
-    padding-top: var(--spacing-md);
-    padding-bottom: var(--spacing-xl);
+    padding: var(--spacing-xl) 0;
     background-color: var(--accent-color);
+    color: var(--text-color);
 }
 
 .visao-geral h2 {
     text-align: center;
     margin-bottom: var(--spacing-lg);
     font-size: var(--font-size-xl);
+    color: var(--primary-color);
 }
 
 .grid {
@@ -328,11 +329,12 @@ body:not(.dark-theme) .logo-dark {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
+    color: var(--text-color);
 }
 
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 10px 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .card::after {
@@ -353,6 +355,11 @@ body:not(.dark-theme) .logo-dark {
 
 .card h3 {
     margin-bottom: var(--spacing-sm);
+    color: var(--text-color);
+}
+
+.card p {
+    color: var(--text-light);
 }
 
 /* FAQ Section */
@@ -628,6 +635,62 @@ footer {
     color: var(--primary-color);
 }
 
+/* User Info in Navbar */
+.navbar-user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: color 0.3s ease;
+    margin-right: var(--spacing-sm);
+    padding: 0.3rem 0.5rem;
+    border-radius: 25px; /* Cápsula para destacar */
+    background-color: var(--accent-color);
+    border: 1px solid var(--primary-color);
+}
+
+body.dark-theme .navbar-user-info {
+    color: var(--dark-text);
+    background-color: var(--dark-accent);
+    border-color: var(--dark-primary);
+}
+
+.navbar-user-info:hover {
+    color: var(--primary-color);
+    opacity: 0.9;
+}
+
+body.dark-theme .navbar-user-info:hover {
+    color: var(--dark-primary);
+}
+
+.navbar-user-avatar i {
+    font-size: 1.5rem; /* Tamanho do ícone */
+    color: var(--primary-color);
+}
+
+body.dark-theme .navbar-user-avatar i {
+    color: var(--dark-primary);
+}
+
+.navbar-user-avatar img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1px solid var(--primary-color);
+}
+
+body.dark-theme .navbar-user-avatar img {
+    border-color: var(--dark-primary);
+}
+
+.navbar-user-info span#navbarUserName {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .nav-links {
@@ -801,7 +864,8 @@ body.dark-theme select:focus {
 
 /* Footer em modo escuro */
 body.dark-theme footer {
-    background-color: #1E2433;
+    background-color: var(--dark-secondary);
+    color: #ffffff;
 }
 
 body.dark-theme .footer-links a:hover {
@@ -817,6 +881,7 @@ body.dark-theme .footer-links a:hover {
 .equipe {
     padding: var(--spacing-xl) 0;
     background-color: var(--background-color);
+    color: var(--text-color);
 }
 
 .equipe h2 {
@@ -1057,8 +1122,9 @@ body.dark-theme .footer-links a:hover {
 
 /* Sobre Section */
 .sobre {
-    padding: var(--spacing-xl) 0;
-    background-color: var(--background-color);
+    padding: var(--spacing-lg) 0 var(--spacing-xl) 0;
+    background-color: var(--accent-color);
+    color: var(--text-color);
 }
 
 .sobre h2 {
@@ -1084,6 +1150,7 @@ body.dark-theme .footer-links a:hover {
 .sobre-text p {
     margin-bottom: var(--spacing-md);
     line-height: 1.6;
+    color: var(--text-light);
 }
 
 .sobre-video {
@@ -1173,8 +1240,15 @@ body.dark-theme .footer-links a:hover {
 
 /* Galeria Section */
 .galeria {
-    padding: var(--spacing-xl) 0;
-    background-color: var(--accent-color);
+    padding: var(--spacing-xl) 0 var(--spacing-lg) 0;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    overflow: hidden;
+}
+
+body.dark-theme .galeria {
+    background-color: var(--dark-background);
+    color: var(--dark-text);
 }
 
 .galeria h2 {
@@ -1184,50 +1258,226 @@ body.dark-theme .footer-links a:hover {
     color: var(--primary-color);
 }
 
-.gallery-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
+body.dark-theme .galeria h2 {
+    color: var(--dark-primary);
 }
 
-.gallery-item {
+/* Estilos para o Carrossel */
+.carousel-container {
+    width: 100%;
+    max-width: 900px;
+    margin: var(--spacing-lg) auto;
     position: relative;
-    border-radius: 8px;
-    overflow: hidden;
-    aspect-ratio: 16/9;
+    height: 500px;
+    perspective: 1200px;
+    transform-style: preserve-3d;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.gallery-item img {
+.carousel-item {
+    width: 85%;
+    max-width: 700px;
+    height: 450px;
+    position: absolute;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    cursor: pointer;
+}
+
+.carousel-item img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.3s ease;
+    position: absolute;
+    top: 0;
+    left: 0;
+    transition: transform 0.6s ease;
 }
 
-.gallery-overlay {
-    position: absolute;
+.carousel-item:hover img {
+    transform: scale(1.05);
+}
+
+.carousel-item .gallery-overlay {
+    position: relative;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: var(--spacing-md);
-    background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-    color: white;
-    transform: translateY(100%);
-    transition: transform 0.3s ease;
-}
-
-.gallery-item:hover .gallery-overlay {
+    padding: 1.5rem;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95), rgba(0, 0, 0, 0.7));
+    color: #ffffff;
     transform: translateY(0);
+    transition: background 0.3s ease;
+    z-index: 1;
 }
 
-.gallery-item:hover img {
+.carousel-item .gallery-overlay h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+}
+
+.carousel-item .gallery-overlay p {
+    margin: 0;
+    font-size: 0.85rem;
+    opacity: 0.9;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+    font-weight: 500;
+    color: #ffffff;
+}
+
+/* Ajustes para os estados do Carrossel (controlados pelo JS) */
+.carousel-item.active {
+    transform: rotateY(0deg) translateZ(0);
+    opacity: 1;
+    visibility: visible;
+    z-index: 5;
+}
+
+.carousel-item.prev {
+    transform: rotateY(15deg) translateZ(-300px) translateX(-150px);
+    opacity: 0.6;
+    visibility: visible;
+    z-index: 4;
+}
+
+.carousel-item.next {
+    transform: rotateY(-15deg) translateZ(-300px) translateX(150px);
+    opacity: 0.6;
+    visibility: visible;
+    z-index: 4;
+}
+
+/* Estilos para itens que não são prev, current ou next (fora de vista) */
+.carousel-item:not(.active):not(.prev):not(.next) {
+    transform: rotateY(0deg) translateZ(-600px);
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1;
+}
+
+/* Responsividade para o Carrossel */
+@media (max-width: 1024px) {
+    .carousel-container {
+        max-width: 700px;
+        height: 400px;
+        perspective: 1000px;
+    }
+    .carousel-item {
+        width: 90%;
+        max-width: 600px;
+        height: 350px;
+    }
+    .carousel-item.prev {
+        transform: rotateY(15deg) translateZ(-250px) translateX(-100px);
+    }
+    .carousel-item.next {
+        transform: rotateY(-15deg) translateZ(-250px) translateX(100px);
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-container {
+        max-width: 500px;
+        height: 350px;
+        perspective: 800px;
+    }
+    .carousel-item {
+        width: 95%;
+        max-width: 450px;
+        height: 300px;
+    }
+    .carousel-item.prev {
+        transform: rotateY(10deg) translateZ(-200px) translateX(-80px);
+    }
+    .carousel-item.next {
+        transform: rotateY(-10deg) translateZ(-200px) translateX(80px);
+    }
+    .carousel-item .gallery-overlay {
+        padding: 1rem;
+    }
+    .carousel-item .gallery-overlay h3 {
+        font-size: 1rem;
+    }
+    .carousel-item .gallery-overlay p {
+        font-size: 0.8rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-container {
+        max-width: 350px;
+        height: 280px;
+        perspective: 600px;
+    }
+    .carousel-item {
+        width: 100%;
+        max-width: 320px;
+        height: 230px;
+    }
+    .carousel-item.prev {
+        transform: rotateY(5deg) translateZ(-150px) translateX(-50px);
+        opacity: 0.4;
+    }
+    .carousel-item.next {
+        transform: rotateY(-5deg) translateZ(-150px) translateX(50px);
+        opacity: 0.4;
+    }
+    .carousel-item:not(.active):not(.prev):not(.next) {
+        transform: rotateY(0deg) translateZ(-400px);
+    }
+}
+
+/* Dark Theme Adjustments for Carousel */
+body.dark-theme .carousel-item {
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .carousel-item .gallery-overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.6));
+}
+
+body.dark-theme .carousel-item:hover img {
     transform: scale(1.05);
+}
+
+/* Estilos para a Numeração do Carrossel */
+.carousel-pagination {
+    text-align: center;
+    margin-top: var(--spacing-md);
+    font-size: 1rem;
+    color: var(--text-color);
+    font-weight: 600;
+}
+
+body.dark-theme .carousel-pagination {
+    color: var(--dark-text);
+}
+
+.carousel-pagination span {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+body.dark-theme .carousel-pagination span {
+    color: var(--dark-primary);
 }
 
 /* FAQ Section */
 .faq {
     padding: var(--spacing-xl) 0;
-    background-color: var(--background-color);
+    background-color: var(--accent-color);
+    color: var(--text-color);
 }
 
 .faq h2 {
@@ -1250,6 +1500,7 @@ body.dark-theme .footer-links a:hover {
     padding: var(--spacing-lg);
     border-radius: 8px;
     transition: transform 0.3s ease;
+    color: var(--text-color);
 }
 
 .faq-item:hover {
@@ -1368,11 +1619,92 @@ body.dark-theme .footer-links a:hover {
         top: 0;
     }
 
-    .timeline-info {
-        padding-left: var(--spacing-xl);
-    }
-
     .contact-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* Video Presentation Section */
+#video-apresentacao {
+    padding: var(--spacing-xl) 0;
+    background-color: var(--accent-color);
+    color: var(--text-color);
+}
+
+#video-apresentacao .container > div {
+    border-radius: 2rem;
+    box-shadow: 0 8px 32px rgba(0,91,255,0.13);
+    padding: 3rem 2.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.2rem;
+    border: 2px solid var(--primary-color);
+}
+
+#video-apresentacao .video-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+#video-apresentacao .video-description {
+    font-size: 1.25rem;
+    color: var(--text-light);
+    text-align: center;
+    max-width: 700px;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+#video-apresentacao .video-description span {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+#video-apresentacao .video-container {
+    width: 100%;
+    max-width: 720px;
+    border-radius: 1.2rem;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,91,255,0.18);
+    border: 2px solid #ffd600;
+}
+
+#video-apresentacao iframe {
+     border-radius: 1.2rem;
+}
+
+/* Adaptações do tema escuro para a seção do vídeo */
+body.dark-theme #video-apresentacao {
+    background-color: #161626;
+    color: var(--dark-text);
+}
+
+body.dark-theme #video-apresentacao .container > div {
+    background: none;
+    border-color: var(--dark-primary);
+    box-shadow: 0 8px 32px rgba(0,91,255,0.3);
+}
+
+body.dark-theme #video-apresentacao .video-title {
+    color: var(--dark-primary);
+    text-shadow: none;
+}
+
+body.dark-theme #video-apresentacao .video-description {
+    color: var(--dark-text-light);
+    text-shadow: none;
+}
+
+body.dark-theme #video-apresentacao .video-description span {
+    color: var(--dark-primary);
+}
+
+body.dark-theme #video-apresentacao .video-container {
+    border-color: var(--dark-primary);
+    box-shadow: 0 8px 32px rgba(0,91,255,0.3);
 } 
