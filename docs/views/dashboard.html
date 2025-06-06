@@ -4497,8 +4497,59 @@
         body.dark-theme .search-box input {
             background: var(--dark-card, #1e1e2d);
             color: var(--dark-text, #e2e8f0);
-<!DOCTYPE html>
-<html lang="pt-BR">
+        }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            gap: 1rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 6px;
+            background: var(--background-color, #fff);
+            color: var(--text-color, #1f2937);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn:not(:disabled):hover {
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .pagination-btn {
+            background: var(--dark-card, #1e1e2d);
+            color: var(--dark-text, #e2e8f0);
+            border-color: var(--dark-border, #2d3748);
+        }
+
+        body.dark-theme .pagination-btn:not(:disabled):hover {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        #pageInfo {
+            color: var(--text-color, #1f2937);
+            font-size: 0.9rem;
+        }
+
+        body.dark-theme #pageInfo {
+            color: var(--dark-text, #e2e8f0);
+        }
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7000,6 +7051,58 @@
         body.dark-theme .chat-quick-access:hover {
             background: var(--dark-primary-dark, #357ABD);
         }
+
+        .pagination-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            gap: 1rem;
+            border-top: 1px solid var(--border-color, #e5e7eb);
+        }
+
+        .pagination-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color, #e5e7eb);
+            border-radius: 6px;
+            background: var(--background-color, #fff);
+            color: var(--text-color, #1f2937);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .pagination-btn:not(:disabled):hover {
+            background: var(--accent-color, #e0eaff);
+            color: var(--primary-color, #0055b3);
+        }
+
+        body.dark-theme .pagination-btn {
+            background: var(--dark-card, #1e1e2d);
+            color: var(--dark-text, #e2e8f0);
+            border-color: var(--dark-border, #2d3748);
+        }
+
+        body.dark-theme .pagination-btn:not(:disabled):hover {
+            background: var(--dark-accent, #1E293B);
+            color: var(--dark-primary, #4A90E2);
+        }
+
+        #pageInfo {
+            color: var(--text-color, #1f2937);
+            font-size: 0.9rem;
+        }
+
+        body.dark-theme #pageInfo {
+            color: var(--dark-text, #e2e8f0);
+        }
     </style>
 </head>
 <body>
@@ -7226,9 +7329,18 @@
                                     </tr>
                                 </thead>
                                 <tbody id="usersTableBody">
-                                    <!-- Todos os usuários serão carregados aqui dinamicamente -->
+                                    <!-- Usuários serão carregados aqui dinamicamente -->
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="prevPage" class="pagination-btn" disabled>
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <span id="pageInfo">Página 1 de 1</span>
+                            <button id="nextPage" class="pagination-btn" disabled>
+                                Próximo <i class="fas fa-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -9450,76 +9562,119 @@ if (chatImageBtn && chatImageInput) {
     </script>
 
     <script>
-        // Função para carregar a lista de usuários
-        function loadUsers() {
-            const usersTableBody = document.getElementById('usersTableBody');
-            const db = firebase.firestore();
+        // Variáveis de paginação
+        let currentPage = 1;
+        const usersPerPage = 6;
+        let totalUsers = 0;
+        let allUsers = [];
 
-            db.collection('users').orderBy('createdAt', 'desc').get()
-                .then((querySnapshot) => {
-                    usersTableBody.innerHTML = '';
-                    
-                    querySnapshot.forEach((doc) => {
-                        const userData = doc.data();
-                        const createdAt = userData.createdAt ? userData.createdAt.toDate() : new Date();
-                        const formattedDate = createdAt.toLocaleDateString('pt-BR', {
-                            day: '2-digit',
-                            month: '2-digit',
-                            year: 'numeric'
-                        });
-
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>
-                                <span class="user-link" data-user-id="${doc.id}" style="cursor: pointer; color: var(--primary-color);">
-                                    ${userData.displayName || 'Usuário'}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="user-avatar-cell">
-                                    ${userData.photoURL ? 
-                                        `<img src="${userData.photoURL}" alt="${userData.displayName || 'Usuário'}" class="user-avatar-img">` :
-                                        `<div class="user-avatar-initials">${getInitials(userData.displayName || 'Usuário')}</div>`
-                                    }
-                                </div>
-                            </td>
-                            <td>${formattedDate}</td>
-                            <td>
-                                <span class="user-status ${userData.ADM === 1 ? 'status-active' : 'status-inactive'}">
-                                    ${userData.ADM === 1 ? 'Administrador' : 'Usuário'}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="user-actions">
-                                    <button onclick="viewUser('${doc.id}')" class="action-btn">
-                                        <i class="fas fa-eye"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        `;
-                        usersTableBody.appendChild(row);
-                    });
-                })
-                .catch((error) => {
-                    console.error("Erro ao carregar usuários:", error);
+        // Função para carregar usuários com paginação
+        async function loadUsers() {
+            try {
+                const querySnapshot = await db.collection('users').orderBy('createdAt', 'desc').get();
+                allUsers = [];
+                querySnapshot.forEach((doc) => {
+                    allUsers.push({ id: doc.id, ...doc.data() });
                 });
+                
+                totalUsers = allUsers.length;
+                updatePagination();
+                displayCurrentPage();
+            } catch (error) {
+                console.error("Erro ao carregar usuários:", error);
+            }
         }
+
+        // Função para exibir a página atual
+        function displayCurrentPage() {
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const currentUsers = allUsers.slice(startIndex, endIndex);
+            
+            usersTableBody.innerHTML = '';
+            
+            currentUsers.forEach(userData => {
+                const createdAt = userData.createdAt ? userData.createdAt.toDate() : new Date();
+                const formattedDate = createdAt.toLocaleDateString('pt-BR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <span class="user-link" data-user-id="${userData.id}" style="cursor: pointer; color: var(--primary-color);">
+                            ${userData.displayName || 'Usuário'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="user-avatar-cell">
+                            ${userData.photoURL ? 
+                                `<img src="${userData.photoURL}" alt="${userData.displayName || 'Usuário'}" class="user-avatar-img">` :
+                                `<div class="user-avatar-initials">${getInitials(userData.displayName || 'Usuário')}</div>`
+                            }
+                        </div>
+                    </td>
+                    <td>${formattedDate}</td>
+                    <td>
+                        <span class="user-status ${userData.ADM === 1 ? 'status-active' : 'status-inactive'}">
+                            ${userData.ADM === 1 ? 'Administrador' : 'Usuário'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="user-actions">
+                            <button onclick="viewUser('${userData.id}')" class="action-btn">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+        }
+
+        // Função para atualizar controles de paginação
+        function updatePagination() {
+            const totalPages = Math.ceil(totalUsers / usersPerPage);
+            document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages;
+        }
+
+        // Event listeners para botões de paginação
+        document.getElementById('prevPage').addEventListener('click', () => {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePagination();
+                displayCurrentPage();
+            }
+        });
+
+        document.getElementById('nextPage').addEventListener('click', () => {
+            const totalPages = Math.ceil(totalUsers / usersPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePagination();
+                displayCurrentPage();
+            }
+        });
 
         // Função para buscar usuários
         document.getElementById('userSearch').addEventListener('input', function(e) {
             const searchTerm = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#usersTableBody tr');
-
-            rows.forEach(row => {
-                const text = row.textContent.toLowerCase();
-                row.style.display = text.includes(searchTerm) ? '' : 'none';
+            const filteredUsers = allUsers.filter(user => {
+                const name = (user.displayName || '').toLowerCase();
+                const email = (user.email || '').toLowerCase();
+                return name.includes(searchTerm) || email.includes(searchTerm);
             });
+            
+            allUsers = filteredUsers;
+            totalUsers = filteredUsers.length;
+            currentPage = 1;
+            updatePagination();
+            displayCurrentPage();
         });
-
-        // Funções para ações de usuário
-        function viewUser(userId) {
-            showUserProfile(userId);
-        }
 
         // Carregar usuários quando a página carregar
         document.addEventListener('DOMContentLoaded', loadUsers);
