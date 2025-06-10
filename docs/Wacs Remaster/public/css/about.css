@@ -1,0 +1,245 @@
+/* public/css/about.css */
+
+.about-section {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.about-section h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 60px;
+    color: var(--gradient-text-start); /* Mantendo a cor do gradiente para o título principal */
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.about-content {
+    display: flex;
+    flex-direction: row; /* Padrão desktop: texto e vídeo lado a lado */
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
+    gap: 50px;
+}
+
+.about-text {
+    flex: 1;
+    text-align: left;
+    font-size: 1.15rem;
+    line-height: 1.9;
+    max-width: 600px;
+}
+
+.about-text p {
+    margin-bottom: 25px;
+}
+
+.about-text p:last-child {
+    margin-bottom: 0;
+}
+
+.about-more-btn {
+    margin-top: 30px; /* Espaço acima do botão */
+    align-self: flex-start; /* Alinha o botão à esquerda dentro do flex container */
+}
+
+.about-video {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* Para posicionar o botão de expandir */
+    max-width: 600px;
+    min-width: 300px;
+    border-radius: var(--border-radius-large);
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    transition: box-shadow 0.5s ease;
+}
+
+.about-video:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+.video-wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* Proporção 16:9 para vídeos responsivos (altura/largura) */
+    background-color: #000;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: var(--border-radius-large);
+}
+
+.video-expand-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 10; /* Acima do iframe */
+}
+
+.video-expand-btn:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+    transform: scale(1.1);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .about-content {
+        flex-direction: column; /* Pilha vertical em telas menores */
+        gap: 40px;
+    }
+
+    .about-text, .about-video {
+        max-width: 100%; /* Ocupa a largura total */
+    }
+
+    .about-section h2 {
+        font-size: 2.2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-section {
+        padding: 60px 15px;
+    }
+
+    .about-section h2 {
+        font-size: 2rem;
+        margin-bottom: 40px;
+    }
+
+    .about-text {
+        font-size: 1rem;
+    }
+}
+
+/* Estilos para a página about.html (conteúdo principal) */
+.page-content {
+    padding: 80px 20px;
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: left; /* Alinhar o texto à esquerda por padrão */
+    background-color: var(--background-color); /* Garante que o fundo da seção siga o tema */
+    color: var(--text-color); /* Garante que o texto da seção siga o tema */
+}
+
+.page-content h2 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-top: 60px;
+    margin-bottom: 30px;
+    text-align: center;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.page-content h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    color: var(--text-color);
+    text-align: left;
+}
+
+.page-content p {
+    font-size: 1.1rem;
+    line-height: 1.9;
+    margin-bottom: 1.5rem;
+    opacity: 1;
+}
+
+.page-content ul,
+.page-content ol {
+    margin-left: 25px;
+    margin-bottom: 1.5rem;
+    list-style-position: outside;
+    padding-left: 0.5rem;
+}
+
+.page-content ul li,
+.page-content ol li {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+    color: var(--text-color);
+    opacity: 1;
+}
+
+.page-content ol li strong {
+    color: var(--gradient-start);
+    font-weight: 600; /* Made stronger for better emphasis */
+}
+
+.page-content hr {
+    border: none;
+    border-top: 2px solid var(--border-color-dark);
+    margin: 50px auto;
+    width: 80%;
+    max-width: 600px;
+    opacity: 0.2;
+}
+
+/* Responsividade para o conteúdo da página */
+@media (max-width: 768px) {
+    .page-content {
+        padding: 60px 15px; /* Adjusted padding for smaller screens */
+    }
+
+    .page-content h2 {
+        font-size: 2rem;
+        margin-top: 40px;
+        margin-bottom: 25px;
+    }
+
+    .page-content h3 {
+        font-size: 1.6rem;
+        margin-top: 30px;
+        margin-bottom: 15px;
+    }
+
+    .page-content p,
+    .page-content ul li,
+    .page-content ol li {
+        font-size: 1rem;
+        line-height: 1.7;
+    }
+
+    .page-content ul,
+    .page-content ol {
+        margin-left: 20px;
+        padding-left: 0.3rem;
+    }
+
+    .page-content hr {
+        margin: 40px auto;
+        width: 90%;
+    }
+} 

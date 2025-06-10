@@ -1,0 +1,187 @@
+/* public/css/main.css */
+
+:root {
+    /* Variáveis do Tema Escuro (Padrão) */
+    --background-color: #0A0A0A;
+    --text-color: #FFFFFF;
+    --card-background: rgba(255, 255, 255, 0.05);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --alpha-banner-bg: #333333;
+    --alpha-banner-text: #E0E0E0;
+    --alpha-banner-icon: #FFA726;
+    --alpha-banner-close-btn: #E0E0E0;
+
+    /* Variáveis do Rodapé */
+    --footer-background: #111111; /* Cor de fundo distinta para o tema escuro */
+    --footer-text: #FFFFFF; /* Texto branco puro */
+
+    /* Variáveis de Gradiente (geralmente fixas) */
+    --gradient-start: #00C6FF;
+    --gradient-end: #0072FF;
+    --gradient-text-start: #00C6FF;
+    --gradient-text-end: #9200FF;
+
+    /* Variáveis de Borda e Sombra */
+    --border-radius-large: 20px;
+    --border-radius-medium: 10px;
+}
+
+/* Tema Claro */
+:root.light-theme {
+    --background-color: #FFFFFF; /* Fundo branco puro para maior clareza */
+    --text-color: #212121; /* Texto mais escuro para alto contraste */
+    --card-background: #F0F2F5; /* Fundo de card sutilmente cinza claro */
+    --border-color: rgba(0, 0, 0, 0.15); /* Borda mais visível no claro */
+    --alpha-banner-bg: #FFE0B2; /* Laranja pastel para aviso */
+    --alpha-banner-text: #424242; /* Texto escuro para aviso */
+    --alpha-banner-icon: #FB8C00; /* Laranja mais vibrante para ícone de aviso */
+    --alpha-banner-close-btn: #424242; /* Botão de fechar escuro */
+
+    /* Variáveis do Rodapé para Tema Claro */
+    --footer-background: #212121; /* Um cinza escuro para contraste no tema claro */
+    --footer-text: #F0F2F5; /* Texto mais claro */
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-color); /* Usando a variável de tema */
+    background-color: var(--background-color); /* Usando a variável de tema */
+    transition: background-color 0.5s ease, color 0.5s ease; /* Adicionando transição */
+}
+
+a {
+    color: var(--text-color); /* Usando a variável de tema */
+    text-decoration: none;
+}
+
+a:hover {
+    opacity: 0.8;
+}
+
+button, input {
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn {
+    padding: 15px 30px;
+    font-weight: 600;
+    border-radius: var(--border-radius-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-gradient {
+    background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    color: var(--text-color); /* Usando a variável de tema */
+}
+
+.btn-gradient:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn-outline-gradient {
+    background: transparent;
+    color: var(--gradient-start);
+    border: 2px solid var(--gradient-start);
+    padding: 13px 28px;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    color: var(--text-color); /* Usando a variável de tema */
+    border-color: transparent;
+    transform: translateY(-2px);
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background-color); /* Usando a variável de tema */
+}
+
+.alpha-notice-banner {
+    background-color: var(--alpha-banner-bg); /* Usando a variável de tema */
+    color: var(--alpha-banner-text); /* Usando a variável de tema */
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    z-index: 1001;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: opacity 0.5s ease-out;
+}
+
+.alpha-notice-banner p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-grow: 1;
+}
+
+.alpha-notice-banner i {
+    font-size: 1.1rem;
+    color: var(--alpha-banner-icon); /* Usando a variável de tema */
+}
+
+.close-banner-btn {
+    background: none;
+    border: none;
+    color: var(--alpha-banner-close-btn); /* Usando a variável de tema */
+    font-size: 1.2rem;
+    cursor: pointer;
+    margin-left: 20px;
+    padding: 5px;
+    transition: color 0.3s ease;
+}
+
+.close-banner-btn:hover {
+    color: var(--text-color); /* Usando a variável de tema */
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, var(--gradient-text-start), var(--gradient-text-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-light {
+    background: linear-gradient(90deg, #3C91E6, #63B8F4); /* Este ainda é um gradiente específico */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Utility classes */
+.highlight {
+    color: var(--primary-color);
+}
+
+.hidden {
+    display: none;
+}
+
+/* Styles from navbar.css and footer.css also need to use these variables, but will be handled separately if necessary. */ 

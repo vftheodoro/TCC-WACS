@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Login</title>
+    <link rel="stylesheet" href="../public/css/main.css">
+    <link rel="stylesheet" href="../public/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-wheelchair login-logo-icon"></i>
+                <span class="login-logo-text">WACS</span>
+                <h2>Bem-vindo de volta!</h2>
+                <p>Faça login para continuar.</p>
+            </div>
+            <form class="login-form">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="seu.email@exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="********" required>
+                </div>
+                <button type="submit" class="btn btn-gradient login-btn">Entrar</button>
+                <div class="social-login-divider">
+                    <span>ou</span>
+                </div>
+                <button type="button" class="btn btn-outline-gradient google-login-btn">
+                    <i class="fab fa-google"></i> Logar com o Google
+                </button>
+            </form>
+            <p class="login-footer-text">Não tem uma conta? <a href="#">Cadastre-se</a></p>
+        </div>
+    </div>
+
+    <script src="../public/js/login.js"></script>
+</body>
+</html> 

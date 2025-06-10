@@ -1,0 +1,118 @@
+/* public/css/stats.css */
+
+.stats-section {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    width: 100%;
+    padding: 0 40px;
+    z-index: 2; /* Ensure it's above the 3D graphic placeholder */
+    margin-top: 50px; /* Adjust as needed for spacing from hero content */
+}
+
+.stat-card {
+    background-color: var(--card-bg);
+    backdrop-filter: blur(10px);
+    border-radius: var(--border-radius-large);
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.stat-number {
+    font-size: 3.5rem;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 5px;
+    background: linear-gradient(90deg, var(--gradient-text-start), var(--gradient-text-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.stat-label {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--text-light);
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.scroll-indicator {
+    display: none !important; /* Esconder completamente o indicador de scroll */
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--text-light);
+    opacity: 0.6;
+    font-size: 0.9rem;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    z-index: 10; /* Ensure it's visible */
+}
+
+.scroll-indicator span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+/* Responsividade para a seção de Estatísticas */
+@media (max-width: 992px) {
+    .stats-section {
+        flex-direction: column;
+        gap: 20px;
+        padding: 0 20px;
+    }
+
+    .stat-card {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto; /* Centraliza os cards */
+        padding: 20px 30px;
+    }
+
+    .stat-number {
+        font-size: 2.8rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-section {
+        margin-top: 30px;
+    }
+
+    .stat-card {
+        padding: 15px 20px;
+    }
+
+    .stat-number {
+        font-size: 2.2rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .scroll-indicator {
+        bottom: 10px;
+    }
+
+    .scroll-indicator span {
+        font-size: 1.2rem;
+    }
+} 

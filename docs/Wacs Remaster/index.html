@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Print Pro</title>
+    <link rel="stylesheet" href="public/css/main.css">
+    <link rel="stylesheet" href="public/css/navbar.css">
+    <link rel="stylesheet" href="public/css/hero.css">
+    <link rel="stylesheet" href="public/css/stats.css">
+    <link rel="stylesheet" href="public/css/footer.css">
+    <link rel="stylesheet" href="public/css/overview.css">
+    <link rel="stylesheet" href="public/css/about.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="alpha-notice-banner">
+        <p><i class="fas fa-exclamation-triangle"></i> Esta é uma versão <strong>Alpha</strong> do WACS. Funcionalidades podem ser limitadas e bugs podem ocorrer. Agradecemos seu feedback!</p>
+        <button class="close-banner-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="main-container">
+        <nav class="navbar">
+            <div class="navbar-logo">
+                <i class="fas fa-wheelchair"></i>
+                <span>WACS</span>
+            </div>
+            <ul class="navbar-menu">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#recursos">Recursos</a></li>
+                <li><a href="#comunidade">Comunidade</a></li>
+                <li><a href="#mapa">Mapa Acessível</a></li>
+                <li><a href="#contato">Contato</a></li>
+                <li><a href="views/about.html">Sobre</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="theme-toggle-btn">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <div class="logged-out-actions">
+                    <button class="btn btn-gradient" onclick="location.href='views/login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <section class="hero-section">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">W</span>heelchair<br>
+                    <span class="gradient-text">A</span>utomation<br>
+                    <span class="gradient-text">C</span>ontrol<br>
+                    <span class="gradient-text">S</span>ystem
+                </h1>
+                <p class="hero-description">
+                    Inovando na mobilidade acessível através da tecnologia.<br>
+                    Controle sua cadeira, encontre locais acessíveis e converse com a comunidade!
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-gradient">Explorar Recursos <i class="fas fa-arrow-right"></i></button>
+                    <button class="btn btn-outline-gradient"><i class="fas fa-laptop-code"></i> Ver Demonstração</button>
+                </div>
+            </div>
+            <div class="hero-3d-graphic">
+                <!-- Placeholder for the 3D element -->
+            </div>
+
+            <div class="stats-section">
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">USUÁRIOS<br>CADASTRADOS</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">LOCAIS<br>MAPEADOS</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">24</span>
+                    <span class="stat-label">SUPORTE<br>24H</span>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="overview-section" id="recursos">
+            <h2>Visão Geral</h2>
+            <div class="overview-cards-container">
+                <div class="overview-card">
+                    <i class="fas fa-wheelchair fa-3x"></i>
+                    <h3>Mobilidade Autônoma</h3>
+                    <p>Controle total da cadeira de rodas através do seu smartphone</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-map fa-3x"></i>
+                    <h3>Mapa Colaborativo</h3>
+                    <p>Compartilhe e descubra locais acessíveis em sua cidade</p>
+                </div>
+                <div class="overview-card">
+                    <i class="fas fa-robot fa-3x"></i>
+                    <h3>Assistente Virtual</h3>
+                    <p>Navegação inteligente e sugestões personalizadas</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="about-section" id="sobre">
+            <h2>Sobre o Projeto</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p>O WACS (Wheelchair Automation Control System) é uma solução inovadora de mobilidade para pessoas com deficiência (PCDs) desenvolvida na Etec de Registro como projeto de TCC do curso de Desenvolvimento de Sistemas.</p>
+                    <p>Nossa missão é promover a inclusão e autonomia através da tecnologia, oferecendo uma cadeira de rodas automatizada controlada via smartphone e um aplicativo colaborativo de mapeamento urbano acessível.</p>
+                    <a href="views/about.html" class="btn btn-gradient about-more-btn">Ver Mais <i class="fas fa-arrow-right"></i></a>
+                </div>
+                <div class="about-video">
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/ycuClDTIFHM" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        <a href="https://www.youtube.com/watch?v=ycuClDTIFHM" target="_blank" class="video-expand-btn" aria-label="Expandir vídeo"><i class="fas fa-external-link-alt"></i></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <i class="fas fa-wheelchair"></i>
+                <span>WACS</span>
+                <p>Inovando na mobilidade acessível.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#recursos">Recursos</a></li>
+                    <li><a href="#comunidade">Comunidade</a></li>
+                    <li><a href="#mapa">Mapa Acessível</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contato</h3>
+                <p>Email: contato@wacs.com</p>
+                <p>Telefone: (XX) XXXX-XXXX</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+            <p class="alpha-footer-notice">Esta é uma versão Alpha. Para feedback, entre em contato.</p>
+        </div>
+    </footer>
+
+    <script src="public/js/script.js"></script>
+</body>
+</html> 

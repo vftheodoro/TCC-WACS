@@ -1,0 +1,163 @@
+/* public/css/footer.css */
+
+.footer {
+    background-color: var(--footer-background); /* Usando a nova variável de tema para o fundo */
+    color: var(--footer-text); /* Usando a nova variável de tema para o texto */
+    padding: 80px 40px 40px; /* Mais padding para respiro */
+    border-top: none;
+    text-align: left;
+    transition: background-color 0.5s ease, color 0.5s ease; /* Adicionando transição */
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 60px; /* Ajustando espaçamento entre colunas */
+    max-width: 1200px;
+    margin: 0 auto 60px; /* Mais margem inferior para separar do bottom */
+}
+
+.footer-brand,
+.footer-links,
+.footer-contact {
+    flex: 1;
+    min-width: 200px; /* Garantir que as colunas não fiquem muito pequenas */
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinhar logo e texto à esquerda */
+    text-align: left;
+}
+
+.footer-brand i {
+    font-size: 32px; /* Ícone um pouco maior */
+    margin-bottom: 8px;
+    color: var(--footer-text); /* Garantindo que o ícone use a cor do texto do rodapé */
+}
+
+.footer-brand span {
+    font-size: 28px; /* Título da marca maior */
+    font-weight: 700;
+    color: var(--footer-text); /* Garantindo que o texto da marca use a cor do texto do rodapé */
+    margin-bottom: 8px;
+}
+
+.footer-brand p {
+    font-size: 1rem;
+    opacity: 0.9; /* Levemente mais visível */
+    margin-top: 5px;
+    color: var(--footer-text); /* Garantindo que o texto da marca use a cor do texto do rodapé */
+}
+
+.footer-links h3,
+.footer-contact h3 {
+    font-size: 1.2rem; /* Títulos das colunas maiores */
+    font-weight: 700;
+    margin-bottom: 20px; /* Mais espaçamento abaixo dos títulos */
+    color: var(--footer-text); /* Garantindo que os títulos usem a cor do texto do rodapé */
+    text-transform: uppercase;
+    letter-spacing: 1px; /* Aumentar espaçamento entre letras */
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links ul li {
+    margin-bottom: 8px;
+}
+
+.footer-links ul li a {
+    color: var(--footer-text); /* Garantindo que os links usem a cor do texto do rodapé */
+    opacity: 0.9;
+    transition: opacity 0.3s ease;
+}
+
+.footer-links ul li a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+.footer-contact p {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    opacity: 0.9;
+    color: var(--footer-text); /* Garantindo que o texto de contato use a cor do texto do rodapé */
+}
+
+.social-icons {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-start; /* Alinhar ícones à esquerda */
+    gap: 15px;
+}
+
+.social-icons a {
+    color: var(--footer-text); /* Garantindo que os ícones sociais usem a cor do texto do rodapé */
+    font-size: 1.5rem; /* Ícones sociais maiores */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    opacity: 0.7;
+    transform: translateY(-2px);
+}
+
+.footer-bottom {
+    margin-top: 60px; /* Mais espaçamento acima do bottom */
+    padding-top: 25px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1); /* Adicionar uma linha divisória sutil */
+    font-size: 0.9rem; /* Texto do copyright levemente maior */
+    opacity: 0.8;
+    text-align: center; /* Centralizar copyright */
+    color: var(--footer-text); /* Garantindo que o texto do bottom use a cor do texto do rodapé */
+}
+
+.alpha-footer-notice {
+    font-size: 0.8rem; /* Aviso no rodapé levemente maior */
+    opacity: 0.7;
+    margin-top: 15px;
+    color: var(--footer-text); /* Garantindo que o aviso use a cor do texto do rodapé */
+}
+
+/* Responsividade do Rodapé */
+@media (max-width: 768px) {
+    .footer {
+        padding: 60px 20px 30px;
+    }
+
+    .footer-container {
+        gap: 40px;
+        margin-bottom: 40px;
+    }
+
+    .footer-bottom {
+        margin-top: 40px;
+    }
+
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 30px;
+    }
+
+    .footer-brand,
+    .footer-links,
+    .footer-contact {
+        width: 100%;
+    }
+
+    .footer-links ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .social-icons {
+        justify-content: flex-start;
+    }
+} 

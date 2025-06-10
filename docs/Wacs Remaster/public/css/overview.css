@@ -1,0 +1,96 @@
+/* public/css/overview.css */
+
+.overview-section {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: var(--background-color); /* Garante que o fundo da seção siga o tema */
+    color: var(--text-color); /* Garante que o texto da seção siga o tema */
+}
+
+.overview-section h2 {
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 30px;
+    color: var(--gradient-text-start); /* Usando uma cor do gradiente para o título principal */
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.overview-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.overview-card {
+    background-color: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius-large); /* Bordas mais arredondadas como na imagem */
+    padding: 40px 30px;
+    flex: 1 1 calc(33.333% - 40px); /* 3 cards por linha com espaçamento */
+    max-width: 380px; /* Largura máxima para os cards */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: background-color 0.5s ease, border-color 0.5s ease, box-shadow 0.5s ease; /* Transição para o tema */
+}
+
+.overview-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.overview-card i {
+    font-size: 4rem; /* Ícones maiores */
+    color: var(--gradient-start); /* Cor azul para os ícones */
+    margin-bottom: 25px;
+    transition: color 0.5s ease; /* Transição para o tema */
+}
+
+.overview-card h3 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    color: var(--text-color); /* Texto do título segue o tema */
+    transition: color 0.5s ease; /* Transição para o tema */
+}
+
+.overview-card h3 .gradient-text {
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.overview-card p {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--text-color); /* Texto da descrição segue o tema */
+    opacity: 0.9;
+    transition: color 0.5s ease; /* Transição para o tema */
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .overview-card {
+        flex: 1 1 calc(50% - 30px); /* 2 cards por linha em telas médias */
+    }
+}
+
+@media (max-width: 768px) {
+    .overview-section h2 {
+        font-size: 2.2rem;
+    }
+    .overview-card {
+        flex: 1 1 100%; /* 1 card por linha em telas pequenas */
+        max-width: 450px; /* Largura máxima para cards em telas pequenas */
+    }
+} 
