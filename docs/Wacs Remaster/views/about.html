@@ -9,12 +9,13 @@
     <link rel="stylesheet" href="../public/css/footer.css">
     <link rel="stylesheet" href="../public/css/about.css"> <!-- Reutilizando estilos da seção sobre do index -->
     <link rel="stylesheet" href="../public/css/team.css"> <!-- Novo: CSS para a seção de equipe -->
+    <link rel="stylesheet" href="../public/css/transitions.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="fade-in">
     <div class="main-container">
         <nav class="navbar">
             <div class="navbar-logo">
@@ -26,9 +27,8 @@
             <ul class="navbar-menu">
                 <li><a href="../index.html">Home</a></li>
                 <li><a href="../index.html#recursos">Recursos</a></li>
-                <li><a href="../index.html#comunidade">Comunidade</a></li>
+                <li><a href="comunidade.html" class="active">Comunidade</a></li>
                 <li><a href="../index.html#mapa">Mapa Acessível</a></li>
-                <li><a href="../index.html#contato">Contato</a></li>
                 <li><a href="about.html">Sobre</a></li>
             </ul>
             <div class="navbar-actions">
@@ -71,130 +71,75 @@
                     <h2>Nossa Equipe</h2>
                     <p class="team-origin">Projeto de TCC desenvolvido na <strong>Etec de Registro</strong> – Curso de Desenvolvimento de Sistemas</p>
 
-                    <h3 class="team-section-title">Orientador</h3>
-                    <div class="team-grid team-grid-single">
-                        <!-- Card do Orientador -->
-                        <div class="team-card-container">
-                            <div class="team-card">
-                                <div class="card-top">
-                                    <p class="card-top-para">Perfil</p>
+                    <h3 class="team-section-title">Desenvolvedores</h3>
+                    <div class="team-grid">
+                        <div class="team-member">
+                            <div class="member-content">
+                                <div class="member-photo" style="background-image: url('../public/images/fotos-desenvolvedores/pedro gpt.png');"></div>
+                                <h3 class="member-name">Pedro Henrique Dias Santos</h3>
+                                <p class="member-role">Desenvolvedor Mobile</p>
+                                <p class="member-bio">Especialista em desenvolvimento mobile.</p>
+                                <div class="member-socials">
+                                    <a href="https://www.linkedin.com/in/pedro-santos-ds/" target="_blank" aria-label="LinkedIn Pedro Henrique"><i class="fab fa-linkedin"></i></a>
+                                    <a href="https://github.com/Pedro-Santos-ds" target="_blank" aria-label="GitHub Pedro Henrique"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.instagram.com/013_pedro_dias/" target="_blank" aria-label="Instagram Pedro Henrique"><i class="fab fa-instagram"></i></a>
                                 </div>
-
-                                <div class="team-front">
-                                    <div class="team-photo" data-src="../public/images/fotos-desenvolvedores/imagem ramon.png"></div>
-                                    <p class="team-heading gradient-text">Ramon Alves Trigo</p>
-                                    <p class="team-role">Orientador</p>
-                                    <p class="team-bio">Professor e orientador do projeto WACS.</p>
+                            </div>
+                        </div>
+                        <div class="team-member">
+                            <div class="member-content">
+                                <div class="member-photo" style="background-image: url('../public/images/fotos-desenvolvedores/luiz gpt.png');"></div>
+                                <h3 class="member-name">Luiz Alberto Iha Lima</h3>
+                                <p class="member-role">Especialista em Integração de Tecnologias</p>
+                                <p class="member-bio">Especialista em integração de tecnologias.</p>
+                                <div class="member-socials">
+                                    <a href="https://www.linkedin.com/in/luiz-iha-lima/" target="_blank" aria-label="LinkedIn Luiz Alberto"><i class="fab fa-linkedin"></i></a>
+                                    <a href="" target="_blank" aria-label="GitHub Luiz Alberto"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.instagram.com/iha.leaf/" target="_blank" aria-label="Instagram Luiz Alberto"><i class="fab fa-instagram"></i></a>
                                 </div>
-
-                                <div class="team-back">
-                                    <p class="team-heading">Redes Sociais</p>
-
-                                    <div class="team-icons">
-                                        <a href="https://www.linkedin.com/in/ramontrigo/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="LinkedIn Ramon Trigo"><i class="fab fa-linkedin"></i></a>
-                                        <a href="https://github.com/ramtrigodev" target="_blank" style="color: inherit; text-decoration: none;" aria-label="GitHub Ramon Trigo"><i class="fab fa-github"></i></a>
-                                        <a href="https://www.instagram.com/trigoramon/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="Instagram Ramon Trigo"><i class="fab fa-instagram"></i></a>
-                                    </div>
+                            </div>
+                        </div>
+                        <div class="team-member">
+                            <div class="member-content">
+                                <div class="member-photo" style="background-image: url('../public/images/fotos-desenvolvedores/victor gpt.png');"></div>
+                                <h3 class="member-name">Victor Gabriel Ferreira Theodoro</h3>
+                                <p class="member-role">Desenvolvedor Full-stack</p>
+                                <p class="member-bio">Desenvolvedor full-stack.</p>
+                                <div class="member-socials">
+                                    <a href="https://www.linkedin.com/in/vftheodoro/" target="_blank" aria-label="LinkedIn Victor Gabriel"><i class="fab fa-linkedin"></i></a>
+                                    <a href="https://github.com/vftheodoro" target="_blank" aria-label="GitHub Victor Gabriel"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.instagram.com/vftheodoro/" target="_blank" aria-label="Instagram Victor Gabriel"><i class="fab fa-instagram"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="team-member">
+                            <div class="member-content">
+                                <div class="member-photo" style="background-image: url('../public/images/fotos-desenvolvedores/mario gpt.png');"></div>
+                                <h3 class="member-name">Mario Armando Takahashi Martins Dias</h3>
+                                <p class="member-role">Desenvolvedor de Sistemas</p>
+                                <p class="member-bio">Especialista em desenvolvimento de sistemas.</p>
+                                <div class="member-socials">
+                                    <a href="https://www.linkedin.com/in/mario-takahashi-martins-dias-6a4a2a222/" target="_blank" aria-label="LinkedIn Mario Armando"><i class="fab fa-linkedin"></i></a>
+                                    <a href="https://github.com/mario-tdias" target="_blank" aria-label="GitHub Mario Armando"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.instagram.com/mario_tdias/" target="_blank" aria-label="Instagram Mario Armando"><i class="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <h3 class="team-section-title">Desenvolvedores</h3>
-                    <div class="team-grid">
-                        <div class="team-card-container">
-                            <div class="team-card">
-                                <div class="card-top">
-                                    <p class="card-top-para">Perfil</p>
-                                </div>
-
-                                <div class="team-front">
-                                    <div class="team-photo" data-src="../public/images/fotos-desenvolvedores/pedro gpt.png"></div>
-                                    <p class="team-heading gradient-text">Pedro Henrique Dias Santos</p>
-                                    <p class="team-role">Desenvolvedor</p>
-                                    <p class="team-bio">Especialista em desenvolvimento mobile.</p>
-                                </div>
-
-                                <div class="team-back">
-                                    <p class="team-heading">Redes Sociais</p>
-
-                                    <div class="team-icons">
-                                        <a href="https://www.linkedin.com/in/pedro-santos-ds/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="LinkedIn Pedro Henrique"><i class="fab fa-linkedin"></i></a>
-                                        <a href="https://github.com/Pedro-Santos-ds" target="_blank" style="color: inherit; text-decoration: none;" aria-label="GitHub Pedro Henrique"><i class="fab fa-github"></i></a>
-                                        <a href="https://www.instagram.com/013_pedro_dias/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="Instagram Pedro Henrique"><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-card-container">
-                            <div class="team-card">
-                                <div class="card-top">
-                                    <p class="card-top-para">Perfil</p>
-                                </div>
-
-                                <div class="team-front">
-                                    <div class="team-photo" data-src="../public/images/fotos-desenvolvedores/luiz gpt.png"></div>
-                                    <p class="team-heading gradient-text">Luiz Alberto Iha Lima</p>
-                                    <p class="team-role">Desenvolvedor</p>
-                                    <p class="team-bio">Especialista em integração de tecnologias.</p>
-                                </div>
-
-                                <div class="team-back">
-                                    <p class="team-heading">Redes Sociais</p>
-
-                                    <div class="team-icons">
-                                        <a href="https://www.linkedin.com/in/luiz-iha-lima/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="LinkedIn Luiz Alberto"><i class="fab fa-linkedin"></i></a>
-                                        <a href="" target="_blank" style="color: inherit; text-decoration: none;" aria-label="GitHub Luiz Alberto"><i class="fab fa-github"></i></a>
-                                        <a href="https://www.instagram.com/iha.leaf/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="Instagram Luiz Alberto"><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-card-container">
-                            <div class="team-card">
-                                <div class="card-top">
-                                    <p class="card-top-para">Perfil</p>
-                                </div>
-
-                                <div class="team-front">
-                                    <div class="team-photo" data-src="../public/images/fotos-desenvolvedores/victor gpt.png"></div>
-                                    <p class="team-heading gradient-text">Victor Gabriel Ferreira Theodoro</p>
-                                    <p class="team-role">Desenvolvedor</p>
-                                    <p class="team-bio">Desenvolvedor full-stack.</p>
-                                </div>
-
-                                <div class="team-back">
-                                    <p class="team-heading">Redes Sociais</p>
-
-                                    <div class="team-icons">
-                                        <a href="https://www.linkedin.com/in/victor-theodoro-53b47820a/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="LinkedIn Victor Gabriel"><i class="fab fa-linkedin"></i></a>
-                                        <a href="https://github.com/vftheodoro" target="_blank" style="color: inherit; text-decoration: none;" aria-label="GitHub Victor Gabriel"><i class="fab fa-github"></i></a>
-                                        <a href="https://www.instagram.com/vftheodoro/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="Instagram Victor Gabriel"><i class="fab fa-instagram"></i></a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="team-card-container">
-                            <div class="team-card">
-                                <div class="card-top">
-                                    <p class="card-top-para">Perfil</p>
-                                </div>
-
-                                <div class="team-front">
-                                    <div class="team-photo" data-src="../public/images/fotos-desenvolvedores/mario gpt.png"></div>
-                                    <p class="team-heading gradient-text">Mario Armando Takahashi Martins Dias</p>
-                                    <p class="team-role">Desenvolvedor</p>
-                                    <p class="team-bio">Especialista em desenvolvimento de sistemas.</p>
-                                </div>
-
-                                <div class="team-back">
-                                    <p class="team-heading">Redes Sociais</p>
-
-                                    <div class="team-icons">
-                                        <a href="https://www.linkedin.com/in/mario-takahashi-martins-dias-6a4a2a222/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="LinkedIn Mario Armando"><i class="fab fa-linkedin"></i></a>
-                                        <a href="https://github.com/mario-tdias" target="_blank" style="color: inherit; text-decoration: none;" aria-label="GitHub Mario Armando"><i class="fab fa-github"></i></a>
-                                        <a href="https://www.instagram.com/mario_tdias/" target="_blank" style="color: inherit; text-decoration: none;" aria-label="Instagram Mario Armando"><i class="fab fa-instagram"></i></a>
-                                    </div>
+                    <h3 class="team-section-title">Orientador</h3>
+                    <div class="team-grid team-grid-single">
+                        <!-- Card do Orientador -->
+                        <div class="team-member">
+                            <div class="member-content">
+                                <div class="member-photo" style="background-image: url('../public/images/fotos-desenvolvedores/imagem ramon.png');"></div>
+                                <h3 class="member-name">Ramon Alves Trigo</h3>
+                                <p class="member-role">Orientador</p>
+                                <p class="member-bio">Professor e orientador do projeto WACS.</p>
+                                <div class="member-socials">
+                                    <a href="https://www.linkedin.com/in/ramon-trigo/" target="_blank" aria-label="LinkedIn Ramon Trigo"><i class="fab fa-linkedin"></i></a>
+                                    <a href="https://github.com/ramtrigodev" target="_blank" aria-label="GitHub Ramon Trigo"><i class="fab fa-github"></i></a>
+                                    <a href="https://www.instagram.com/trigoramon/" target="_blank" aria-label="Instagram Ramon Trigo"><i class="fab fa-instagram"></i></a>
                                 </div>
                             </div>
                         </div>

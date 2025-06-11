@@ -10,6 +10,7 @@
     --alpha-banner-text: #E0E0E0;
     --alpha-banner-icon: #FFA726;
     --alpha-banner-close-btn: #E0E0E0;
+    --secondary-card-bg-color: #1A1A1A; /* Fundo para seção de senha no tema escuro */
 
     /* Variáveis do Rodapé */
     --footer-background: #111111; /* Cor de fundo distinta para o tema escuro */
@@ -36,6 +37,7 @@
     --alpha-banner-text: #424242; /* Texto escuro para aviso */
     --alpha-banner-icon: #FB8C00; /* Laranja mais vibrante para ícone de aviso */
     --alpha-banner-close-btn: #424242; /* Botão de fechar escuro */
+    --secondary-card-bg-color: #FFFFFF; /* Fundo para seção de senha no tema claro */
 
     /* Variáveis do Rodapé para Tema Claro */
     --footer-background: #212121; /* Um cinza escuro para contraste no tema claro */
@@ -182,6 +184,59 @@ button, input {
 
 .hidden {
     display: none;
+}
+
+/* Flash Notification Styles */
+.flash-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--gradient-end); /* Cor de fundo para sucesso, pode variar */
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    z-index: 1000;
+    font-weight: 500;
+}
+
+.flash-notification.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.flash-notification.success {
+    background-color: #4CAF50; /* Verde para sucesso */
+}
+
+.flash-notification.error {
+    background-color: #F44336; /* Vermelho para erro */
+}
+
+.flash-notification.info {
+    background-color: #2196F3; /* Azul para informação */
+}
+
+.flash-notification .close-flash-notification-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-left: 10px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.flash-notification .close-flash-notification-btn:hover {
+    opacity: 1;
 }
 
 /* Styles from navbar.css and footer.css also need to use these variables, but will be handled separately if necessary. */ 

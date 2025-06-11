@@ -50,6 +50,23 @@
     color: var(--gradient-start);
 }
 
+.navbar-menu a.active {
+    opacity: 1;
+    color: var(--gradient-start);
+    font-weight: 600;
+}
+
+.navbar-menu a.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    border-radius: 2px;
+}
+
 /* Remove dropdown styles for simplicity based on new image */
 .navbar-menu .dropdown {
     position: static;
