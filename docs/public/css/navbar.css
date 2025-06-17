@@ -446,6 +446,11 @@
     .mobile-navbar-actions {
         padding: 20px;
     }
+
+    .navbar-actions .btn {
+        padding: 10px 15px;
+        font-size: 0.8rem;
+    }
 }
 
 .navbar-menu li a:hover,

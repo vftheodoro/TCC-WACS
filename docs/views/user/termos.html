@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Termos de Uso - WACS</title>
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .link-blue { color: #2196f3 !important; text-decoration: underline; cursor: pointer; transition: color 0.2s; }
+        .link-blue:hover { color: #1565c0 !important; }
+        .termos-content { max-width: 600px; margin: 40px auto; background: var(--card-background); border-radius: 18px; box-shadow: 0 2px 16px #0002; padding: 40px 28px; }
+        .termos-content h1 { font-size: 2.2rem; margin-bottom: 18px; text-align: center; }
+        .termos-content p, .termos-content ul { font-size: 1.08rem; color: var(--text-color); margin-bottom: 18px; line-height: 1.7; }
+        .termos-content ul { padding-left: 20px; }
+        .termos-content .btn { margin-top: 24px; width: 100%; }
+        @media (max-width: 700px) { .termos-content { padding: 24px 8px; } }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box termos-content">
+            <h1>Termos de Uso do Projeto WACS (TCC)</h1>
+            <p>Bem-vindo ao WACS (Wheelchair Automation Control System), um projeto acadêmico de Trabalho de Conclusão de Curso (TCC) da Etec de Registro. Este documento descreve as condições de uso do sistema em fase de testes. Ao criar uma conta ou utilizar o WACS, você concorda com estes Termos de Uso.</p>
+            <hr>
+            <h2>1. Sobre o Projeto</h2>
+            <p>O WACS é um protótipo desenvolvido para fins de pesquisa e aprendizagem, sem caráter comercial. Todas as funcionalidades estão em fase de testes e podem ser alteradas conforme o andamento do TCC.</p>
+            <hr>
+            <h2>2. Cadastro e Segurança dos Dados</h2>
+            <ul>
+                <li>Para usar o sistema, é necessário criar uma conta com <strong>username</strong>, <strong>e-mail</strong> e <strong>senha</strong>.</li>
+                <li>As informações pessoais fornecidas (nome, cidade, tipo de mobilidade, comorbidades e foto de perfil) são opcionais, mas ajudam na experiência colaborativa.</li>
+                <li>E‑mails e senhas são armazenados de forma segura e secreta na plataforma Firebase, com criptografia e acesso restrito apenas à equipe do projeto.</li>
+            </ul>
+            <hr>
+            <h2>3. Uso do Sistema</h2>
+            <ul>
+                <li>Você pode avaliar locais, adicionar informações e interagir com outros usuários.</li>
+                <li>Este é um ambiente de testes: bugs e instabilidades podem ocorrer.</li>
+                <li>Conteúdos ofensivos ou discriminatórios não são permitidos.</li>
+            </ul>
+            <hr>
+            <h2>4. Privacidade</h2>
+            <ul>
+                <li>Sua privacidade é importante: não compartilhamos seus dados com terceiros.</li>
+                <li>Você pode editar ou excluir suas informações a qualquer momento no perfil.</li>
+            </ul>
+            <hr>
+            <h2>5. Responsabilidades</h2>
+            <ul>
+                <li>Este projeto é fornecido "como está" para fins de pesquisa. Não oferecemos garantias de disponibilidade contínua.</li>
+                <li>A equipe TCC não se responsabiliza por perdas de dados decorrentes de mau uso ou instabilidades.</li>
+            </ul>
+            <hr>
+            <h2>6. Encerramento de Conta</h2>
+            <ul>
+                <li>Você pode encerrar sua conta a qualquer momento pela seção de configurações.</li>
+                <li>Em caso de desativação, seus dados serão removidos do sistema.</li>
+            </ul>
+            <hr>
+            <h2>7. Contato</h2>
+            <p>Para dúvidas ou sugestões sobre o TCC, envie e-mail para: <a href="mailto:projetowacs@gmail.com" class="link-blue">projeto.wacs@etecregistro.edu.br</a></p>
+            <p style="font-size:0.98em; color:#888; text-align:right; margin-top:24px;">Última atualização: 17 de junho de 2025</p>
+            <button id="btnVoltar" class="btn btn-outline-gradient login-btn" style="margin-top: 18px; width: 100%;">Voltar</button>
+        </div>
+    </div>
+    <div class="theme-transition-overlay"></div>
+    <script>
+    document.getElementById('btnVoltar').onclick = function() {
+        if (window.history.length > 1) {
+            window.history.back();
+        } else {
+            window.location.href = '../index.html';
+        }
+    };
+    </script>
+</body>
+</html> 

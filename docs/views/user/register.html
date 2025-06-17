@@ -61,15 +61,15 @@
                     <div class="form-group">
                         <label for="region">Estado e Cidade *</label>
                         <div class="uf-cidade-row">
-                            <select id="ufSelect" class="uf-select" required>
-                                <option value="" disabled selected>Selecione o estado</option>
-                                <option value="SP">SP</option><option value="RJ">RJ</option><option value="MG">MG</option><option value="RS">RS</option><option value="PR">PR</option><option value="SC">SC</option><option value="BA">BA</option><option value="PE">PE</option><option value="CE">CE</option><option value="GO">GO</option><option value="DF">DF</option><option value="ES">ES</option><option value="MT">MT</option><option value="MS">MS</option><option value="PA">PA</option><option value="AM">AM</option><option value="MA">MA</option><option value="PB">PB</option><option value="RN">RN</option><option value="AL">AL</option><option value="SE">SE</option><option value="PI">PI</option><option value="RO">RO</option><option value="TO">TO</option><option value="AC">AC</option><option value="AP">AP</option><option value="RR">RR</option>
+                            <select id="ufSelect" class="uf-select" required disabled>
+                                <option value="SP" selected>SP</option>
                             </select>
                             <div style="position: relative; flex: 1;">
-                                <input type="text" id="cidadeInput" class="autocomplete-cidade" placeholder="Digite sua cidade" autocomplete="off" required disabled>
+                                <input type="text" id="cidadeInput" class="autocomplete-cidade" placeholder="Digite sua cidade" autocomplete="off" required>
                                 <div id="cidadeAutocompleteList" class="autocomplete-cidade-list" style="display:none;"></div>
                             </div>
                         </div>
+                        <p style="font-size: 0.88em; color: #f44336; margin-top: 4px;">Em breve para outras regiões.</p>
                         <input type="hidden" id="region" name="region" required>
                     </div>
                     <!-- Picker customizado para Tipo de Mobilidade -->
@@ -307,16 +307,18 @@
     // Avatar upload
     const profilePicInput = document.getElementById('profilePic');
     const profilePicPreview = document.getElementById('profilePicPreview');
-    profilePicInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(ev) {
-                profilePicPreview.src = ev.target.result;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
+    if (profilePicInput) {
+        profilePicInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    profilePicPreview.src = ev.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
 
     // Validação final do formulário
     registerForm.addEventListener('submit', function(e) {
@@ -331,78 +333,102 @@
         // e.preventDefault(); // Remova este comentário se for testar sem backend
     });
 
+    // Carregar cidades do Vale do Ribeira
+    const cidadesBrasil = [
+        { uf: 'SP', nome: 'Apiaí' },
+        { uf: 'SP', nome: 'Barra do Chapéu' },
+        { uf: 'SP', nome: 'Barra do Turvo' },
+        { uf: 'SP', nome: 'Cajati' },
+        { uf: 'SP', nome: 'Cananéia' },
+        { uf: 'SP', nome: 'Eldorado' },
+        { uf: 'SP', nome: 'Iguape' },
+        { uf: 'SP', nome: 'Ilha Comprida' },
+        { uf: 'SP', nome: 'Iporanga' },
+        { uf: 'SP', nome: 'Itaoca' },
+        { uf: 'SP', nome: 'Itapirapuã Paulista' },
+        { uf: 'SP', nome: 'Itariri' },
+        { uf: 'SP', nome: 'Jacupiranga' },
+        { uf: 'SP', nome: 'Juquiá' },
+        { uf: 'SP', nome: 'Juquitiba' },
+        { uf: 'SP', nome: 'Miracatu' },
+        { uf: 'SP', nome: 'Pariquera-Açu' },
+        { uf: 'SP', nome: 'Pedro de Toledo' },
+        { uf: 'SP', nome: 'Registro' },
+        { uf: 'SP', nome: 'Ribeira' },
+        { uf: 'SP', nome: 'São Lourenço da Serra' },
+        { uf: 'SP', nome: 'Sete Barras' },
+        { uf: 'SP', nome: 'Tapiraí' }
+    ];
+
     // Autocomplete de cidade
     const ufSelect = document.getElementById('ufSelect');
     const cidadeInput = document.getElementById('cidadeInput');
     const cidadeAutocompleteList = document.getElementById('cidadeAutocompleteList');
     const regionInput = document.getElementById('region');
-    const cidadesPorUF = {
-        SP: ['Registro', 'São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto', 'São José dos Campos', 'Jacupiranga', 'Vale do Ribeira'],
-        RJ: ['Rio de Janeiro', 'Niterói', 'Petrópolis', 'Campos dos Goytacazes', 'Volta Redonda'],
-        MG: ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Montes Claros'],
-        RS: ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Canoas', 'Santa Maria'],
-        PR: ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel'],
-        SC: ['Florianópolis', 'Joinville', 'Blumenau', 'Chapecó', 'Itajaí'],
-        BA: ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Itabuna'],
-        PE: ['Recife', 'Jaboatão', 'Olinda', 'Caruaru', 'Petrolina'],
-        CE: ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral'],
-        GO: ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde', 'Luziânia'],
-        DF: ['Brasília', 'Ceilândia', 'Taguatinga', 'Samambaia', 'Planaltina'],
-        ES: ['Vitória', 'Vila Velha', 'Serra', 'Cariacica', 'Cachoeiro de Itapemirim'],
-        MT: ['Cuiabá', 'Várzea Grande', 'Rondonópolis', 'Sinop', 'Tangará da Serra'],
-        MS: ['Campo Grande', 'Dourados', 'Três Lagoas', 'Corumbá', 'Ponta Porã'],
-        PA: ['Belém', 'Ananindeua', 'Santarém', 'Marabá', 'Castanhal'],
-        AM: ['Manaus', 'Parintins', 'Itacoatiara', 'Manacapuru', 'Coari'],
-        MA: ['São Luís', 'Imperatriz', 'Timon', 'Caxias', 'Codó'],
-        PB: ['João Pessoa', 'Campina Grande', 'Santa Rita', 'Patos', 'Bayeux'],
-        RN: ['Natal', 'Mossoró', 'Parnamirim', 'São Gonçalo do Amarante', 'Macaíba'],
-        AL: ['Maceió', 'Arapiraca', 'Rio Largo', 'Palmeira dos Índios', 'União dos Palmares'],
-        SE: ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto', 'Itabaiana', 'Estância'],
-        PI: ['Teresina', 'Parnaíba', 'Picos', 'Piripiri', 'Floriano'],
-        RO: ['Porto Velho', 'Ji-Paraná', 'Ariquemes', 'Vilhena', 'Cacoal'],
-        TO: ['Palmas', 'Araguaína', 'Gurupi', 'Porto Nacional', 'Paraíso do Tocantins'],
-        AC: ['Rio Branco', 'Cruzeiro do Sul', 'Sena Madureira', 'Tarauacá', 'Feijó'],
-        AP: ['Macapá', 'Santana', 'Laranjal do Jari', 'Oiapoque', 'Mazagão'],
-        RR: ['Boa Vista', 'Rorainópolis', 'Caracaraí', 'Alto Alegre', 'Mucajaí']
-    };
     let cidadeAutocompleteIndex = -1;
-    ufSelect.addEventListener('change', function() {
-        cidadeInput.value = '';
-        regionInput.value = '';
-        cidadeInput.disabled = !ufSelect.value;
-        cidadeAutocompleteList.innerHTML = '';
-        cidadeAutocompleteList.style.display = 'none';
-        cidadeAutocompleteIndex = -1;
-        cidadeInput.focus();
+    let lastCidadeValue = '';
+    let cidadeInputDebounce;
+
+    cidadeInput.addEventListener('input', function(e) {
+        clearTimeout(cidadeInputDebounce);
+        const val = cidadeInput.value;
+        lastCidadeValue = val;
+        cidadeInputDebounce = setTimeout(() => {
+            autocompleteCidade(val, e);
+        }, 60);
     });
-    cidadeInput.addEventListener('input', function() {
-        const val = cidadeInput.value.trim().toLowerCase();
+
+    function autocompleteCidade(val, e) {
+        const valLower = val.trim().toLowerCase();
         cidadeAutocompleteList.innerHTML = '';
         cidadeAutocompleteIndex = -1;
-        if (!val || !ufSelect.value) {
+
+        if (!valLower) { 
             cidadeAutocompleteList.style.display = 'none';
             regionInput.value = '';
             return;
         }
-        const matches = (cidadesPorUF[ufSelect.value] || []).filter(cidade => cidade.toLowerCase().includes(val));
+        // Filtrar cidades do estado selecionado (SP) e pelo texto digitado
+        const matches = cidadesBrasil.filter(obj => obj.nome.toLowerCase().includes(valLower));
+
         if (matches.length === 0) {
             cidadeAutocompleteList.style.display = 'none';
             regionInput.value = '';
             return;
         }
-        matches.slice(0, 10).forEach((cidade, idx) => {
+        // Autocompletar inline (apenas se o usuário está digitando para frente, não apagando)
+        const firstMatch = matches[0];
+        if (
+            firstMatch &&
+            val.length > 0 &&
+            firstMatch.nome.toLowerCase().startsWith(valLower) &&
+            val !== firstMatch.nome &&
+            val.length > lastCidadeValue.length - 1
+        ) {
+            cidadeInput.value = firstMatch.nome;
+            cidadeInput.setSelectionRange(val.length, firstMatch.nome.length);
+            lastCidadeValue = firstMatch.nome;
+        }
+        matches.slice(0, 10).forEach((obj, idx) => {
             const div = document.createElement('div');
             div.className = 'autocomplete-cidade-item';
-            div.textContent = cidade;
+            // Destacar a parte digitada
+            const idxStart = obj.nome.toLowerCase().indexOf(valLower);
+            if (idxStart >= 0) {
+                div.innerHTML = obj.nome.substring(0, idxStart) + '<b>' + obj.nome.substring(idxStart, idxStart + valLower.length) + '</b>' + obj.nome.substring(idxStart + valLower.length);
+            } else {
+                div.textContent = obj.nome;
+            }
             div.onclick = function() {
-                cidadeInput.value = cidade;
-                regionInput.value = ufSelect.value + ' - ' + cidade;
+                cidadeInput.value = obj.nome;
+                regionInput.value = obj.uf + ' - ' + obj.nome;
                 cidadeAutocompleteList.style.display = 'none';
+                lastCidadeValue = obj.nome;
             };
             cidadeAutocompleteList.appendChild(div);
         });
         cidadeAutocompleteList.style.display = 'block';
-    });
+    }
     cidadeInput.addEventListener('keydown', function(e) {
         const items = cidadeAutocompleteList.querySelectorAll('.autocomplete-cidade-item');
         if (!items.length) return;
@@ -432,6 +458,34 @@
             } else {
                 item.classList.remove('selected');
             }
+        });
+    }
+    // Renderização dinâmica das opções dos pickers (garante que sempre aparecem)
+    function renderMobilityOptions() {
+        const options = [
+            { value: 'cadeira', icon: 'fa-wheelchair', label: 'Cadeira de rodas' },
+            { value: 'andador', icon: 'fa-walking', label: 'Andador' },
+            { value: 'muleta', icon: 'fa-crutch', label: 'Muleta' },
+            { value: 'visual', icon: 'fa-low-vision', label: 'Deficiência visual' },
+            { value: 'auditiva', icon: 'fa-deaf', label: 'Deficiência auditiva' },
+            { value: 'outra', icon: 'fa-question', label: 'Outra' },
+            { value: 'nenhuma', icon: 'fa-check', label: 'Nenhuma' }
+        ];
+        mobilityDropdownList.innerHTML = '';
+        options.forEach(opt => {
+            const div = document.createElement('div');
+            div.className = 'dropdown-item';
+            div.innerHTML = `
+                <i class="fas fa-${opt.icon}"></i>
+                ${opt.label}
+            `;
+            div.onclick = function() {
+                mobilitySelected.innerHTML = opt.label;
+                mobilityTypeInput.value = opt.value;
+                mobilityDropdownList.style.display = 'none';
+                hidePickerOverlay();
+            };
+            mobilityDropdownList.appendChild(div);
         });
     }
     </script>

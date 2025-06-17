@@ -23,10 +23,10 @@
             <button class="menu-toggle-btn">
                 <i class="fas fa-bars"></i>
             </button>
-            <div class="navbar-logo">
+            <a href="index.html" class="navbar-logo" style="text-decoration:none; color:inherit;">
                 <i class="fas fa-wheelchair"></i>
                 <span>WACS</span>
-            </div>
+            </a>
             <ul class="navbar-menu">
                 <li data-page="index"><a href="index.html">Home</a></li>
                 <li data-page="recursos"><a href="views/recursos.html">Recursos</a></li>
@@ -57,10 +57,10 @@
 
         <div class="mobile-menu-overlay">
             <div class="mobile-menu-header">
-                <div class="navbar-logo">
+                <a href="index.html" class="navbar-logo" style="text-decoration:none; color:inherit;">
                     <i class="fas fa-wheelchair"></i>
                     <span>WACS</span>
-                </div>
+                </a>
                 <button class="close-menu-btn">
                     <i class="fas fa-times"></i>
                 </button>
@@ -205,5 +205,8 @@
     <script src="public/js/auth-check.js"></script>
     <script src="public/js/script.js"></script>
     <div class="theme-transition-overlay"></div>
+    <div class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
 </body>
 </html> 

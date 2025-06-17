@@ -8,6 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('Script carregado.');
     console.log('Largura da tela ao carregar:', window.innerWidth, 'px');
 
+    // Ocultar overlay de carregamento assim que a página carrega (para navegação e refresh)
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove('show');
+    }
+
     // Lógica do Tema Claro/Escuro
     const themeToggleBtn = document.querySelector('.theme-toggle-btn');
     const html = document.documentElement;
@@ -55,6 +61,26 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Lógica para mostrar overlay de carregamento ao clicar em links de navegação
+    document.querySelectorAll('a').forEach(link => {
+        // Ignora links que são âncoras internas ou não têm href
+        if (link.getAttribute('href') && !link.getAttribute('href').startsWith('#')) {
+            link.addEventListener('click', (event) => {
+                // Evita o comportamento padrão imediatamente
+                event.preventDefault();
+
+                if (loadingOverlay) {
+                    loadingOverlay.classList.add('show');
+                }
+
+                // Pequeno atraso para a animação do carregamento aparecer
+                setTimeout(() => {
+                    window.location.href = link.getAttribute('href');
+                }, 300); // Ajuste este tempo para corresponder ao início da sua animação de carregamento
+            });
+        }
+    });
 
     // Lógica para destacar a página ativa na navbar e gerenciar transições de tela
     const currentEffectiveFileName = getFileNameFromPath(window.location.pathname);

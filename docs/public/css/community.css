@@ -609,3 +609,48 @@
         font-size: 0.8em;
     }
 } 
+
+/* Login Required Message */
+.login-required-message {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh; /* Ajuste conforme necessário para centralização vertical */
+    padding: 20px;
+    text-align: center;
+    flex-grow: 1; /* Adicionado para preencher o espaço vertical disponível */
+}
+
+.login-required-message .message-box {
+    background-color: var(--card-bg-color);
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: var(--shadow-large);
+    max-width: 500px;
+    width: 100%;
+}
+
+.login-required-message .message-icon {
+    font-size: 4em;
+    color: var(--gradient-color-1);
+    margin-bottom: 20px;
+}
+
+.login-required-message h2 {
+    font-size: 2.5em;
+    color: var(--text-color-primary);
+    margin-bottom: 15px;
+}
+
+.login-required-message p {
+    font-size: 1.1em;
+    color: var(--text-color-secondary);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.login-required-message .btn {
+    font-size: 1.1em;
+    padding: 12px 30px;
+} 

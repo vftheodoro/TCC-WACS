@@ -4,12 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WACS - Login</title>
-    <link rel="stylesheet" href="../public/css/main.css">
-    <link rel="stylesheet" href="../public/css/login.css">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+    .link-blue { color: #2196f3 !important; text-decoration: underline; cursor: pointer; transition: color 0.2s; }
+    .link-blue:hover { color: #1565c0 !important; }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -40,6 +44,10 @@
                 <button type="button" class="btn btn-outline-gradient google-login-btn" id="google-login-btn">
                     <i class="fab fa-google"></i> Logar com o Google
                 </button>
+                <p class="switch-form-text">Não tem uma conta? <a href="register.html" class="link-blue">Cadastre-se</a></p>
+                <p class="switch-form-text" style="margin-top: 18px; font-size: 0.95em; text-align: center;">
+                    <a href="termos.html" class="link-blue">Termos de Uso</a>
+                </p>
             </form>
 
         </div>
@@ -50,8 +58,13 @@
     <script defer src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script defer src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
 
-    <script defer src="../public/js/env-config.js"></script>
-    <script defer src="../public/js/auth-check.js"></script>
-    <script defer src="../public/js/login.js"></script>
+    <script defer src="../../public/js/env-config.js"></script>
+    <script defer src="../../public/js/auth-check.js"></script>
+    <script defer src="../../public/js/login.js"></script>
+    <script src="../../public/js/script.js"></script>
+    <div class="theme-transition-overlay"></div>
+    <div class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
 </body>
 </html> 
