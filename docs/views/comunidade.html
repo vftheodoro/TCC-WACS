@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Comunidade</title>
+    <link rel="stylesheet" href="../public/css/main.css">
+    <link rel="stylesheet" href="../public/css/navbar.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+    <!-- Você pode adicionar um CSS específico para a comunidade aqui se precisar -->
+    <link rel="stylesheet" href="../public/css/community.css">
+    <link rel="stylesheet" href="../public/css/transitions.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="fade-in">
+    <div class="main-container">
+        <nav class="navbar">
+            <button class="menu-toggle-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="navbar-logo">
+                <a href="../index.html">
+                    <i class="fas fa-wheelchair"></i>
+                    <span>WACS</span>
+                </a>
+            </div>
+            <ul class="navbar-menu">
+                <li data-page="home"><a href="../index.html">Home</a></li>
+                <li data-page="recursos"><a href="recursos.html">Recursos</a></li>
+                <li data-page="comunidade"><a href="comunidade.html">Comunidade</a></li>
+                <li data-page="mapa"><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                <li data-page="about"><a href="about.html">Sobre</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="theme-toggle-btn">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <!-- Nova estrutura para status de usuário em mobile -->
+                <div class="mobile-user-status">
+                    <img src="" alt="Foto de Perfil" class="profile-pic-mobile hidden">
+                    <button class="btn btn-outline-gradient login-btn-mobile hidden" onclick="location.href='login.html'">Login</button>
+                </div>
+                <div class="logged-out-actions">
+                    <button class="btn btn-gradient" onclick="location.href='login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Overlay (initially hidden) -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu-header">
+                <div class="navbar-logo">
+                    <a href="../index.html">
+                        <i class="fas fa-wheelchair"></i>
+                        <span>WACS</span>
+                    </a>
+                </div>
+                <button class="close-menu-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="mobile-navbar-menu">
+                <li data-page="home"><a href="../index.html">Home</a></li>
+                <li data-page="recursos"><a href="recursos.html">Recursos</a></li>
+                <li data-page="comunidade"><a href="comunidade.html">Comunidade</a></li>
+                <li data-page="mapa"><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                <li data-page="about"><a href="about.html">Sobre</a></li>
+            </ul>
+            <div class="mobile-navbar-actions">
+                <div class="logged-out-actions-mobile">
+                    <button class="btn btn-gradient" onclick="location.href='login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions-mobile hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Required Message (initially hidden by JS) -->
+        <section class="login-required-message hidden">
+            <div class="message-box">
+                <i class="fas fa-user-lock message-icon"></i>
+                <h2>Acesso Restrito à Comunidade</h2>
+                <p>Para interagir com outros usuários, criar posts e ver o feed, por favor, faça login ou cadastre-se na plataforma WACS.</p>
+                <button class="btn btn-gradient" onclick="location.href='login.html'">Acessar Plataforma / Cadastrar</button>
+            </div>
+        </section>
+
+        <section class="page-content community-page-content community-content-wrapper">
+            <h2>Bem-vindo à Comunidade WACS!</h2>
+
+            <div class="community-main-content">
+                <div class="community-feed-area">
+                    <div class="create-post-card">
+                        <textarea placeholder="O que você gostaria de compartilhar com a comunidade WACS?" class="post-textarea"></textarea>
+                        <div class="post-actions">
+                            <button class="btn btn-outline-gradient"><i class="fas fa-image"></i> Foto</button>
+                            <button class="btn btn-outline-gradient"><i class="fas fa-video"></i> Vídeo</button>
+                            <button class="btn btn-gradient post-btn">Publicar</button>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Feed de Posts -->
+                    <div class="posts-feed">
+                        <h3>Feed da Comunidade</h3>
+
+                        <!-- Exemplo de Post 1 (será populado por JS) -->
+                        <div class="post-card">
+                            <div class="post-header">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Foto de Perfil" class="post-author-pic">
+                                <span class="post-author-name">João Silva</span>
+                                <span class="post-timestamp">há 1 hora</span>
+                            </div>
+                            <div class="post-content">
+                                <p>Acabei de mapear um novo local acessível na minha cidade! É incrível como pequenos atos podem fazer uma grande diferença. #Acessibilidade #WACS</p>
+                                <!-- <img src="https://picsum.photos/600/400?random=1" alt="Imagem do Post" class="post-image"> -->
+                            </div>
+                            <div class="post-footer">
+                                <span class="post-stats"><i class="fas fa-thumbs-up"></i> <span class="likes-count">15</span> Curtidas</span>
+                                <span class="post-stats"><i class="fas fa-comment"></i> <span class="comments-count">3</span> Comentários</span>
+                            </div>
+                        </div>
+
+                        <!-- Exemplo de Post 2 (será populado por JS) -->
+                        <div class="post-card">
+                            <div class="post-header">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Foto de Perfil" class="post-author-pic">
+                                <span class="post-author-name">Maria Oliveira</span>
+                                <span class="post-timestamp">há 3 horas</span>
+                            </div>
+                            <div class="post-content">
+                                <p>Muito feliz em ver a comunidade WACS crescendo! Juntos somos mais fortes para promover a inclusão. #ComunidadeWACS</p>
+                                <img src="https://picsum.photos/600/400?random=2" alt="Imagem do Post" class="post-image">
+                            </div>
+                            <div class="post-footer">
+                                <span class="post-stats"><i class="fas fa-thumbs-up"></i> <span class="likes-count">28</span> Curtidas</span>
+                                <span class="post-stats"><i class="fas fa-comment"></i> <span class="comments-count">7</span> Comentários</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="community-sidebar-area">
+                    <!-- Seção de Perfil do Usuário (já existente, movida para cá) -->
+                    <div class="user-profile-section">
+                        <h3>Seu Perfil</h3>
+                        <div class="profile-card">
+                            <div class="profile-header">
+                                <img src="" alt="Foto de Perfil" class="profile-card-pic">
+                                <span class="profile-card-name"></span>
+                            </div>
+                            <div class="profile-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span class="stat-value" id="user-contributions">0</span>
+                                    <span class="stat-label">Contribuições</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-star"></i>
+                                    <span class="stat-value" id="user-ratings">0</span>
+                                    <span class="stat-label">Avaliações</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-medal"></i>
+                                    <span class="stat-value" id="user-points">0</span>
+                                    <span class="stat-label">Pontos</span>
+                                </div>
+                            </div>
+                            <div class="profile-actions">
+                                <button class="btn btn-gradient" onclick="location.href='edit-profile.html'">Editar Perfil</button>
+                                <button class="btn btn-outline-gradient">Ver Histórico</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Seção de Chats Privados -->
+                    <div class="private-chats-section">
+                        <h3>Chats Privados</h3>
+                        <div class="chat-list">
+                            <!-- Chat Item 1 (será populado por JS) -->
+                            <div class="chat-item">
+                                <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Foto de Perfil" class="chat-pic">
+                                <div class="chat-info">
+                                    <span class="chat-contact-name">Ana Paula</span>
+                                    <span class="last-message">Olá, tudo bem?</span>
+                                </div>
+                                <span class="unread-count">2</span>
+                            </div>
+                            <!-- Chat Item 2 (será populado por JS) -->
+                            <div class="chat-item">
+                                <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Foto de Perfil" class="chat-pic">
+                                <div class="chat-info">
+                                    <span class="chat-contact-name">Carlos Diniz</span>
+                                    <span class="last-message">Ótima iniciativa!</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nova Seção: Sugestões para Você -->
+                    <div class="suggestions-section">
+                        <h3>Sugestões para Você</h3>
+                        <div class="suggestion-list">
+                            <!-- Sugestão de Usuário 1 (será populado por JS) -->
+                            <div class="suggestion-item">
+                                <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="Foto de Perfil" class="suggestion-pic">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-name">Felipe Souza</span>
+                                    <span class="suggestion-role">Engenheiro de Dados</span>
+                                </div>
+                                <button class="btn btn-outline-gradient connect-btn"><i class="fas fa-user-plus"></i> Conectar</button>
+                            </div>
+                            <!-- Sugestão de Usuário 2 (será populado por JS) -->
+                            <div class="suggestion-item">
+                                <img src="https://randomuser.me/api/portraits/women/77.jpg" alt="Foto de Perfil" class="suggestion-pic">
+                                <div class="suggestion-info">
+                                    <span class="suggestion-name">Larissa Costa</span>
+                                    <span class="suggestion-role">UX Designer</span>
+                                </div>
+                                <button class="btn btn-outline-gradient connect-btn"><i class="fas fa-user-plus"></i> Conectar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nova Seção: Tópicos em Destaque -->
+                    <div class="trending-topics-section">
+                        <h3>Tópicos em Destaque</h3>
+                        <div class="topic-list">
+                            <!-- Tópico 1 (será populado por JS) -->
+                            <div class="topic-item">
+                                <span class="topic-name">#AcessibilidadeDigital</span>
+                                <span class="topic-posts">1.2K Posts</span>
+                            </div>
+                            <!-- Tópico 2 (será populado por JS) -->
+                            <div class="topic-item">
+                                <span class="topic-name">#InovacaoPCD</span>
+                                <span class="topic-posts">850 Posts</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <i class="fas fa-wheelchair"></i>
+                <span>WACS</span>
+                <p>Inovando na mobilidade acessível.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../index.html#recursos">Recursos</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                    <li><a href="../index.html#contato">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contato</h3>
+                <p>Email: contato@wacs.com</p>
+                <p>Telefone: (XX) XXXX-XXXX</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+            <p class="alpha-footer-notice">Esta é uma versão Alpha. Para feedback, entre em contato.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js" defer></script>
+
+    <script src="../public/js/env-config.js" defer></script>
+    <script src="../public/js/auth-check.js" defer></script>
+    <script src="../public/js/script.js" defer></script>
+</body>
+</html> 

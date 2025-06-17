@@ -5,8 +5,7 @@
     flex-direction: column;
     align-items: center; /* Centralizar itens novamente */
     justify-content: center;
-    padding: 80px 40px;
-    min-height: calc(100vh - 100px); /* Adjusts for navbar height */
+    padding:100px 100px; /* Zerando todo o preenchimento para teste */
     background-color: var(--background-color); /* Usando a nova variável de tema */
     position: relative;
     overflow: hidden;
@@ -25,7 +24,7 @@
     font-weight: 900;
     margin-bottom: 20px;
     line-height: 1.1;
-    text-align: left; /* Alinhar APENAS o título à esquerda */
+    text-align: center; /* Alinhar APENAS o título à esquerda */
 }
 
 .hero-title .gradient-text-light {
@@ -75,7 +74,7 @@
     left: 0;
     z-index: 1;
     /* A imagem de fundo pode precisar de uma variável de tema se mudar entre temas */
-    background-image: url('https://via.placeholder.com/1200x800/0A0A0A/00C6FF?text=WACS+Technology+Element');
+    /* background-image: url('https://via.placeholder.com/1200x800/0A0A0A/00C6FF?text=WACS+Technology+Element'); */
     background-size: cover; /* Ou 'cover' dependendo da imagem */
     background-position: center;
     background-repeat: no-repeat;
@@ -103,6 +102,7 @@
 
     .hero-title {
         font-size: 3.5rem;
+        text-align: center; /* Centralizar título em telas menores */
     }
 
     .hero-subtitle {

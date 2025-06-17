@@ -1,0 +1,89 @@
+.features-intro {
+    text-align: center;
+    padding: 60px 20px;
+    background: var(--background-light);
+    border-radius: 12px;
+    margin: 40px auto;
+    max-width: 900px;
+    box-shadow: var(--shadow-small);
+}
+
+.features-intro h1 {
+    font-size: 3em;
+    color: var(--text-color-primary);
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.features-intro p {
+    font-size: 1.2em;
+    color: var(--text-color-secondary);
+    max-width: 700px;
+    margin: 0 auto;
+    line-height: 1.6;
+}
+
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: var(--card-background);
+    border-radius: 12px;
+    padding: 30px;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-large);
+}
+
+.feature-card i {
+    font-size: 3.5em;
+    color: var(--gradient-start);
+    margin-bottom: 20px;
+}
+
+.feature-card h3 {
+    font-size: 1.8em;
+    color: var(--text-color-primary);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.feature-card p {
+    font-size: 1em;
+    color: var(--text-color-secondary);
+    line-height: 1.5;
+}
+
+/* Estilos para o botão desabilitado e tag 'Em breve' */
+.disabled-button {
+    position: relative;
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none; /* Garante que o botão não seja clicável */
+}
+
+.soon-tag {
+    position: absolute;
+    top: -10px; /* Ajuste para posicionar acima do botão */
+    right: -10px; /* Ajuste para posicionar à direita do botão */
+    background-color: var(--gradient-end);
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+    transform: rotate(5deg); /* Leve inclinação para destacar */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+} 

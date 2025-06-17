@@ -1,0 +1,235 @@
+/* public/css/team.css */
+
+.equipe {
+    padding: 80px 20px;
+    text-align: center;
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.equipe .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.equipe h2 {
+    font-size: 2.8em;
+    margin-bottom: 20px;
+    color: var(--heading-color);
+}
+
+.team-origin {
+    font-size: 1.1em;
+    color: var(--text-color-light);
+    margin-bottom: 60px;
+}
+
+.team-section-title {
+    font-size: 2.2em;
+    margin-top: 60px;
+    margin-bottom: 40px;
+    color: var(--gradient-start); /* Destaque para o título da seção */
+    position: relative;
+    display: inline-block;
+}
+
+.team-section-title::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    border-radius: 2px;
+}
+
+.team-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* Força 4 colunas de tamanho igual para os desenvolvedores */
+    gap: 30px;
+    justify-content: center;
+    /* align-items: stretch; Removido para permitir altura fixa no .team-member */
+}
+
+.team-grid-single {
+    grid-template-columns: 1fr;
+    max-width: 250px; /* Ajuste para o card único do orientador */
+    margin: 0 auto;
+}
+
+.team-member {
+    background-color: var(--card-background);
+    border-radius: 12px;
+    padding: 20px; /* Reduzido o padding para tornar o card mais quadrado */
+    height: 340px; /* Altura fixa para padronizar o tamanho */
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center; /* Centraliza o texto */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+.team-member::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    z-index: 1;
+}
+
+.team-member:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+}
+
+.team-member:hover::before {
+    opacity: 0.1;
+}
+
+.member-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    flex-grow: 1; /* Permite que o conteúdo ocupe o espaço */
+}
+
+.member-photo {
+    width: 110px; /* Ajustado para um visual mais quadrado */
+    height: 110px; /* Ajustado para um visual mais quadrado */
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-bottom: 15px;
+    border: 4px solid var(--gradient-end); /* Borda mais fina */
+    box-shadow: 0 0 0 4px var(--background-color-darker); /* Sombra mais fina */
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.team-member:hover .member-photo {
+    border-color: var(--gradient-start);
+    box-shadow: 0 0 0 4px var(--card-background);
+}
+
+.member-name {
+    font-size: 1.4em; /* Reduzido o tamanho da fonte */
+    font-weight: 700;
+    color: var(--heading-color);
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    line-height: 1.2;
+    height: 2.4em; /* Fixa a altura para duas linhas (1.2 * 2) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Limita o nome a 2 linhas */
+    -webkit-box-orient: vertical;
+}
+
+.member-role {
+    font-size: 0.9em; /* Reduzido o tamanho da fonte */
+    color: var(--gradient-start);
+    font-weight: 500;
+    margin-bottom: 10px;
+    line-height: 1.2; /* Ajuste para o cargo */
+    height: 1.2em; /* Fixa a altura para uma linha */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* Limita o cargo a 1 linha */
+    -webkit-box-orient: vertical;
+}
+
+.member-bio {
+    font-size: 0.85em; /* Reduzido o tamanho da fonte */
+    color: var(--text-color-light);
+    line-height: 1.4; /* Ajustado o espaçamento da linha */
+    margin-bottom: 20px;
+    max-height: 4.2em; /* Limita a altura para 3 linhas (1.4 * 3) */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* Limita o texto a 3 linhas */
+    -webkit-box-orient: vertical;
+    flex-grow: 0; /* Desabilita o crescimento para manter a altura fixa */
+}
+
+.member-socials {
+    display: flex;
+    gap: 15px;
+    margin-top: auto; /* Empurra os ícones para a parte inferior do card */
+}
+
+.member-socials a {
+    color: var(--text-color-light);
+    font-size: 1.4em; /* Ajustado o tamanho da fonte */
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.member-socials a:hover {
+    color: var(--gradient-end);
+    transform: translateY(-3px) scale(1.1);
+}
+
+/* Responsividade */
+@media (max-width: 992px) {
+    .team-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 colunas para tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .equipe {
+        padding: 40px 15px;
+    }
+    .equipe h2 {
+        font-size: 2.2em;
+    }
+    .team-section-title {
+        font-size: 1.8em;
+    }
+    .team-grid {
+        grid-template-columns: 1fr; /* Coluna única para mobile */
+        gap: 20px;
+    }
+    .team-member {
+        padding: 20px;
+        height: auto; /* Altura automática para mobile */
+    }
+    .member-photo {
+        width: 100px;
+        height: 100px;
+    }
+    .member-name {
+        font-size: 1.3em;
+        height: auto; /* Remove altura fixa para mobile */
+        -webkit-line-clamp: unset; /* Remove clamp para mobile */
+    }
+    .member-role {
+        font-size: 0.85em;
+        height: auto; /* Remove altura fixa para mobile */
+        -webkit-line-clamp: unset; /* Remove clamp para mobile */
+    }
+    .member-bio {
+        font-size: 0.8em;
+        max-height: none; /* Remove limitação de altura no mobile para biografia completa */
+        -webkit-line-clamp: unset;
+    }
+    .member-socials a {
+        font-size: 1.2em;
+    }
+} 

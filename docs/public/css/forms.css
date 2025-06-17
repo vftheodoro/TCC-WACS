@@ -1,0 +1,232 @@
+/* Wacs Remaster/public/css/forms.css */
+
+.edit-profile-page-content {
+    padding: 40px 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.edit-profile-page-content h2 {
+    font-size: 2.8em;
+    color: var(--text-color-primary);
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+}
+
+.edit-profile-page-content h2::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -10px;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: var(--gradient-color-1);
+    border-radius: 2px;
+}
+
+.edit-profile-page-content p {
+    font-size: 1.1em;
+    color: var(--text-color-secondary);
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.profile-edit-card {
+    background-color: var(--card-bg-color);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: var(--shadow-small);
+    margin-top: 30px;
+    text-align: left;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-color-primary);
+    font-size: 1.1em;
+}
+
+.form-group input[type="text"],
+.form-group input[type="email"],
+.form-group input[type="password"],
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1em;
+    color: var(--text-color-primary);
+    background-color: var(--input-bg-color);
+    transition: border-color 0.3s ease;
+}
+
+.form-group input[type="text"]:focus,
+.form-group input[type="email"]:focus,
+.form-group input[type="password"]:focus,
+.form-group textarea:focus {
+    border-color: var(--gradient-color-1);
+    outline: none;
+}
+
+.form-group input[type="email"][disabled] {
+    background-color: var(--disabled-input-bg-color);
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.profile-picture-upload {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.profile-picture-upload label {
+    margin-bottom: 15px;
+}
+
+.profile-picture-preview {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 4px solid var(--gradient-color-1);
+    box-shadow: var(--shadow-medium);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-picture-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#changeProfilePicBtn {
+    padding: 10px 20px;
+    font-size: 0.95em;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.form-actions .btn {
+    padding: 12px 25px;
+    font-size: 1.05em;
+}
+
+/* Styles for Password Section */
+.password-section {
+    background-color: var(--secondary-card-bg-color, #f0f0f0); /* Adicione uma cor de fundo ou ajuste */
+    border-radius: 10px;
+    padding: 25px;
+    margin-top: 30px; /* Espaçamento da seção anterior */
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-small);
+}
+
+.password-section h3 {
+    font-size: 2em;
+    color: var(--gradient-color-1);
+    margin-bottom: 10px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.password-section h3::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: -5px;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--gradient-color-2);
+    border-radius: 2px;
+}
+
+.password-section .section-description {
+    font-size: 0.95em;
+    color: var(--text-color-secondary);
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .edit-profile-page-content {
+        padding: 30px 15px;
+    }
+
+    .edit-profile-page-content h2 {
+        font-size: 2.2em;
+    }
+
+    .profile-edit-card {
+        padding: 20px;
+    }
+
+    .form-group label {
+        font-size: 1em;
+    }
+
+    .form-group input,
+    .form-group textarea {
+        padding: 10px;
+    }
+
+    .profile-picture-preview {
+        width: 120px;
+        height: 120px;
+    }
+
+    #changeProfilePicBtn {
+        padding: 8px 15px;
+        font-size: 0.9em;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .edit-profile-page-content h2 {
+        font-size: 1.8em;
+    }
+
+    .profile-edit-card {
+        padding: 15px;
+    }
+
+    .profile-picture-preview {
+        width: 100px;
+        height: 100px;
+    }
+} 

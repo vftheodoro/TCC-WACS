@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Editar Perfil</title>
+    <link rel="stylesheet" href="../public/css/main.css">
+    <link rel="stylesheet" href="../public/css/navbar.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/transitions.css">
+    <link rel="stylesheet" href="../public/css/forms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="fade-in">
+    <div class="main-container">
+        <nav class="navbar">
+            <button class="menu-toggle-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="navbar-logo">
+                <a href="../index.html">
+                    <i class="fas fa-wheelchair"></i>
+                    <span>WACS</span>
+                </a>
+            </div>
+            <ul class="navbar-menu">
+                <li data-page="home"><a href="../index.html">Home</a></li>
+                <li data-page="recursos"><a href="recursos.html">Recursos</a></li>
+                <li data-page="comunidade"><a href="comunidade.html">Comunidade</a></li>
+                <li data-page="mapa"><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                <li data-page="about"><a href="about.html">Sobre</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="theme-toggle-btn">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <!-- Nova estrutura para status de usuário em mobile -->
+                <div class="mobile-user-status">
+                    <img src="" alt="Foto de Perfil" class="profile-pic-mobile hidden">
+                    <button class="btn btn-outline-gradient login-btn-mobile hidden" onclick="location.href='login.html'">Login</button>
+                </div>
+                <div class="logged-out-actions">
+                    <button class="btn btn-gradient" onclick="location.href='login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu Overlay (initially hidden) -->
+        <div class="mobile-menu-overlay">
+            <div class="mobile-menu-header">
+                <div class="navbar-logo">
+                    <a href="../index.html">
+                        <i class="fas fa-wheelchair"></i>
+                        <span>WACS</span>
+                    </a>
+                </div>
+                <button class="close-menu-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <ul class="mobile-navbar-menu">
+                <li data-page="home"><a href="../index.html">Home</a></li>
+                <li data-page="recursos"><a href="recursos.html">Recursos</a></li>
+                <li data-page="comunidade"><a href="comunidade.html">Comunidade</a></li>
+                <li data-page="mapa"><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                <li data-page="about"><a href="about.html">Sobre</a></li>
+            </ul>
+            <div class="mobile-navbar-actions">
+                <div class="logged-out-actions-mobile">
+                    <button class="btn btn-gradient" onclick="location.href='login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions-mobile hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </div>
+
+        <section class="page-content edit-profile-page-content">
+            <h2>Editar Perfil</h2>
+            <p>Atualize suas informações de perfil e senha.</p>
+
+            <div class="profile-edit-card">
+                <form id="editProfileForm">
+                    <div class="form-group profile-picture-upload">
+                        <label for="profilePicture">Foto de Perfil</label>
+                        <div class="profile-picture-preview">
+                            <img id="currentProfilePic" src="../public/images/fotos-perfil/default-avatar.png" alt="Foto de Perfil Atual">
+                            <input type="file" id="profilePicture" accept="image/*" style="display: none;">
+                            <button type="button" class="btn btn-outline-gradient" id="changeProfilePicBtn"><i class="fas fa-camera"></i> Alterar Foto</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userName">Nome de Usuário</label>
+                        <input type="text" id="userName" name="userName" placeholder="Seu nome de usuário">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userEmail">E-mail</label>
+                        <input type="email" id="userEmail" name="userEmail" placeholder="seu.email@exemplo.com" disabled>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userBio">Sobre Mim</label>
+                        <textarea id="userBio" name="userBio" rows="4" placeholder="Fale um pouco sobre você, suas experiências e objetivos..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userLocation">Localização</label>
+                        <input type="text" id="userLocation" name="userLocation" placeholder="Ex: São Paulo, Brasil">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userSkills">Habilidades (separadas por vírgula)</label>
+                        <input type="text" id="userSkills" name="userSkills" placeholder="Ex: JavaScript, React, UX Design, Acessibilidade">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="userInstagram"><i class="fab fa-instagram"></i> Instagram</label>
+                        <input type="text" id="userInstagram" name="userInstagram" placeholder="@seu_usuario">
+                    </div>
+
+                    <!-- Seção de Alteração de Senha -->
+                    <div class="password-section">
+                        <h3>Alterar Senha</h3>
+                        <p class="section-description">Preencha os campos abaixo apenas se desejar alterar sua senha.</p>
+
+                        <div class="form-group">
+                            <label for="currentPassword">Senha Atual</label>
+                            <input type="password" id="currentPassword" name="currentPassword" placeholder="Sua senha atual">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="newPassword">Nova Senha</label>
+                            <input type="password" id="newPassword" name="newPassword" placeholder="Deixe em branco para não alterar">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirmar Nova Senha</label>
+                            <input type="password" id="confirmNewPassword" name="confirmNewPassword" placeholder="Confirme sua nova senha">
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-gradient">Salvar Alterações</button>
+                        <button type="button" class="btn btn-outline-gradient" onclick="window.history.back();">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </div>
+
+    <div id="flashNotification" class="flash-notification">
+        <span id="flashNotificationMessage"></span>
+        <button class="close-flash-notification-btn">&times;</button>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <i class="fas fa-wheelchair"></i>
+                <span>WACS</span>
+                <p>Inovando na mobilidade acessível.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../index.html#recursos">Recursos</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                    <li><a href="../index.html#contato">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contato</h3>
+                <p>Email: contato@wacs.com</p>
+                <p>Telefone: (XX) XXXX-XXXX</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+            <p class="alpha-footer-notice">Esta é uma versão Alpha. Para feedback, entre em contato.</p>
+        </div>
+    </footer>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="../public/js/env-config.js"></script>
+    <script src="../public/js/auth-check.js"></script>
+    <script src="../public/js/script.js"></script>
+</body>
+</html> 

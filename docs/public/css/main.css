@@ -10,6 +10,7 @@
     --alpha-banner-text: #E0E0E0;
     --alpha-banner-icon: #FFA726;
     --alpha-banner-close-btn: #E0E0E0;
+    --secondary-card-bg-color: #1A1A1A; /* Fundo para seção de senha no tema escuro */
 
     /* Variáveis do Rodapé */
     --footer-background: #111111; /* Cor de fundo distinta para o tema escuro */
@@ -24,6 +25,12 @@
     /* Variáveis de Borda e Sombra */
     --border-radius-large: 20px;
     --border-radius-medium: 10px;
+
+    /* Variáveis para Mensagens de Status (Erro/Sucesso) */
+    --danger-background: #ffe0e0; /* Fundo vermelho claro para erros */
+    --danger-color: #d32f2f; /* Texto vermelho escuro para erros */
+    --success-background: #e8f5e9; /* Fundo verde claro para sucesso */
+    --success-color: #388e3c; /* Texto verde escuro para sucesso */
 }
 
 /* Tema Claro */
@@ -36,10 +43,17 @@
     --alpha-banner-text: #424242; /* Texto escuro para aviso */
     --alpha-banner-icon: #FB8C00; /* Laranja mais vibrante para ícone de aviso */
     --alpha-banner-close-btn: #424242; /* Botão de fechar escuro */
+    --secondary-card-bg-color: #FFFFFF; /* Fundo para seção de senha no tema claro */
 
     /* Variáveis do Rodapé para Tema Claro */
     --footer-background: #212121; /* Um cinza escuro para contraste no tema claro */
     --footer-text: #F0F2F5; /* Texto mais claro */
+
+    /* Variáveis para Mensagens de Status (Erro/Sucesso) no Tema Claro */
+    --danger-background: #fce4e4; /* Fundo vermelho mais claro */
+    --danger-color: #c62828; /* Texto vermelho forte */
+    --success-background: #e1f5e0; /* Fundo verde mais claro */
+    --success-color: #2e7d32; /* Texto verde forte */
 }
 
 * {
@@ -182,6 +196,120 @@ button, input {
 
 .hidden {
     display: none;
+}
+
+/* Flash Notification Styles */
+.flash-notification {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--gradient-end); /* Cor de fundo para sucesso, pode variar */
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease-out, visibility 0.3s ease-out;
+    z-index: 1000;
+    font-weight: 500;
+}
+
+.flash-notification.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.flash-notification.success {
+    background-color: #4CAF50; /* Verde para sucesso */
+}
+
+.flash-notification.error {
+    background-color: #F44336; /* Vermelho para erro */
+}
+
+.flash-notification.info {
+    background-color: #2196F3; /* Azul para informação */
+}
+
+.flash-notification .close-flash-notification-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    margin-left: 10px;
+    opacity: 0.8;
+    transition: opacity 0.2s ease;
+}
+
+.flash-notification .close-flash-notification-btn:hover {
+    opacity: 1;
+}
+
+/* Styles for Login Required Message in Community Page */
+.login-required-message {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--navbar-height) - var(--footer-height, 0px)); /* Ajuste para preencher a tela */
+    text-align: center;
+    padding: 20px;
+    flex-direction: column;
+}
+
+.login-required-message .message-box {
+    background-color: var(--card-background);
+    padding: 40px;
+    border-radius: var(--border-radius-large);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    max-width: 600px;
+    width: 90%;
+    border: 1px solid var(--border-color);
+}
+
+.login-required-message .message-icon {
+    font-size: 60px;
+    color: var(--gradient-start);
+    margin-bottom: 20px;
+}
+
+.login-required-message h2 {
+    font-size: 2.2rem;
+    color: var(--text-color);
+    margin-bottom: 15px;
+}
+
+.login-required-message p {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+.login-required-message .btn {
+    padding: 15px 30px;
+    font-size: 1rem;
+}
+
+/* Responsividade para a mensagem de login */
+@media (max-width: 768px) {
+    .login-required-message .message-box {
+        padding: 30px 20px;
+    }
+
+    .login-required-message h2 {
+        font-size: 1.8rem;
+    }
+
+    .login-required-message p {
+        font-size: 1rem;
+    }
 }
 
 /* Styles from navbar.css and footer.css also need to use these variables, but will be handled separately if necessary. */ 
