@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Cadastro</title>
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <i class="fas fa-wheelchair login-logo-icon"></i>
+                <span class="login-logo-text">WACS</span>
+                <h2>Criar Conta</h2>
+            </div>
+            <form class="login-form" id="registerForm" autocomplete="off">
+                <div id="register-error" class="error-message" style="display:none;"></div>
+                <!-- Etapa 1: Perguntas principais -->
+                <div class="step step-1 active">
+                    <div class="form-group">
+                        <label for="username">Username <span title="Identificador público único">*</span></label>
+                        <input type="text" id="username" name="username" required maxlength="32" autocomplete="off" placeholder="Escolha um nome de usuário">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail <span title="Usado para login e recuperação de conta">*</span></label>
+                        <input type="email" id="email" name="email" required autocomplete="off" placeholder="seu@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha *</label>
+                        <div class="password-input-container">
+                            <input type="password" id="password" name="password" required minlength="6" placeholder="Crie uma senha">
+                            <span class="password-toggle" id="togglePassword"><i class="fas fa-eye"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Senha *</label>
+                        <div class="password-input-container">
+                            <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6" placeholder="Repita a senha">
+                            <span class="password-toggle" id="toggleConfirmPassword"><i class="fas fa-eye"></i></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="fullName">Nome Completo *</label>
+                        <input type="text" id="fullName" name="fullName" required maxlength="64" placeholder="Seu nome completo">
+                    </div>
+                    <button type="button" class="btn btn-gradient login-btn" id="nextStepBtn">Próxima etapa</button>
+                    <p class="switch-form-text">Já tem conta? <a href="login.html" class="link-blue">Entrar</a></p>
+                </div>
+                <!-- Etapa 2: Liberada após etapa 1 -->
+                <div class="step step-2" style="display:none;">
+                    <div class="form-group">
+                        <label for="birthdate">Data de nascimento *</label>
+                        <input type="date" id="birthdate" name="birthdate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="region">Estado e Cidade *</label>
+                        <div class="uf-cidade-row">
+                            <select id="ufSelect" class="uf-select" required>
+                                <option value="" disabled selected>Selecione o estado</option>
+                                <option value="SP">SP</option><option value="RJ">RJ</option><option value="MG">MG</option><option value="RS">RS</option><option value="PR">PR</option><option value="SC">SC</option><option value="BA">BA</option><option value="PE">PE</option><option value="CE">CE</option><option value="GO">GO</option><option value="DF">DF</option><option value="ES">ES</option><option value="MT">MT</option><option value="MS">MS</option><option value="PA">PA</option><option value="AM">AM</option><option value="MA">MA</option><option value="PB">PB</option><option value="RN">RN</option><option value="AL">AL</option><option value="SE">SE</option><option value="PI">PI</option><option value="RO">RO</option><option value="TO">TO</option><option value="AC">AC</option><option value="AP">AP</option><option value="RR">RR</option>
+                            </select>
+                            <div style="position: relative; flex: 1;">
+                                <input type="text" id="cidadeInput" class="autocomplete-cidade" placeholder="Digite sua cidade" autocomplete="off" required disabled>
+                                <div id="cidadeAutocompleteList" class="autocomplete-cidade-list" style="display:none;"></div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="region" name="region" required>
+                    </div>
+                    <!-- Picker customizado para Tipo de Mobilidade -->
+                    <div class="form-group">
+                        <label for="mobilityTypePicker">Tipo de Mobilidade *</label>
+                        <div class="custom-dropdown" id="mobilityTypePicker">
+                            <button type="button" class="dropdown-btn" id="mobilityDropdownBtn">
+                                <span id="mobilitySelected"><i class="fas fa-wheelchair"></i> Selecione</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-list" id="mobilityDropdownList" style="display:none;">
+                                <div class="dropdown-item" data-value="cadeira"><i class="fas fa-wheelchair"></i> Cadeira de rodas</div>
+                                <div class="dropdown-item" data-value="andador"><i class="fas fa-walking"></i> Andador</div>
+                                <div class="dropdown-item" data-value="muleta"><i class="fas fa-crutch"></i> Muleta</div>
+                                <div class="dropdown-item" data-value="visual"><i class="fas fa-low-vision"></i> Deficiência visual</div>
+                                <div class="dropdown-item" data-value="auditiva"><i class="fas fa-deaf"></i> Deficiência auditiva</div>
+                                <div class="dropdown-item" data-value="outra"><i class="fas fa-question"></i> Outra</div>
+                                <div class="dropdown-item" data-value="nenhuma"><i class="fas fa-check"></i> Nenhuma</div>
+                            </div>
+                            <input type="hidden" id="mobilityType" name="mobilityType" required>
+                        </div>
+                    </div>
+                    <!-- Multi-select customizado para Comorbidades -->
+                    <div class="form-group">
+                        <label>Comorbidades / Necessidades Especiais</label>
+                        <div class="custom-multiselect" id="comorbidadesPicker">
+                            <button type="button" class="dropdown-btn" id="comorbidadesDropdownBtn">
+                                <span id="comorbidadesSelected">Selecione</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-list" id="comorbidadesDropdownList" style="display:none; max-height: 220px; overflow-y: auto;">
+                                <div class="dropdown-item" data-value="diabetes">Diabetes</div>
+                                <div class="dropdown-item" data-value="hipertensao">Hipertensão</div>
+                                <div class="dropdown-item" data-value="cardio">Doença cardiovascular</div>
+                                <div class="dropdown-item" data-value="respiratorio">Problemas respiratórios</div>
+                                <div class="dropdown-item" data-value="outra">Outro</div>
+                                <div class="dropdown-item" data-value="nenhuma">Nenhuma</div>
+                            </div>
+                            <input type="hidden" id="comorbidades" name="comorbidades">
+                            <div class="chips" id="comorbidadesChips"></div>
+                        </div>
+                    </div>
+                    <!-- Avatar circular para foto de perfil -->
+                    <div class="form-group" style="display: flex; flex-direction: column; align-items: center;">
+                        <label for="profilePic">Foto de Perfil (opcional)</label>
+                        <div class="avatar-upload" style="position: relative; width: 90px; height: 90px;">
+                            <img id="profilePicPreview" src="../../public/images/fotos-perfil/default-avatar.png" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-color); background: var(--card-background);" alt="Prévia da foto de perfil">
+                            <label for="profilePic" class="avatar-upload-btn" style="position: absolute; bottom: 0; right: 0; background: var(--gradient-start); color: #fff; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; border: 2px solid #fff; box-shadow: 0 2px 8px #0002;">
+                                <i class="fas fa-camera"></i>
+                            </label>
+                            <input type="file" id="profilePic" name="profilePic" accept="image/*" style="display:none;">
+                        </div>
+                    </div>
+                    <div class="form-group" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="acceptTerms" name="acceptTerms" required style="width: 18px; height: 18px;">
+                        <label for="acceptTerms" style="margin: 0;">Li e aceito os <a href="termos.html" target="_blank" class="link-blue">Termos de Uso</a> *</label>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="button" class="btn btn-outline-gradient login-btn" id="prevStepBtn">Voltar</button>
+                        <button type="submit" class="btn btn-gradient login-btn">Criar Conta</button>
+                    </div>
+                    <p class="switch-form-text">Já tem conta? <a href="login.html" class="link-blue">Entrar</a></p>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script src="../../public/js/script.js"></script>
+    <script>
+    // Controle de etapas
+    const step1 = document.querySelector('.step-1');
+    const step2 = document.querySelector('.step-2');
+    const nextStepBtn = document.getElementById('nextStepBtn');
+    const prevStepBtn = document.getElementById('prevStepBtn');
+    const registerForm = document.getElementById('registerForm');
+    const errorDiv = document.getElementById('register-error');
+
+    nextStepBtn.addEventListener('click', function() {
+        errorDiv.style.display = 'none';
+        const username = document.getElementById('username').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const fullName = document.getElementById('fullName').value.trim();
+        if (!username || !email || !password || !confirmPassword || !fullName) {
+            errorDiv.textContent = 'Preencha todos os campos obrigatórios.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        if (password !== confirmPassword) {
+            errorDiv.textContent = 'As senhas não coincidem.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        step1.style.display = 'none';
+        step2.style.display = 'block';
+    });
+    if (prevStepBtn) {
+        prevStepBtn.addEventListener('click', function() {
+            step2.style.display = 'none';
+            step1.style.display = 'block';
+        });
+    }
+
+    // Mostrar/ocultar senha
+    document.getElementById('togglePassword').onclick = function() {
+        const pwd = document.getElementById('password');
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        this.innerHTML = pwd.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    };
+    document.getElementById('toggleConfirmPassword').onclick = function() {
+        const pwd = document.getElementById('confirmPassword');
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+        this.innerHTML = pwd.type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+    };
+
+    // Overlay para pickers
+    let pickerOverlay = null;
+    function showPickerOverlay() {
+        if (!pickerOverlay) {
+            pickerOverlay = document.createElement('div');
+            pickerOverlay.className = 'picker-overlay';
+            document.body.appendChild(pickerOverlay);
+            pickerOverlay.onclick = function() {
+                closeAllDropdowns();
+            };
+        }
+    }
+    function hidePickerOverlay() {
+        if (pickerOverlay) {
+            pickerOverlay.remove();
+            pickerOverlay = null;
+        }
+    }
+    function closeAllDropdowns() {
+        mobilityDropdownList.style.display = 'none';
+        comorbidadesDropdownList.style.display = 'none';
+        hidePickerOverlay();
+    }
+    // Dropdown customizado para Tipo de Mobilidade
+    const mobilityDropdownBtn = document.getElementById('mobilityDropdownBtn');
+    const mobilityDropdownList = document.getElementById('mobilityDropdownList');
+    const mobilitySelected = document.getElementById('mobilitySelected');
+    const mobilityTypeInput = document.getElementById('mobilityType');
+
+    mobilityDropdownBtn.onclick = function(e) {
+        if (mobilityDropdownList.style.display === 'block') {
+            mobilityDropdownList.style.display = 'none';
+            hidePickerOverlay();
+        } else {
+            closeAllDropdowns();
+            mobilityDropdownList.style.display = 'block';
+            showPickerOverlay();
+        }
+    };
+    document.addEventListener('click', function(e) {
+        if (!mobilityDropdownBtn.contains(e.target) && !mobilityDropdownList.contains(e.target) && !comorbidadesDropdownBtn.contains(e.target) && !comorbidadesDropdownList.contains(e.target)) {
+            closeAllDropdowns();
+        }
+    });
+    Array.from(mobilityDropdownList.children).forEach(item => {
+        item.onclick = function() {
+            mobilitySelected.innerHTML = this.innerHTML;
+            mobilityTypeInput.value = this.getAttribute('data-value');
+            mobilityDropdownList.style.display = 'none';
+            hidePickerOverlay();
+        };
+    });
+
+    // Multi-select customizado para Comorbidades
+    const comorbidadesDropdownBtn = document.getElementById('comorbidadesDropdownBtn');
+    const comorbidadesDropdownList = document.getElementById('comorbidadesDropdownList');
+    const comorbidadesSelected = document.getElementById('comorbidadesSelected');
+    const comorbidadesInput = document.getElementById('comorbidades');
+    const comorbidadesChips = document.getElementById('comorbidadesChips');
+    let comorbidadesValues = [];
+
+    comorbidadesDropdownBtn.onclick = function(e) {
+        if (comorbidadesDropdownList.style.display === 'block') {
+            comorbidadesDropdownList.style.display = 'none';
+            hidePickerOverlay();
+        } else {
+            closeAllDropdowns();
+            comorbidadesDropdownList.style.display = 'block';
+            showPickerOverlay();
+            updateComorbidadesDropdown();
+        }
+    };
+    function updateComorbidadesDropdown() {
+        Array.from(comorbidadesDropdownList.children).forEach(item => {
+            const value = item.getAttribute('data-value');
+            if (comorbidadesValues.includes(value)) {
+                item.style.display = 'none';
+            } else {
+                item.style.display = '';
+            }
+        });
+    }
+    Array.from(comorbidadesDropdownList.children).forEach(item => {
+        item.onclick = function() {
+            const value = this.getAttribute('data-value');
+            if (value === 'nenhuma') {
+                comorbidadesValues = ['nenhuma'];
+            } else {
+                comorbidadesValues = comorbidadesValues.filter(v => v !== 'nenhuma');
+                if (!comorbidadesValues.includes(value)) {
+                    comorbidadesValues.push(value);
+                }
+            }
+            updateComorbidadesChips();
+            comorbidadesInput.value = comorbidadesValues.join(',');
+            updateComorbidadesDropdown();
+        };
+    });
+    function updateComorbidadesChips() {
+        comorbidadesChips.innerHTML = '';
+        if (comorbidadesValues.length === 0) {
+            comorbidadesSelected.textContent = 'Selecione';
+            return;
+        }
+        comorbidadesSelected.textContent = '';
+        comorbidadesValues.forEach(val => {
+            const chip = document.createElement('span');
+            chip.className = 'chip';
+            chip.textContent = Array.from(comorbidadesDropdownList.children).find(i => i.getAttribute('data-value') === val)?.textContent || val;
+            chip.onclick = function(e) {
+                comorbidadesValues = comorbidadesValues.filter(v => v !== val);
+                updateComorbidadesChips();
+                comorbidadesInput.value = comorbidadesValues.join(',');
+                updateComorbidadesDropdown();
+                e.stopPropagation();
+            };
+            comorbidadesChips.appendChild(chip);
+        });
+    }
+    // Avatar upload
+    const profilePicInput = document.getElementById('profilePic');
+    const profilePicPreview = document.getElementById('profilePicPreview');
+    profilePicInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                profilePicPreview.src = ev.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Validação final do formulário
+    registerForm.addEventListener('submit', function(e) {
+        errorDiv.style.display = 'none';
+        if (!document.getElementById('acceptTerms').checked) {
+            e.preventDefault();
+            errorDiv.textContent = 'Você deve aceitar os Termos de Uso e a Política de Privacidade.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        // Aqui você pode adicionar validação extra ou integração com backend
+        // e.preventDefault(); // Remova este comentário se for testar sem backend
+    });
+
+    // Autocomplete de cidade
+    const ufSelect = document.getElementById('ufSelect');
+    const cidadeInput = document.getElementById('cidadeInput');
+    const cidadeAutocompleteList = document.getElementById('cidadeAutocompleteList');
+    const regionInput = document.getElementById('region');
+    const cidadesPorUF = {
+        SP: ['Registro', 'São Paulo', 'Campinas', 'Santos', 'Sorocaba', 'Ribeirão Preto', 'São José dos Campos', 'Jacupiranga', 'Vale do Ribeira'],
+        RJ: ['Rio de Janeiro', 'Niterói', 'Petrópolis', 'Campos dos Goytacazes', 'Volta Redonda'],
+        MG: ['Belo Horizonte', 'Uberlândia', 'Contagem', 'Juiz de Fora', 'Montes Claros'],
+        RS: ['Porto Alegre', 'Caxias do Sul', 'Pelotas', 'Canoas', 'Santa Maria'],
+        PR: ['Curitiba', 'Londrina', 'Maringá', 'Ponta Grossa', 'Cascavel'],
+        SC: ['Florianópolis', 'Joinville', 'Blumenau', 'Chapecó', 'Itajaí'],
+        BA: ['Salvador', 'Feira de Santana', 'Vitória da Conquista', 'Camaçari', 'Itabuna'],
+        PE: ['Recife', 'Jaboatão', 'Olinda', 'Caruaru', 'Petrolina'],
+        CE: ['Fortaleza', 'Caucaia', 'Juazeiro do Norte', 'Maracanaú', 'Sobral'],
+        GO: ['Goiânia', 'Aparecida de Goiânia', 'Anápolis', 'Rio Verde', 'Luziânia'],
+        DF: ['Brasília', 'Ceilândia', 'Taguatinga', 'Samambaia', 'Planaltina'],
+        ES: ['Vitória', 'Vila Velha', 'Serra', 'Cariacica', 'Cachoeiro de Itapemirim'],
+        MT: ['Cuiabá', 'Várzea Grande', 'Rondonópolis', 'Sinop', 'Tangará da Serra'],
+        MS: ['Campo Grande', 'Dourados', 'Três Lagoas', 'Corumbá', 'Ponta Porã'],
+        PA: ['Belém', 'Ananindeua', 'Santarém', 'Marabá', 'Castanhal'],
+        AM: ['Manaus', 'Parintins', 'Itacoatiara', 'Manacapuru', 'Coari'],
+        MA: ['São Luís', 'Imperatriz', 'Timon', 'Caxias', 'Codó'],
+        PB: ['João Pessoa', 'Campina Grande', 'Santa Rita', 'Patos', 'Bayeux'],
+        RN: ['Natal', 'Mossoró', 'Parnamirim', 'São Gonçalo do Amarante', 'Macaíba'],
+        AL: ['Maceió', 'Arapiraca', 'Rio Largo', 'Palmeira dos Índios', 'União dos Palmares'],
+        SE: ['Aracaju', 'Nossa Senhora do Socorro', 'Lagarto', 'Itabaiana', 'Estância'],
+        PI: ['Teresina', 'Parnaíba', 'Picos', 'Piripiri', 'Floriano'],
+        RO: ['Porto Velho', 'Ji-Paraná', 'Ariquemes', 'Vilhena', 'Cacoal'],
+        TO: ['Palmas', 'Araguaína', 'Gurupi', 'Porto Nacional', 'Paraíso do Tocantins'],
+        AC: ['Rio Branco', 'Cruzeiro do Sul', 'Sena Madureira', 'Tarauacá', 'Feijó'],
+        AP: ['Macapá', 'Santana', 'Laranjal do Jari', 'Oiapoque', 'Mazagão'],
+        RR: ['Boa Vista', 'Rorainópolis', 'Caracaraí', 'Alto Alegre', 'Mucajaí']
+    };
+    let cidadeAutocompleteIndex = -1;
+    ufSelect.addEventListener('change', function() {
+        cidadeInput.value = '';
+        regionInput.value = '';
+        cidadeInput.disabled = !ufSelect.value;
+        cidadeAutocompleteList.innerHTML = '';
+        cidadeAutocompleteList.style.display = 'none';
+        cidadeAutocompleteIndex = -1;
+        cidadeInput.focus();
+    });
+    cidadeInput.addEventListener('input', function() {
+        const val = cidadeInput.value.trim().toLowerCase();
+        cidadeAutocompleteList.innerHTML = '';
+        cidadeAutocompleteIndex = -1;
+        if (!val || !ufSelect.value) {
+            cidadeAutocompleteList.style.display = 'none';
+            regionInput.value = '';
+            return;
+        }
+        const matches = (cidadesPorUF[ufSelect.value] || []).filter(cidade => cidade.toLowerCase().includes(val));
+        if (matches.length === 0) {
+            cidadeAutocompleteList.style.display = 'none';
+            regionInput.value = '';
+            return;
+        }
+        matches.slice(0, 10).forEach((cidade, idx) => {
+            const div = document.createElement('div');
+            div.className = 'autocomplete-cidade-item';
+            div.textContent = cidade;
+            div.onclick = function() {
+                cidadeInput.value = cidade;
+                regionInput.value = ufSelect.value + ' - ' + cidade;
+                cidadeAutocompleteList.style.display = 'none';
+            };
+            cidadeAutocompleteList.appendChild(div);
+        });
+        cidadeAutocompleteList.style.display = 'block';
+    });
+    cidadeInput.addEventListener('keydown', function(e) {
+        const items = cidadeAutocompleteList.querySelectorAll('.autocomplete-cidade-item');
+        if (!items.length) return;
+        if (e.key === 'ArrowDown') {
+            cidadeAutocompleteIndex = (cidadeAutocompleteIndex + 1) % items.length;
+            updateCidadeAutocompleteHighlight(items);
+            e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+            cidadeAutocompleteIndex = (cidadeAutocompleteIndex - 1 + items.length) % items.length;
+            updateCidadeAutocompleteHighlight(items);
+            e.preventDefault();
+        } else if (e.key === 'Enter') {
+            if (cidadeAutocompleteIndex >= 0 && cidadeAutocompleteIndex < items.length) {
+                items[cidadeAutocompleteIndex].click();
+                e.preventDefault();
+            }
+        }
+    });
+    cidadeInput.addEventListener('blur', function() {
+        setTimeout(() => { cidadeAutocompleteList.style.display = 'none'; }, 120);
+    });
+    function updateCidadeAutocompleteHighlight(items) {
+        items.forEach((item, idx) => {
+            if (idx === cidadeAutocompleteIndex) {
+                item.classList.add('selected');
+                item.scrollIntoView({ block: 'nearest' });
+            } else {
+                item.classList.remove('selected');
+            }
+        });
+    }
+    </script>
+    <div class="theme-transition-overlay"></div>
+    <div class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
+    <style>
+    .link-blue { color: #2196f3 !important; text-decoration: underline; cursor: pointer; transition: color 0.2s; }
+    .link-blue:hover { color: #1565c0 !important; }
+    /* Custom Dropdown (Tipo de Mobilidade) */
+    .custom-dropdown, .custom-multiselect {
+      position: relative;
+      width: 100%;
+      margin-bottom: 18px;
+    }
+    .dropdown-btn {
+      width: 100%;
+      background: var(--card-background);
+      color: var(--text-color);
+      border: 1.5px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      box-shadow: 0 1px 4px #0001;
+    }
+    .dropdown-btn:focus, .dropdown-btn:hover {
+      border-color: var(--gradient-start);
+      box-shadow: 0 2px 8px #0002;
+    }
+    .dropdown-list {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      width: 100%;
+      background: #fff !important;
+      border: 2px solid var(--gradient-start);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px #0003;
+      z-index: 10;
+      animation: fadeInDropdown 0.18s;
+      padding: 6px 0;
+      min-width: 180px;
+      font-size: 1.08em;
+      line-height: 1.5;
+    }
+    body.dark .dropdown-list {
+      background: #181a1b !important;
+    }
+    @keyframes fadeInDropdown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .dropdown-item {
+      padding: 14px 22px;
+      font-size: 1.08em;
+      color: var(--text-color);
+      background: none;
+      font-weight: 500;
+    }
+    .dropdown-item:hover, .dropdown-item.selected {
+      background: var(--gradient-bg-light, #e3f2fd);
+      color: var(--gradient-start);
+    }
+    .dropdown-item i {
+      min-width: 22px;
+      text-align: center;
+      font-size: 1.1em;
+    }
+    /* Chips para seleção múltipla */
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .chip {
+      background: var(--gradient-bg-light, #e3f2fd);
+      color: var(--gradient-start);
+      border-radius: 16px;
+      padding: 5px 14px 5px 10px;
+      font-size: 0.98em;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      box-shadow: 0 1px 4px #0001;
+      transition: background 0.18s, color 0.18s;
+    }
+    .chip:hover {
+      background: var(--gradient-start);
+      color: #fff;
+    }
+    .chip::after {
+      content: '×';
+      font-size: 1.1em;
+      margin-left: 6px;
+      opacity: 0.7;
+    }
+    /* Avatar upload */
+    .avatar-upload {
+      position: relative;
+      width: 96px;
+      height: 96px;
+      margin-bottom: 10px;
+    }
+    .avatar-upload img {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--gradient-start);
+      box-shadow: 0 2px 12px #0002;
+      background: var(--card-background);
+      transition: border-color 0.2s;
+    }
+    .avatar-upload-btn {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--gradient-start);
+      color: #fff;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 8px #0002;
+      font-size: 1.2em;
+      transition: background 0.2s;
+    }
+    .avatar-upload-btn:hover {
+      background: var(--gradient-end);
+    }
+    /* Responsividade */
+    @media (max-width: 600px) {
+      .dropdown-list { font-size: 0.98em; }
+      .avatar-upload, .avatar-upload img { width: 72px; height: 72px; }
+      .avatar-upload-btn { width: 28px; height: 28px; font-size: 1em; }
+    }
+    .picker-overlay { display: none !important; }
+    /* Estado e cidade */
+    .uf-cidade-row {
+      display: flex;
+      gap: 10px;
+    }
+    .uf-select, .autocomplete-cidade, .dropdown-btn {
+      height: 48px;
+      border-radius: 10px;
+      border: 1.5px solid var(--border-color);
+      font-size: 1.08em;
+      font-family: inherit;
+      padding: 0 16px;
+      box-shadow: 0 1px 4px #0001;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s, color 0.2s;
+      margin-bottom: 0;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      background: #fff;
+      color: #111;
+    }
+    body.dark .uf-select, body.dark .autocomplete-cidade, body.dark .dropdown-btn {
+      background: #181a1b !important;
+      color: #fff !important;
+      border-color: #333 !important;
+    }
+    .uf-select:focus, .autocomplete-cidade:focus, .dropdown-btn:focus {
+      border-color: var(--gradient-start);
+      box-shadow: 0 2px 8px #0002;
+    }
+    .autocomplete-cidade[disabled] {
+      background: #f0f0f0 !important;
+      color: #bbb !important;
+      cursor: not-allowed;
+    }
+    .dropdown-list, .autocomplete-cidade-list {
+      position: absolute;
+      top: 110%;
+      left: 0;
+      width: 100%;
+      background: #fff;
+      border: 2px solid var(--gradient-start);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px #0003;
+      z-index: 20;
+      animation: fadeInDropdown 0.18s;
+      max-height: 260px;
+      overflow-y: auto;
+      font-size: 1.08em;
+      padding: 6px 0;
+    }
+    body.dark .dropdown-list, body.dark .autocomplete-cidade-list {
+      background: #181a1b !important;
+      color: #fff !important;
+      border-color: #333 !important;
+    }
+    .dropdown-item, .autocomplete-cidade-item {
+      padding: 14px 22px;
+      cursor: pointer;
+      color: #111;
+      background: none;
+      font-weight: 500;
+      border-radius: 8px;
+      margin: 2px 8px;
+      transition: background 0.15s, color 0.15s;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    body.dark .dropdown-item, body.dark .autocomplete-cidade-item {
+      color: #fff;
+    }
+    .dropdown-item:hover, .autocomplete-cidade-item:hover, .dropdown-item.selected, .autocomplete-cidade-item.selected {
+      background: var(--gradient-bg-light, #e3f2fd);
+      color: var(--gradient-start) !important;
+    }
+    body.dark .dropdown-item:hover, body.dark .autocomplete-cidade-item:hover, body.dark .dropdown-item.selected, body.dark .autocomplete-cidade-item.selected {
+      background: #23272b;
+      color: var(--gradient-start) !important;
+    }
+    .dropdown-list {
+      border: 2px solid var(--gradient-start);
+    }
+    @media (max-width: 600px) {
+      .uf-cidade-row { flex-direction: column; gap: 0; }
+      .uf-select { width: 100%; max-width: 100%; }
+    }
+    </style>
+</body>
+</html> 
