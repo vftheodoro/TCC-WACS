@@ -12,6 +12,186 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .locations-container {
+            max-width: 100%;
+            margin: 20px auto;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .filters-section {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .filter-group select,
+        .filter-group input {
+            padding: 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            background: var(--input-bg);
+            color: var(--text-color);
+        }
+
+        #locationsList {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--accent-color) var(--card-bg);
+        }
+
+        #locationsList::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        #locationsList::-webkit-scrollbar-track {
+            background: var(--card-bg);
+            border-radius: 4px;
+        }
+
+        #locationsList::-webkit-scrollbar-thumb {
+            background: var(--accent-color);
+            border-radius: 4px;
+        }
+
+        .location-card {
+            background: var(--card-bg);
+            border-radius: 8px;
+            padding: 20px;
+            min-width: 300px;
+            max-width: 300px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+            flex: 0 0 auto;
+        }
+
+        .location-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .location-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .location-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .location-rating {
+            color: #ffd700;
+        }
+
+        .location-details {
+            color: var(--text-color);
+            font-size: 0.9em;
+            margin-bottom: 10px;
+        }
+
+        .accessibility-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-tag {
+            background: var(--accent-color);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        .user-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8em;
+        }
+
+        .scroll-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .scroll-button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .scroll-button:hover {
+            background: var(--accent-color-dark);
+        }
+    </style>
 </head>
 <body class="fade-in">
     <div class="main-container">
@@ -82,10 +262,172 @@
             </div>
         </div>
 
-        <section class="page-content" style="min-height: 60vh; text-align: center; padding: 50px;">
+        <section class="page-content">
             <h1>Mapa Acessível</h1>
-            <p>Esta é a página do Mapa Acessível. Em breve, você encontrará um mapa interativo aqui!</p>
-            <p>Estamos trabalhando para trazer uma solução robusta de mapeamento colaborativo.</p>
+            <p>Encontre locais acessíveis próximos a você e compartilhe suas experiências!</p>
+            
+            <div class="locations-container">
+                <div class="filters-section">
+                    <input type="text" class="search-bar" placeholder="Buscar locais..." id="searchInput">
+                    
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label for="typeFilter">Tipo de Local</label>
+                            <select id="typeFilter">
+                                <option value="">Todos</option>
+                                <option value="shopping">Shopping</option>
+                                <option value="restaurante">Restaurante</option>
+                                <option value="parque">Parque</option>
+                                <option value="teatro">Teatro</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="ratingFilter">Avaliação Mínima</label>
+                            <select id="ratingFilter">
+                                <option value="0">Todas</option>
+                                <option value="3">3+ estrelas</option>
+                                <option value="4">4+ estrelas</option>
+                                <option value="4.5">4.5+ estrelas</option>
+                            </select>
+                        </div>
+                        
+                        <div class="filter-group">
+                            <label for="featureFilter">Recurso de Acessibilidade</label>
+                            <select id="featureFilter">
+                                <option value="">Todos</option>
+                                <option value="rampa">Rampas</option>
+                                <option value="elevador">Elevadores</option>
+                                <option value="braile">Braile</option>
+                                <option value="libras">Libras</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="locationsList">
+                    <!-- Shopping Center -->
+                    <div class="location-card" data-type="shopping" data-rating="4.5" data-features="rampa,elevador,braile">
+                        <div class="location-header">
+                            <span class="location-name">Shopping Center Acessível</span>
+                            <span class="location-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star-half-alt"></i>
+                                4.5
+                            </span>
+                        </div>
+                        <div class="location-details">
+                            <p><i class="fas fa-map-marker-alt"></i> Av. Principal, 1000 - Centro</p>
+                            <p><i class="fas fa-comment"></i> "Excelente estrutura de acessibilidade, com rampas e elevadores em todos os níveis."</p>
+                        </div>
+                        <div class="accessibility-features">
+                            <span class="feature-tag">Rampas</span>
+                            <span class="feature-tag">Elevadores</span>
+                            <span class="feature-tag">Sinalização em Braile</span>
+                            <span class="feature-tag">Vagas Preferenciais</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">JD</div>
+                            <span>João Dias - 2 dias atrás</span>
+                        </div>
+                    </div>
+
+                    <!-- Restaurante -->
+                    <div class="location-card" data-type="restaurante" data-rating="4.0" data-features="libras,braile">
+                        <div class="location-header">
+                            <span class="location-name">Restaurante Inclusivo</span>
+                            <span class="location-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="far fa-star"></i>
+                                4.0
+                            </span>
+                        </div>
+                        <div class="location-details">
+                            <p><i class="fas fa-map-marker-alt"></i> Rua das Flores, 500 - Jardim</p>
+                            <p><i class="fas fa-comment"></i> "Cardápio em braile e funcionários treinados em libras. Ambiente muito acolhedor!"</p>
+                        </div>
+                        <div class="accessibility-features">
+                            <span class="feature-tag">Cardápio em Braile</span>
+                            <span class="feature-tag">Atendimento em Libras</span>
+                            <span class="feature-tag">Mesa Adaptada</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">MS</div>
+                            <span>Maria Silva - 1 semana atrás</span>
+                        </div>
+                    </div>
+
+                    <!-- Parque -->
+                    <div class="location-card" data-type="parque" data-rating="5.0" data-features="rampa">
+                        <div class="location-header">
+                            <span class="location-name">Parque Municipal</span>
+                            <span class="location-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                5.0
+                            </span>
+                        </div>
+                        <div class="location-details">
+                            <p><i class="fas fa-map-marker-alt"></i> Av. dos Ipês, 2000 - Parque</p>
+                            <p><i class="fas fa-comment"></i> "Trilhas adaptadas e equipamentos inclusivos para todas as idades. Um exemplo de inclusão!"</p>
+                        </div>
+                        <div class="accessibility-features">
+                            <span class="feature-tag">Trilhas Adaptadas</span>
+                            <span class="feature-tag">Equipamentos Inclusivos</span>
+                            <span class="feature-tag">Banheiros Adaptados</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">PL</div>
+                            <span>Pedro Lima - 3 dias atrás</span>
+                        </div>
+                    </div>
+
+                    <!-- Teatro -->
+                    <div class="location-card" data-type="teatro" data-rating="4.8" data-features="elevador,libras">
+                        <div class="location-header">
+                            <span class="location-name">Teatro Municipal</span>
+                            <span class="location-rating">
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                <i class="fas fa-star"></i>
+                                4.8
+                            </span>
+                        </div>
+                        <div class="location-details">
+                            <p><i class="fas fa-map-marker-alt"></i> Praça da Cultura, 100 - Centro</p>
+                            <p><i class="fas fa-comment"></i> "Espetáculos com interpretação em libras e lugares reservados para cadeirantes."</p>
+                        </div>
+                        <div class="accessibility-features">
+                            <span class="feature-tag">Interpretação em Libras</span>
+                            <span class="feature-tag">Elevadores</span>
+                            <span class="feature-tag">Lugares Reservados</span>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-avatar">AC</div>
+                            <span>Ana Costa - 5 dias atrás</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="scroll-buttons">
+                    <button class="scroll-button" onclick="scrollLeft()">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <button class="scroll-button" onclick="scrollRight()">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
         </section>
 
     </div>
@@ -131,5 +473,59 @@
     <script src="../public/js/auth-check.js"></script>
     <script src="../public/js/script.js"></script>
     <div class="theme-transition-overlay"></div>
+
+    <script>
+        // Filtros
+        const searchInput = document.getElementById('searchInput');
+        const typeFilter = document.getElementById('typeFilter');
+        const ratingFilter = document.getElementById('ratingFilter');
+        const featureFilter = document.getElementById('featureFilter');
+        const locationsList = document.getElementById('locationsList');
+
+        function filterLocations() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const selectedType = typeFilter.value;
+            const minRating = parseFloat(ratingFilter.value);
+            const selectedFeature = featureFilter.value;
+
+            const cards = locationsList.getElementsByClassName('location-card');
+
+            Array.from(cards).forEach(card => {
+                const name = card.querySelector('.location-name').textContent.toLowerCase();
+                const type = card.dataset.type;
+                const rating = parseFloat(card.dataset.rating);
+                const features = card.dataset.features.split(',');
+
+                const matchesSearch = name.includes(searchTerm);
+                const matchesType = !selectedType || type === selectedType;
+                const matchesRating = rating >= minRating;
+                const matchesFeature = !selectedFeature || features.includes(selectedFeature);
+
+                card.style.display = matchesSearch && matchesType && matchesRating && matchesFeature ? 'block' : 'none';
+            });
+        }
+
+        searchInput.addEventListener('input', filterLocations);
+        typeFilter.addEventListener('change', filterLocations);
+        ratingFilter.addEventListener('change', filterLocations);
+        featureFilter.addEventListener('change', filterLocations);
+
+        // Scroll functions
+        function scrollLeft() {
+            const container = document.getElementById('locationsList');
+            container.scrollBy({
+                left: -320,
+                behavior: 'smooth'
+            });
+        }
+
+        function scrollRight() {
+            const container = document.getElementById('locationsList');
+            container.scrollBy({
+                left: 320,
+                behavior: 'smooth'
+            });
+        }
+    </script>
 </body>
 </html> 

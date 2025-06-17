@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Adicionar listener ao botão de login mobile
     if (mobileLoginBtn) {
         mobileLoginBtn.addEventListener('click', () => {
-            window.location.href = 'views/login.html';
+            window.location.href = 'views/user/login.html';
         });
     }
 

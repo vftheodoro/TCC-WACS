@@ -248,4 +248,39 @@ body {
     .login-logo-text {
         font-size: 30px;
     }
+}
+
+/* Estilos para notificações flash */
+.flash-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #333;
+    font-size: 14px;
+    z-index: 1000;
+    transform: translateX(120%);
+    transition: transform 0.3s ease-in-out;
+}
+
+.flash-notification.show {
+    transform: translateX(0);
+}
+
+.flash-notification.success {
+    background: #4CAF50;
+    color: white;
+}
+
+.flash-notification.error {
+    background: #f44336;
+    color: white;
+}
+
+.flash-notification.info {
+    background: #2196F3;
+    color: white;
 } 

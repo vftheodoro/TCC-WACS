@@ -1,5 +1,29 @@
 /* Wacs Remaster/public/js/login.js */
 
+// Função para mostrar notificações flash
+function showFlashNotification(message, type = 'info') {
+    // Criar elemento de notificação
+    const notification = document.createElement('div');
+    notification.className = `flash-notification ${type}`;
+    notification.textContent = message;
+
+    // Adicionar ao DOM
+    document.body.appendChild(notification);
+
+    // Mostrar notificação
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+
+    // Remover após 5 segundos
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }, 5000);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
     // Get form elements and message displays
@@ -27,12 +51,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const loadingOverlay = document.querySelector('.loading-overlay');
 
-    // Store referrer in localStorage if not coming from login page itself
-    // This should be done before any redirection logic to capture the original referring page
+    // Store referrer in localStorage if not coming from login page itself or register page
     const referrer = document.referrer;
-    // Only store referrer if it's a valid http/https URL and not the login page itself
-    if (referrer && (referrer.startsWith('http://') || referrer.startsWith('https://')) && !referrer.includes('/login.html')) {
+    // Store referrer if it's not the login or register page
+    if (referrer && 
+        !referrer.includes('/user/login.html') && 
+        !referrer.includes('/user/register.html')) {
         localStorage.setItem('redirectAfterLogin', referrer);
+    } else {
+        // If no valid referrer, check if we came from the community page
+        const urlParams = new URLSearchParams(window.location.search);
+        const fromCommunity = urlParams.get('from') === 'community';
+        if (fromCommunity) {
+            localStorage.setItem('redirectAfterLogin', '../comunidade.html');
+        }
     }
 
     // Function to toggle password visibility
