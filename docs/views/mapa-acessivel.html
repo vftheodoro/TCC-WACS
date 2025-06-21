@@ -77,6 +77,7 @@
             -webkit-overflow-scrolling: touch;
             scrollbar-width: thin;
             scrollbar-color: var(--accent-color) var(--card-bg);
+            justify-content: center;
         }
 
         #locationsList::-webkit-scrollbar {
@@ -191,6 +192,17 @@
         .scroll-button:hover {
             background: var(--accent-color-dark);
         }
+
+        .map-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 400px;
+            margin: 0 auto 32px auto;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #222; /* fallback para dark */
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
     </style>
 </head>
 <body class="fade-in">
@@ -263,9 +275,8 @@
         </div>
 
         <section class="page-content">
-            <h1>Mapa Acessível</h1>
-            <p>Encontre locais acessíveis próximos a você e compartilhe suas experiências!</p>
-            
+            <h1 style="text-align: center;">Mapa Acessível</h1>
+            <p style="text-align: center;">Encontre locais acessíveis próximos a você e compartilhe suas experiências!</p>
             <div class="locations-container">
                 <div class="filters-section">
                     <input type="text" class="search-bar" placeholder="Buscar locais..." id="searchInput">
@@ -427,6 +438,13 @@
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
+                <div style="margin-top: 48px; margin-bottom: 16px; text-align: center;">
+                    <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -1px;">Mapa de Locais Acessíveis</h2>
+                    <p style="color: var(--text-secondary, #aaa); font-size: 1.05rem;">Veja no mapa os locais cadastrados pela comunidade</p>
+                </div>
+                <div class="map-container">
+                    <p>O mapa será carregado aqui</p>
+                </div>
             </div>
         </section>
 
@@ -481,6 +499,34 @@
         const ratingFilter = document.getElementById('ratingFilter');
         const featureFilter = document.getElementById('featureFilter');
         const locationsList = document.getElementById('locationsList');
+        const scrollButtons = document.querySelectorAll('.scroll-button');
+        const leftButton = scrollButtons[0];
+        const rightButton = scrollButtons[1];
+        const allCards = Array.from(locationsList.getElementsByClassName('location-card'));
+        let filteredCards = [...allCards];
+        let currentPage = 0;
+        const cardsPerPage = 3;
+
+        function updatePaginationButtons() {
+            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+            leftButton.disabled = currentPage === 0;
+            rightButton.disabled = currentPage >= totalPages - 1 || totalPages === 0;
+        }
+
+        function showPage(page) {
+            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+            if (page < 0) page = 0;
+            if (page >= totalPages) page = totalPages - 1;
+            currentPage = page;
+            filteredCards.forEach((card, i) => {
+                if (i >= page * cardsPerPage && i < (page + 1) * cardsPerPage) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            updatePaginationButtons();
+        }
 
         function filterLocations() {
             const searchTerm = searchInput.value.toLowerCase();
@@ -488,9 +534,7 @@
             const minRating = parseFloat(ratingFilter.value);
             const selectedFeature = featureFilter.value;
 
-            const cards = locationsList.getElementsByClassName('location-card');
-
-            Array.from(cards).forEach(card => {
+            filteredCards = allCards.filter(card => {
                 const name = card.querySelector('.location-name').textContent.toLowerCase();
                 const type = card.dataset.type;
                 const rating = parseFloat(card.dataset.rating);
@@ -501,8 +545,10 @@
                 const matchesRating = rating >= minRating;
                 const matchesFeature = !selectedFeature || features.includes(selectedFeature);
 
-                card.style.display = matchesSearch && matchesType && matchesRating && matchesFeature ? 'block' : 'none';
+                return matchesSearch && matchesType && matchesRating && matchesFeature;
             });
+            currentPage = 0;
+            showPage(currentPage);
         }
 
         searchInput.addEventListener('input', filterLocations);
@@ -510,20 +556,167 @@
         ratingFilter.addEventListener('change', filterLocations);
         featureFilter.addEventListener('change', filterLocations);
 
-        // Scroll functions
-        function scrollLeft() {
-            const container = document.getElementById('locationsList');
-            container.scrollBy({
-                left: -320,
-                behavior: 'smooth'
-            });
-        }
+        leftButton.addEventListener('click', () => {
+            if (currentPage > 0) {
+                showPage(currentPage - 1);
+            }
+        });
+        rightButton.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
+            if (currentPage < totalPages - 1) {
+                showPage(currentPage + 1);
+            }
+        });
 
-        function scrollRight() {
-            const container = document.getElementById('locationsList');
-            container.scrollBy({
-                left: 320,
-                behavior: 'smooth'
+        // Inicialização
+        filterLocations();
+    </script>
+    <!-- Google Maps Script (adaptado do dashboard) -->
+    <script>
+        function loadGoogleMapsScriptAccessible() {
+            if (document.getElementById('google-maps-script-accessible')) return;
+            const script = document.createElement('script');
+            script.id = 'google-maps-script-accessible';
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${window.ENV.GOOGLE_MAPS_API_KEY}&libraries=places&callback=initAccessibleMap`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+        window.accessibleMap = undefined;
+        window.accessibleMapMarkers = [];
+        function initAccessibleMap() {
+            const darkMapStyles = [
+                { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.stroke", stylers: [{ color: "#242f3e" }] },
+                { elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+                { featureType: "administrative.locality", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "poi", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "poi.park", elementType: "geometry", stylers: [{ color: "#263c3f" }] },
+                { featureType: "poi.park", elementType: "labels.text.fill", stylers: [{ color: "#6b9a76" }] },
+                { featureType: "road", elementType: "geometry", stylers: [{ color: "#38414e" }] },
+                { featureType: "road", elementType: "geometry.stroke", stylers: [{ color: "#212a37" }] },
+                { featureType: "road", elementType: "labels.text.fill", stylers: [{ color: "#9ca5b3" }] },
+                { featureType: "road.highway", elementType: "geometry", stylers: [{ color: "#746855" }] },
+                { featureType: "road.highway", elementType: "geometry.stroke", stylers: [{ color: "#1f2835" }] },
+                { featureType: "road.highway", elementType: "labels.text.fill", stylers: [{ color: "#f3d19c" }] },
+                { featureType: "transit", elementType: "geometry", stylers: [{ color: "#2f3948" }] },
+                { featureType: "transit.station", elementType: "labels.text.fill", stylers: [{ color: "#d59563" }] },
+                { featureType: "water", elementType: "geometry", stylers: [{ color: "#17263c" }] },
+                { featureType: "water", elementType: "labels.text.fill", stylers: [{ color: "#ffffff" }] },
+                { featureType: "water", elementType: "labels.text.stroke", stylers: [{ color: "#17263c" }] }
+            ];
+            const lightMapStyles = [];
+            document.removeEventListener('themechange', window._wacs_accessible_map_theme_listener);
+            window._wacs_accessible_map_theme_listener = function() {
+                if (window.accessibleMap) {
+                    const isDark = document.body.classList.contains('dark-theme');
+                    window.accessibleMap.setOptions({ styles: isDark ? darkMapStyles : lightMapStyles });
+                }
+            };
+            document.addEventListener('themechange', window._wacs_accessible_map_theme_listener);
+            const mapContainer = document.querySelector('.map-container');
+            if (mapContainer) {
+                mapContainer.innerHTML = '';
+                const mapOptions = {
+                    center: { lat: -24.4874, lng: -47.8446 },
+                    zoom: 14,
+                    mapTypeId: google.maps.MapTypeId.ROADMAP,
+                    mapTypeControl: true,
+                    streetViewControl: false,
+                    fullscreenControl: true
+                };
+                window.accessibleMap = new google.maps.Map(mapContainer, mapOptions);
+                const isDark = document.body.classList.contains('dark-theme');
+                window.accessibleMap.setOptions({ styles: isDark ? darkMapStyles : lightMapStyles });
+                loadLocationsForAccessibleMap();
+            }
+        }
+        function loadLocationsForAccessibleMap() {
+            if (!window.accessibleMap) return;
+            window.accessibleMapMarkers.forEach(marker => marker.setMap(null));
+            window.accessibleMapMarkers = [];
+            if (!firebase || !firebase.firestore) return;
+            firebase.firestore().collection('accessibleLocations')
+                .get()
+                .then((querySnapshot) => {
+                    const bounds = new google.maps.LatLngBounds();
+                    let hasLocations = false;
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        if (data.location) {
+                            hasLocations = true;
+                            const position = {
+                                lat: data.location.latitude,
+                                lng: data.location.longitude
+                            };
+                            const marker = new google.maps.Marker({
+                                position: position,
+                                map: window.accessibleMap,
+                                title: data.name,
+                                animation: google.maps.Animation.DROP
+                            });
+                            const rating = data.rating || 0;
+                            const reviewCount = data.reviewCount || 0;
+                            const imageUrl = data.imageUrl || data.image || data.photoUrl || '';
+                            let ratingStars = '';
+                            for (let i = 1; i <= 5; i++) {
+                                if (i <= Math.floor(rating)) {
+                                    ratingStars += '<i class="fas fa-star" style="color: #fbbf24;"></i>';
+                                } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
+                                    ratingStars += '<i class="fas fa-star-half-alt" style="color: #fbbf24;"></i>';
+                                } else {
+                                    ratingStars += '<i class="far fa-star" style="color: #d1d5db;"></i>';
+                                }
+                            }
+                            // Detecta tema para InfoWindow
+                            const isDark = document.body.classList.contains('dark-theme');
+                            const infoTextColor = isDark ? '#fff' : '#222';
+                            const infowindow = new google.maps.InfoWindow({
+                                content: `
+                                    <div class='map-info-window' style='color: ${infoTextColor}; max-width: 280px;'>
+                                        <h3 style='color: ${infoTextColor}; margin-bottom: 8px;'>${data.name}</h3>
+                                        ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;" onerror="this.style.display='none'">` : ''}
+                                        <p style='margin: 4px 0;'><strong>Endereço:</strong> ${data.address}</p>
+                                        <p style='margin: 4px 0;'><strong>Recursos:</strong> ${data.features}</p>
+                                        <div style='margin-top:8px;'>
+                                            ${ratingStars}
+                                            <span style='margin-left:6px;font-size:13px;'>
+                                                ${rating.toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'})
+                                            </span>
+                                        </div>
+                                    </div>
+                                `
+                            });
+                            marker.addListener('click', function() {
+                                infowindow.open(window.accessibleMap, marker);
+                            });
+                            window.accessibleMapMarkers.push(marker);
+                            bounds.extend(position);
+                        }
+                    });
+                    if (hasLocations) {
+                        window.accessibleMap.fitBounds(bounds);
+                        const listener = google.maps.event.addListener(window.accessibleMap, 'idle', function() {
+                            if (window.accessibleMap.getZoom() > 16) {
+                                window.accessibleMap.setZoom(16);
+                            }
+                            google.maps.event.removeListener(listener);
+                        });
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao carregar locais para o mapa:', error);
+                });
+        }
+        if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY) {
+            loadGoogleMapsScriptAccessible();
+        } else {
+            window.addEventListener('DOMContentLoaded', function() {
+                if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY) {
+                    loadGoogleMapsScriptAccessible();
+                } else {
+                    console.error('Google Maps API key não encontrada nas variáveis de ambiente');
+                }
             });
         }
     </script>
