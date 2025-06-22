@@ -109,11 +109,34 @@ document.addEventListener('DOMContentLoaded', () => {
         loginErrorMessage.textContent = ''; // Clear previous errors
         loadingOverlay.classList.add('show');
 
-        const email = loginEmailInput.value;
+        let loginInput = loginEmailInput.value.trim();
         const password = loginPasswordInput.value;
+        let emailToLogin = loginInput;
+
+        // Função para validar email
+        function isEmail(str) {
+            return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(str);
+        }
 
         try {
-            await firebase.auth().signInWithEmailAndPassword(email, password);
+            if (!isEmail(loginInput)) {
+                // Buscar email pelo username (novo) OU displayName (antigo) no Firestore
+                let querySnapshot = await firebase.firestore().collection('users').where('username', '==', loginInput).limit(1).get();
+                if (querySnapshot.empty) {
+                    querySnapshot = await firebase.firestore().collection('users').where('displayName', '==', loginInput).limit(1).get();
+                }
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    if (userData.email) {
+                        emailToLogin = userData.email;
+                    } else {
+                        throw new Error('Usuário não possui email cadastrado.');
+                    }
+                } else {
+                    throw new Error('Usuário não encontrado.');
+                }
+            }
+            await firebase.auth().signInWithEmailAndPassword(emailToLogin, password);
             showFlashNotification('Login realizado com sucesso!', 'success');
             // Redirect to previous page or a dashboard/home page
             const redirectTo = localStorage.getItem('redirectAfterLogin') || '../index.html';
@@ -122,12 +145,14 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error("Firebase Login Error:", error);
             let message = 'Ocorreu um erro. Por favor, tente novamente.';
-            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {
-                message = 'Email ou senha inválidos.';
+            if (error.message === 'Usuário não encontrado.' || error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password' || error.code === 'auth/invalid-login-credentials') {
+                message = 'Email, usuário ou senha inválidos.';
             } else if (error.code === 'auth/invalid-email') {
                 message = 'O formato do email é inválido.';
             } else if (error.code === 'auth/user-disabled') {
                 message = 'Esta conta foi desativada.';
+            } else if (error.message === 'Usuário não possui email cadastrado.') {
+                message = 'Usuário não possui email cadastrado.';
             }
             showErrorMessage(loginErrorMessage, message);
         } finally {

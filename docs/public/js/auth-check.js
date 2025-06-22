@@ -183,11 +183,7 @@ document.addEventListener('click', (e) => {
         auth.signOut().then(() => {
             showFlashMessage('Você foi desconectado.', 'info');
             // Redireciona para a página inicial após o logout
-            if (window.location.pathname.includes('/views/')) {
-                window.location.href = '../index.html';
-            } else {
-                window.location.href = 'index.html';
-            }
+            window.location.href = '../../index.html';
         }).catch((error) => {
             console.error('Error during logout:', error);
             showFlashMessage('Erro ao desconectar. Tente novamente.', 'error');

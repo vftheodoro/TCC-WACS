@@ -828,6 +828,171 @@
     }
     renderMobilityOptions();
     renderComorbidadesOptions();
+
+    // Preencher formulário de edição de perfil com dados do Firebase
+    // Requer que auth-check.js já tenha inicializado o Firebase
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Referências dos campos do formulário
+        const profilePicPreview = document.getElementById('profilePicPreview');
+        const userNameInput = document.getElementById('userName');
+        const userEmailInput = document.getElementById('userEmail');
+        const fullNameInput = document.getElementById('fullName');
+        const birthdateInput = document.getElementById('birthdate');
+        const ufSelect = document.getElementById('ufSelect');
+        const cidadeInput = document.getElementById('cidadeInput');
+        const regionInput = document.getElementById('region');
+        const mobilityTypeInput = document.getElementById('mobilityType');
+        const mobilitySelected = document.getElementById('mobilitySelected');
+        const comorbidadesInput = document.getElementById('comorbidades');
+        const comorbidadesChips = document.getElementById('comorbidadesChips');
+        const userBioInput = document.getElementById('userBio');
+        const userSkillsInput = document.getElementById('userSkills');
+        const userInstagramInput = document.getElementById('userInstagram');
+
+        // Helper para preencher chips de comorbidades
+        function setComorbidades(values) {
+            comorbidadesInput.value = Array.isArray(values) ? values.join(',') : (values || '');
+            comorbidadesChips.innerHTML = '';
+            (Array.isArray(values) ? values : (values ? [values] : [])).forEach(val => {
+                const chip = document.createElement('div');
+                chip.className = 'chip';
+                chip.textContent = val;
+                comorbidadesChips.appendChild(chip);
+            });
+        }
+
+        // Listener de autenticação
+        auth.onAuthStateChanged(async function(user) {
+            if (!user) {
+                // Não autenticado, redireciona para login
+                window.location.href = 'login.html';
+                return;
+            }
+            // Preenche dados do Auth
+            userNameInput.value = user.displayName || '';
+            userEmailInput.value = user.email || '';
+            if (user.photoURL) {
+                profilePicPreview.src = user.photoURL;
+            }
+            // Busca dados adicionais do Firestore
+            try {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const data = userDoc.data();
+                    if (data.fullName) fullNameInput.value = data.fullName;
+                    if (data.birthdate) birthdateInput.value = data.birthdate;
+                    if (data.uf) ufSelect.value = data.uf;
+                    if (data.cidade) cidadeInput.value = data.cidade;
+                    if (data.region) regionInput.value = data.region;
+                    if (data.mobilityType) {
+                        mobilityTypeInput.value = data.mobilityType;
+                        // Atualiza texto do picker customizado
+                        if (mobilitySelected) mobilitySelected.innerHTML = data.mobilityType;
+                    }
+                    if (data.comorbidades) setComorbidades(Array.isArray(data.comorbidades) ? data.comorbidades : (typeof data.comorbidades === 'string' ? data.comorbidades.split(',') : []));
+                    if (data.bio) userBioInput.value = data.bio;
+                    if (data.skills) userSkillsInput.value = data.skills;
+                    if (data.instagram) userInstagramInput.value = data.instagram;
+                }
+            } catch (e) {
+                console.error('Erro ao buscar dados do Firestore:', e);
+            }
+        });
+    });
+
+    // Atualizar dados do usuário ao submeter o formulário
+    const editProfileForm = document.getElementById('editProfileForm');
+    editProfileForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (!auth.currentUser) {
+            showFlashMessage('Usuário não autenticado.', 'error');
+            return;
+        }
+        const user = auth.currentUser;
+        // Coletar dados do formulário
+        const displayName = document.getElementById('userName').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+        const uf = document.getElementById('ufSelect').value;
+        const cidade = document.getElementById('cidadeInput').value.trim();
+        const region = document.getElementById('region').value;
+        const mobilityType = document.getElementById('mobilityType').value;
+        const comorbidades = document.getElementById('comorbidades').value.split(',').map(s => s.trim()).filter(Boolean);
+        const bio = document.getElementById('userBio').value;
+        const skills = document.getElementById('userSkills').value;
+        const instagram = document.getElementById('userInstagram').value;
+        const currentPassword = document.getElementById('currentPassword').value;
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+        const profilePicInput = document.getElementById('profilePic');
+        let photoURL = user.photoURL;
+
+        // Validação básica
+        if (!displayName || !fullName || !birthdate || !uf || !cidade || !region || !mobilityType) {
+            showFlashMessage('Preencha todos os campos obrigatórios.', 'error');
+            return;
+        }
+        if ((newPassword || confirmNewPassword) && newPassword !== confirmNewPassword) {
+            showFlashMessage('As senhas não coincidem.', 'error');
+            return;
+        }
+        if (newPassword && newPassword.length < 6) {
+            showFlashMessage('A nova senha deve ter pelo menos 6 caracteres.', 'error');
+            return;
+        }
+
+        try {
+            // Atualizar foto de perfil se alterada
+            if (profilePicInput.files && profilePicInput.files[0]) {
+                const file = profilePicInput.files[0];
+                const storageRef = firebase.storage().ref();
+                const fileName = `${user.uid}_profile_${Date.now()}`;
+                const fileRef = storageRef.child(`profile_pictures/${fileName}`);
+                await fileRef.put(file);
+                photoURL = await fileRef.getDownloadURL();
+                await user.updateProfile({ photoURL });
+            }
+            // Atualizar displayName
+            if (user.displayName !== displayName) {
+                await user.updateProfile({ displayName });
+            }
+            // Atualizar senha se necessário
+            if (newPassword) {
+                if (!currentPassword) {
+                    showFlashMessage('Informe a senha atual para alterar a senha.', 'error');
+                    return;
+                }
+                const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+                await user.reauthenticateWithCredential(credential);
+                await user.updatePassword(newPassword);
+            }
+            // Atualizar dados no Firestore
+            await db.collection('users').doc(user.uid).set({
+                displayName,
+                fullName,
+                birthdate,
+                uf,
+                cidade,
+                region,
+                mobilityType,
+                comorbidades,
+                bio,
+                skills,
+                instagram,
+                photoURL,
+                lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            showFlashMessage('Perfil atualizado com sucesso!', 'success');
+            // Limpar campos de senha
+            document.getElementById('currentPassword').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmNewPassword').value = '';
+        } catch (error) {
+            console.error(error);
+            showFlashMessage('Erro ao atualizar perfil: ' + (error.message || error), 'error');
+        }
+    });
     </script>
 </body>
 </html> 

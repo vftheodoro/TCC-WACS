@@ -277,6 +277,11 @@
         <section class="page-content">
             <h1 style="text-align: center;">Mapa Acessível</h1>
             <p style="text-align: center;">Encontre locais acessíveis próximos a você e compartilhe suas experiências!</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="btn btn-gradient" id="addLocationBtn">Adicionar Novo Local Acessível</button>
+            </div>
+
             <div class="locations-container">
                 <div class="filters-section">
                     <input type="text" class="search-bar" placeholder="Buscar locais..." id="searchInput">
@@ -317,124 +322,13 @@
                 </div>
 
                 <div id="locationsList">
-                    <!-- Shopping Center -->
-                    <div class="location-card" data-type="shopping" data-rating="4.5" data-features="rampa,elevador,braile">
-                        <div class="location-header">
-                            <span class="location-name">Shopping Center Acessível</span>
-                            <span class="location-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star-half-alt"></i>
-                                4.5
-                            </span>
-                        </div>
-                        <div class="location-details">
-                            <p><i class="fas fa-map-marker-alt"></i> Av. Principal, 1000 - Centro</p>
-                            <p><i class="fas fa-comment"></i> "Excelente estrutura de acessibilidade, com rampas e elevadores em todos os níveis."</p>
-                        </div>
-                        <div class="accessibility-features">
-                            <span class="feature-tag">Rampas</span>
-                            <span class="feature-tag">Elevadores</span>
-                            <span class="feature-tag">Sinalização em Braile</span>
-                            <span class="feature-tag">Vagas Preferenciais</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">JD</div>
-                            <span>João Dias - 2 dias atrás</span>
-                        </div>
-                    </div>
-
-                    <!-- Restaurante -->
-                    <div class="location-card" data-type="restaurante" data-rating="4.0" data-features="libras,braile">
-                        <div class="location-header">
-                            <span class="location-name">Restaurante Inclusivo</span>
-                            <span class="location-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="far fa-star"></i>
-                                4.0
-                            </span>
-                        </div>
-                        <div class="location-details">
-                            <p><i class="fas fa-map-marker-alt"></i> Rua das Flores, 500 - Jardim</p>
-                            <p><i class="fas fa-comment"></i> "Cardápio em braile e funcionários treinados em libras. Ambiente muito acolhedor!"</p>
-                        </div>
-                        <div class="accessibility-features">
-                            <span class="feature-tag">Cardápio em Braile</span>
-                            <span class="feature-tag">Atendimento em Libras</span>
-                            <span class="feature-tag">Mesa Adaptada</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">MS</div>
-                            <span>Maria Silva - 1 semana atrás</span>
-                        </div>
-                    </div>
-
-                    <!-- Parque -->
-                    <div class="location-card" data-type="parque" data-rating="5.0" data-features="rampa">
-                        <div class="location-header">
-                            <span class="location-name">Parque Municipal</span>
-                            <span class="location-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                5.0
-                            </span>
-                        </div>
-                        <div class="location-details">
-                            <p><i class="fas fa-map-marker-alt"></i> Av. dos Ipês, 2000 - Parque</p>
-                            <p><i class="fas fa-comment"></i> "Trilhas adaptadas e equipamentos inclusivos para todas as idades. Um exemplo de inclusão!"</p>
-                        </div>
-                        <div class="accessibility-features">
-                            <span class="feature-tag">Trilhas Adaptadas</span>
-                            <span class="feature-tag">Equipamentos Inclusivos</span>
-                            <span class="feature-tag">Banheiros Adaptados</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">PL</div>
-                            <span>Pedro Lima - 3 dias atrás</span>
-                        </div>
-                    </div>
-
-                    <!-- Teatro -->
-                    <div class="location-card" data-type="teatro" data-rating="4.8" data-features="elevador,libras">
-                        <div class="location-header">
-                            <span class="location-name">Teatro Municipal</span>
-                            <span class="location-rating">
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                <i class="fas fa-star"></i>
-                                4.8
-                            </span>
-                        </div>
-                        <div class="location-details">
-                            <p><i class="fas fa-map-marker-alt"></i> Praça da Cultura, 100 - Centro</p>
-                            <p><i class="fas fa-comment"></i> "Espetáculos com interpretação em libras e lugares reservados para cadeirantes."</p>
-                        </div>
-                        <div class="accessibility-features">
-                            <span class="feature-tag">Interpretação em Libras</span>
-                            <span class="feature-tag">Elevadores</span>
-                            <span class="feature-tag">Lugares Reservados</span>
-                        </div>
-                        <div class="user-info">
-                            <div class="user-avatar">AC</div>
-                            <span>Ana Costa - 5 dias atrás</span>
-                        </div>
-                    </div>
+                    <!-- Cards de locais serão inseridos aqui dinamicamente -->
                 </div>
                 <div class="scroll-buttons">
-                    <button class="scroll-button" onclick="scrollLeft()">
+                    <button class="scroll-button" id="prevPageBtn">
                         <i class="fas fa-chevron-left"></i>
                     </button>
-                    <button class="scroll-button" onclick="scrollRight()">
+                    <button class="scroll-button" id="nextPageBtn">
                         <i class="fas fa-chevron-right"></i>
                     </button>
                 </div>
@@ -484,61 +378,190 @@
         </div>
     </footer>
 
+    <!-- Modal para Adicionar Local -->
+    <div id="addLocationModal" class="modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);">
+        <div class="modal-content" style="background-color: #111; color: #fff; opacity: 1; margin: 10% auto; padding: 25px; border-radius: 8px; max-width: 500px; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="margin: 0;">Adicionar Novo Local</h2>
+                <span class="close-btn" id="closeModalBtn" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            <form id="addLocationForm">
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="locationName" style="display: block; margin-bottom: 5px;">Nome do Local</label>
+                    <input type="text" id="locationName" name="locationName" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="locationMap" style="display: block; margin-bottom: 5px;">Selecione no mapa</label>
+                    <div id="locationMap" style="width: 100%; height: 220px; border-radius: 8px; margin-bottom: 10px;"></div>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="locationAddress" style="display: block; margin-bottom: 5px;">Endereço Completo</label>
+                    <input type="text" id="locationAddress" name="locationAddress" class="form-control" required placeholder="Ex: Av. Paulista, 1000, São Paulo, SP" style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);">
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="locationType" style="display: block; margin-bottom: 5px;">Tipo de Local</label>
+                    <select id="locationType" name="locationType" class="form-control" required style="width: 100%; padding: 8px; border-radius: 4px; border: 1px solid var(--border-color); background: var(--input-bg); color: var(--text-color);">
+                        <option value="shopping">Shopping</option>
+                        <option value="restaurante">Restaurante</option>
+                        <option value="parque">Parque</option>
+                        <option value="teatro">Teatro</option>
+                        <option value="museu">Museu</option>
+                        <option value="outro">Outro</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label style="display: block; margin-bottom: 5px;">Recursos de Acessibilidade</label>
+                    <div id="featuresCheckboxes" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                        <div><input type="checkbox" id="featureRampa" value="Rampas"><label for="featureRampa" style="margin-left: 5px;">Rampas</label></div>
+                        <div><input type="checkbox" id="featureElevador" value="Elevadores"><label for="featureElevador" style="margin-left: 5px;">Elevadores</label></div>
+                        <div><input type="checkbox" id="featureBraile" value="Sinalização em Braile"><label for="featureBraile" style="margin-left: 5px;">Sinalização em Braile</label></div>
+                        <div><input type="checkbox" id="featureLibras" value="Atendimento em Libras"><label for="featureLibras" style="margin-left: 5px;">Atendimento em Libras</label></div>
+                    </div>
+                </div>
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label for="locationImage" style="display: block; margin-bottom: 5px;">Foto do Local</label>
+                    <input type="file" id="locationImage" name="locationImage" accept="image/*" style="width: 100%; color: var(--text-color);">
+                </div>
+                <div style="text-align: right;">
+                    <button type="submit" class="btn btn-gradient">Salvar Local</button>
+                </div>
+                 <div id="formStatus" style="margin-top: 15px; text-align: center;"></div>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
     <script src="../public/js/env-config.js"></script>
     <script src="../public/js/auth-check.js"></script>
     <script src="../public/js/script.js"></script>
     <div class="theme-transition-overlay"></div>
 
     <script>
-        // Filtros
+        // --- Variáveis Globais ---
         const searchInput = document.getElementById('searchInput');
         const typeFilter = document.getElementById('typeFilter');
         const ratingFilter = document.getElementById('ratingFilter');
         const featureFilter = document.getElementById('featureFilter');
         const locationsList = document.getElementById('locationsList');
-        const scrollButtons = document.querySelectorAll('.scroll-button');
-        const leftButton = scrollButtons[0];
-        const rightButton = scrollButtons[1];
-        const allCards = Array.from(locationsList.getElementsByClassName('location-card'));
-        let filteredCards = [...allCards];
+        const prevPageBtn = document.getElementById('prevPageBtn');
+        const nextPageBtn = document.getElementById('nextPageBtn');
+        
+        let allLocationsData = []; // Armazena todos os locais do Firebase
+        let filteredLocationsData = []; // Armazena os locais filtrados
+        
+        // --- Variáveis de Paginação ---
         let currentPage = 0;
         const cardsPerPage = 3;
+        
+        // --- Funções de Renderização e UI ---
 
-        function updatePaginationButtons() {
-            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
-            leftButton.disabled = currentPage === 0;
-            rightButton.disabled = currentPage >= totalPages - 1 || totalPages === 0;
-        }
-
-        function showPage(page) {
-            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
-            if (page < 0) page = 0;
-            if (page >= totalPages) page = totalPages - 1;
-            currentPage = page;
-            filteredCards.forEach((card, i) => {
-                if (i >= page * cardsPerPage && i < (page + 1) * cardsPerPage) {
-                    card.style.display = 'block';
+        /**
+         * Gera o HTML para as estrelas de avaliação.
+         */
+        function getRatingStars(rating) {
+            let stars = '';
+            const floorRating = Math.floor(rating);
+            for (let i = 1; i <= 5; i++) {
+                if (i <= floorRating) {
+                    stars += '<i class="fas fa-star"></i>';
+                } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
                 } else {
-                    card.style.display = 'none';
+                    stars += '<i class="far fa-star"></i>';
                 }
-            });
-            updatePaginationButtons();
+            }
+            return stars;
         }
 
-        function filterLocations() {
+        /**
+         * Renderiza os cards de locais na lista com base na paginação.
+         */
+        function renderLocationCards(locations, page = 0) {
+            locationsList.innerHTML = ''; // Limpa a lista atual
+            currentPage = page;
+
+            if (locations.length === 0) {
+                locationsList.innerHTML = '<p style="text-align: center; width: 100%;">Nenhum local encontrado com os filtros selecionados.</p>';
+                updatePaginationControls(0);
+                return;
+            }
+
+            const startIndex = page * cardsPerPage;
+            const endIndex = startIndex + cardsPerPage;
+            const paginatedLocations = locations.slice(startIndex, endIndex);
+
+            paginatedLocations.forEach(data => {
+                const card = document.createElement('div');
+                card.className = 'location-card';
+                card.dataset.type = data.type || 'geral';
+                card.dataset.rating = data.rating || 0;
+                card.dataset.features = (data.features || []).join(',');
+
+                const rating = data.rating || 0;
+                const imageUrl = data.imageUrl || data.image || data.photoUrl || '';
+
+                // Monta o HTML do card
+                card.innerHTML = `
+                    ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width: calc(100% + 40px); margin: -20px -20px 15px -20px; border-radius: 8px 8px 0 0; height: 140px; object-fit: cover;" onerror="this.style.display='none'">` : ''}
+                    <div class="location-header">
+                        <span class="location-name">${data.name}</span>
+                        <span class="location-rating">
+                            ${getRatingStars(rating)}
+                            <span style="font-size: 0.9em; margin-left: 4px;">${rating.toFixed(1)}</span>
+                        </span>
+                    </div>
+                    <div class="location-details">
+                        <p><i class="fas fa-map-marker-alt"></i> ${data.address || 'Endereço não informado'}</p>
+                        ${data.latestReview ? `<p><i class="fas fa-comment"></i> "${data.latestReview}"</p>` : ''}
+                    </div>
+                    <div class="accessibility-features">
+                        ${(data.features || []).map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                    </div>
+                    ${data.lastUser ? `
+                    <div class="user-info">
+                        <div class="user-avatar">${data.lastUser.initials || '...'}</div>
+                        <span>${data.lastUser.name} - ${data.lastUser.timestamp}</span>
+                    </div>` : ''}
+                `;
+                locationsList.appendChild(card);
+            });
+            
+            updatePaginationControls(locations.length);
+        }
+
+        /**
+         * Atualiza o estado e a visibilidade dos botões de paginação.
+         */
+        function updatePaginationControls(totalItems) {
+            const totalPages = Math.ceil(totalItems / cardsPerPage);
+            const scrollButtonsContainer = document.querySelector('.scroll-buttons');
+
+            prevPageBtn.disabled = currentPage === 0;
+            nextPageBtn.disabled = currentPage >= totalPages - 1;
+
+            if (totalPages > 1) {
+                scrollButtonsContainer.style.display = 'flex';
+            } else {
+                scrollButtonsContainer.style.display = 'none';
+            }
+        }
+        
+        // --- Lógica de Filtro ---
+
+        function filterAndRender() {
             const searchTerm = searchInput.value.toLowerCase();
             const selectedType = typeFilter.value;
             const minRating = parseFloat(ratingFilter.value);
             const selectedFeature = featureFilter.value;
 
-            filteredCards = allCards.filter(card => {
-                const name = card.querySelector('.location-name').textContent.toLowerCase();
-                const type = card.dataset.type;
-                const rating = parseFloat(card.dataset.rating);
-                const features = card.dataset.features.split(',');
+            filteredLocationsData = allLocationsData.filter(data => {
+                const name = (data.name || '').toLowerCase();
+                const type = data.type || 'geral';
+                const rating = data.rating || 0;
+                const features = data.features || [];
 
                 const matchesSearch = name.includes(searchTerm);
                 const matchesType = !selectedType || type === selectedType;
@@ -547,32 +570,192 @@
 
                 return matchesSearch && matchesType && matchesRating && matchesFeature;
             });
-            currentPage = 0;
-            showPage(currentPage);
+            
+            renderLocationCards(filteredLocationsData, 0); // Renderiza a primeira página dos resultados
+            loadMarkersForAccessibleMap(filteredLocationsData); // Atualiza todos os marcadores no mapa
         }
 
-        searchInput.addEventListener('input', filterLocations);
-        typeFilter.addEventListener('change', filterLocations);
-        ratingFilter.addEventListener('change', filterLocations);
-        featureFilter.addEventListener('change', filterLocations);
+        searchInput.addEventListener('input', filterAndRender);
+        typeFilter.addEventListener('change', filterAndRender);
+        ratingFilter.addEventListener('change', filterAndRender);
+        featureFilter.addEventListener('change', filterAndRender);
 
-        leftButton.addEventListener('click', () => {
+        // --- Event Listeners para Paginação ---
+        prevPageBtn.addEventListener('click', () => {
             if (currentPage > 0) {
-                showPage(currentPage - 1);
-            }
-        });
-        rightButton.addEventListener('click', () => {
-            const totalPages = Math.ceil(filteredCards.length / cardsPerPage);
-            if (currentPage < totalPages - 1) {
-                showPage(currentPage + 1);
+                renderLocationCards(filteredLocationsData, currentPage - 1);
             }
         });
 
-        // Inicialização
-        filterLocations();
-    </script>
-    <!-- Google Maps Script (adaptado do dashboard) -->
-    <script>
+        nextPageBtn.addEventListener('click', () => {
+            const totalPages = Math.ceil(filteredLocationsData.length / cardsPerPage);
+            if (currentPage < totalPages - 1) {
+                renderLocationCards(filteredLocationsData, currentPage + 1);
+            }
+        });
+
+        // --- Lógica do Modal ---
+        const modal = document.getElementById('addLocationModal');
+        const addLocationBtn = document.getElementById('addLocationBtn');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const addLocationForm = document.getElementById('addLocationForm');
+        const formStatus = document.getElementById('formStatus');
+        
+        let selectedCoordinates = null;
+        let mapInstance = null;
+        let markerInstance = null;
+        let geocoderInstance = null;
+
+        function initLocationPickerMap() {
+            const mapDiv = document.getElementById('locationMap');
+            if (!mapDiv || typeof google === 'undefined' || !google.maps) return;
+            if (!geocoderInstance) geocoderInstance = new google.maps.Geocoder();
+            mapInstance = new google.maps.Map(mapDiv, {
+                center: { lat: -23.55052, lng: -46.633308 }, // Centro de SP
+                zoom: 12,
+                mapTypeId: google.maps.MapTypeId.ROADMAP,
+                streetViewControl: false,
+                fullscreenControl: false
+            });
+            mapInstance.addListener('click', function(event) {
+                const latLng = event.latLng;
+                if (markerInstance) markerInstance.setMap(null);
+                markerInstance = new google.maps.Marker({
+                    position: latLng,
+                    map: mapInstance
+                });
+                selectedCoordinates = {
+                    latitude: latLng.lat(),
+                    longitude: latLng.lng()
+                };
+                // Geocodificação reversa para preencher o endereço
+                geocoderInstance.geocode({ location: latLng }, function(results, status) {
+                    if (status === 'OK' && results[0]) {
+                        document.getElementById('locationAddress').value = results[0].formatted_address;
+                    }
+                });
+            });
+        }
+
+        addLocationBtn.addEventListener('click', function(e) {
+            if (localStorage.getItem('isLoggedIn') !== 'true') {
+                e.preventDefault();
+                window.location.href = 'user/login.html';
+            } else {
+                modal.style.display = 'block';
+                setTimeout(initLocationPickerMap, 300); // Aguarda o modal abrir
+            }
+        });
+
+        closeModalBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        addLocationForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            formStatus.textContent = 'Salvando, por favor aguarde...';
+            formStatus.style.color = 'var(--accent-color)';
+
+            const locationName = document.getElementById('locationName').value;
+            const locationAddress = document.getElementById('locationAddress').value;
+            const locationType = document.getElementById('locationType').value;
+            const imageFile = document.getElementById('locationImage').files[0];
+            const selectedFeatures = Array.from(document.querySelectorAll('#featuresCheckboxes input:checked')).map(cb => cb.value);
+
+            // Validação extra: endereço e coordenadas
+            if (!locationAddress || locationAddress.length < 5) {
+                formStatus.textContent = 'Por favor, selecione um endereço válido no mapa ou digite um endereço completo.';
+                formStatus.style.color = 'red';
+                return;
+            }
+
+            let coordinates = null;
+            if (selectedCoordinates) {
+                coordinates = selectedCoordinates;
+            } else {
+                // fallback: geocodificar o endereço digitado
+                try {
+                    const geocoder = new google.maps.Geocoder();
+                    const geocodeResult = await new Promise((resolve, reject) => {
+                        geocoder.geocode({ 'address': locationAddress }, (results, status) => {
+                            if (status === 'OK') {
+                                resolve(results);
+                            } else {
+                                reject(new Error('A geocodificação falhou: ' + status));
+                            }
+                        });
+                    });
+                    const location = geocodeResult[0].geometry.location;
+                    coordinates = {
+                        latitude: location.lat(),
+                        longitude: location.lng()
+                    };
+                } catch (geoError) {
+                    formStatus.textContent = 'Erro ao localizar o endereço: ' + geoError.message;
+                    formStatus.style.color = 'red';
+                    return;
+                }
+            }
+            if (!coordinates || !coordinates.latitude || !coordinates.longitude) {
+                formStatus.textContent = 'Coordenadas não encontradas. Selecione um local no mapa ou digite um endereço válido.';
+                formStatus.style.color = 'red';
+                return;
+            }
+
+            try {
+                let imageUrl = '';
+                if (imageFile) {
+                    const user = firebase.auth().currentUser;
+                    const fileName = `${user.uid}_${Date.now()}_${imageFile.name}`;
+                    const storageRef = firebase.storage().ref();
+                    const imageRef = storageRef.child(`locations/${fileName}`);
+                    const snapshot = await imageRef.put(imageFile);
+                    imageUrl = await snapshot.ref.getDownloadURL();
+                }
+
+                const newLocation = {
+                    name: locationName,
+                    address: locationAddress,
+                    type: locationType,
+                    features: selectedFeatures,
+                    imageUrl: imageUrl,
+                    location: coordinates,
+                    rating: 0,
+                    reviewCount: 0,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    addedBy: firebase.auth().currentUser.uid
+                };
+
+                // Salvar os dados no Firestore
+                // Gera um ID seguro: nome_do_local
+                const safeDocId = locationName.replace(/[.#$/\[\]]/g, '_');
+                await firebase.firestore().collection('accessibleLocations').doc(safeDocId).set(newLocation);
+
+                formStatus.textContent = 'Local adicionado com sucesso!';
+                formStatus.style.color = 'green';
+
+                addLocationForm.reset();
+                setTimeout(() => {
+                    modal.style.display = 'none';
+                    formStatus.textContent = '';
+                    fetchAllLocations();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Erro ao adicionar local:', error);
+                formStatus.textContent = 'Erro ao salvar o local: ' + (error.message || error);
+                formStatus.style.color = 'red';
+            }
+        });
+
+        // --- Funções do Mapa do Google ---
+
         function loadGoogleMapsScriptAccessible() {
             if (document.getElementById('google-maps-script-accessible')) return;
             const script = document.createElement('script');
@@ -584,6 +767,7 @@
         }
         window.accessibleMap = undefined;
         window.accessibleMapMarkers = [];
+
         function initAccessibleMap() {
             const darkMapStyles = [
                 { elementType: "geometry", stylers: [{ color: "#242f3e" }] },
@@ -628,86 +812,107 @@
                 window.accessibleMap = new google.maps.Map(mapContainer, mapOptions);
                 const isDark = document.body.classList.contains('dark-theme');
                 window.accessibleMap.setOptions({ styles: isDark ? darkMapStyles : lightMapStyles });
-                loadLocationsForAccessibleMap();
+                
+                // Carrega todos os locais do Firebase ao iniciar o mapa
+                fetchAllLocations();
             }
         }
-        function loadLocationsForAccessibleMap() {
+
+        /**
+         * Busca todos os locais do Firebase e armazena na variável global.
+         */
+        function fetchAllLocations() {
+            if (!firebase || !firebase.firestore) {
+                console.error("Firebase não está configurado.");
+                return;
+            }
+            firebase.firestore().collection('accessibleLocations').get().then((querySnapshot) => {
+                allLocationsData = [];
+                querySnapshot.forEach((doc) => {
+                    allLocationsData.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Renderiza os cards e marcadores iniciais
+                filterAndRender();
+            }).catch((error) => {
+                console.error('Erro ao carregar locais do Firebase:', error);
+                locationsList.innerHTML = '<p style="text-align: center; width: 100%;">Erro ao carregar locais. Tente novamente mais tarde.</p>';
+            });
+        }
+
+        /**
+         * Carrega (ou recarrega) os marcadores no mapa com base nos locais fornecidos.
+         */
+        function loadMarkersForAccessibleMap(locations) {
             if (!window.accessibleMap) return;
+            
+            // Limpa marcadores antigos
             window.accessibleMapMarkers.forEach(marker => marker.setMap(null));
             window.accessibleMapMarkers = [];
-            if (!firebase || !firebase.firestore) return;
-            firebase.firestore().collection('accessibleLocations')
-                .get()
-                .then((querySnapshot) => {
-                    const bounds = new google.maps.LatLngBounds();
-                    let hasLocations = false;
-                    querySnapshot.forEach((doc) => {
-                        const data = doc.data();
-                        if (data.location) {
-                            hasLocations = true;
-                            const position = {
-                                lat: data.location.latitude,
-                                lng: data.location.longitude
-                            };
-                            const marker = new google.maps.Marker({
-                                position: position,
-                                map: window.accessibleMap,
-                                title: data.name,
-                                animation: google.maps.Animation.DROP
-                            });
-                            const rating = data.rating || 0;
-                            const reviewCount = data.reviewCount || 0;
-                            const imageUrl = data.imageUrl || data.image || data.photoUrl || '';
-                            let ratingStars = '';
-                            for (let i = 1; i <= 5; i++) {
-                                if (i <= Math.floor(rating)) {
-                                    ratingStars += '<i class="fas fa-star" style="color: #fbbf24;"></i>';
-                                } else if (i === Math.ceil(rating) && rating % 1 !== 0) {
-                                    ratingStars += '<i class="fas fa-star-half-alt" style="color: #fbbf24;"></i>';
-                                } else {
-                                    ratingStars += '<i class="far fa-star" style="color: #d1d5db;"></i>';
-                                }
-                            }
-                            // Detecta tema para InfoWindow
-                            const isDark = document.body.classList.contains('dark-theme');
-                            const infoTextColor = isDark ? '#fff' : '#222';
-                            const infowindow = new google.maps.InfoWindow({
-                                content: `
-                                    <div class='map-info-window' style='color: ${infoTextColor}; max-width: 280px;'>
-                                        <h3 style='color: ${infoTextColor}; margin-bottom: 8px;'>${data.name}</h3>
-                                        ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;" onerror="this.style.display='none'">` : ''}
-                                        <p style='margin: 4px 0;'><strong>Endereço:</strong> ${data.address}</p>
-                                        <p style='margin: 4px 0;'><strong>Recursos:</strong> ${data.features}</p>
-                                        <div style='margin-top:8px;'>
-                                            ${ratingStars}
-                                            <span style='margin-left:6px;font-size:13px;'>
-                                                ${rating.toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'})
-                                            </span>
-                                        </div>
-                                    </div>
-                                `
-                            });
-                            marker.addListener('click', function() {
-                                infowindow.open(window.accessibleMap, marker);
-                            });
-                            window.accessibleMapMarkers.push(marker);
-                            bounds.extend(position);
-                        }
+
+            if (!locations || locations.length === 0) {
+                return; // Não adiciona marcadores se não houver locais
+            }
+
+            const bounds = new google.maps.LatLngBounds();
+            
+            locations.forEach((data) => {
+                if (data.location) {
+                    const position = {
+                        lat: data.location.latitude,
+                        lng: data.location.longitude
+                    };
+                    const marker = new google.maps.Marker({
+                        position: position,
+                        map: window.accessibleMap,
+                        title: data.name,
+                        animation: google.maps.Animation.DROP
                     });
-                    if (hasLocations) {
-                        window.accessibleMap.fitBounds(bounds);
-                        const listener = google.maps.event.addListener(window.accessibleMap, 'idle', function() {
-                            if (window.accessibleMap.getZoom() > 16) {
-                                window.accessibleMap.setZoom(16);
-                            }
-                            google.maps.event.removeListener(listener);
-                        });
+                    
+                    const rating = data.rating || 0;
+                    const reviewCount = data.reviewCount || 0;
+                    const imageUrl = data.imageUrl || data.image || data.photoUrl || '';
+                    
+                    const ratingStars = getRatingStars(rating);
+
+                    const isDark = document.body.classList.contains('dark-theme');
+                    const infoTextColor = isDark ? '#fff' : '#222';
+                    const infowindow = new google.maps.InfoWindow({
+                        content: `
+                            <div class='map-info-window' style='color: ${infoTextColor}; max-width: 280px;'>
+                                <h3 style='color: ${infoTextColor}; margin-bottom: 8px;'>${data.name}</h3>
+                                ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width:100%;height:120px;object-fit:cover;border-radius:8px;margin-bottom:8px;" onerror="this.style.display='none'">` : ''}
+                                <p style='margin: 4px 0;'><strong>Endereço:</strong> ${data.address}</p>
+                                <p style='margin: 4px 0;'><strong>Recursos:</strong> ${(data.features || []).join(', ')}</p>
+                                <div style='margin-top:8px;'>
+                                    ${ratingStars}
+                                    <span style='margin-left:6px;font-size:13px;'>
+                                        ${rating.toFixed(1)} (${reviewCount} ${reviewCount === 1 ? 'avaliação' : 'avaliações'})
+                                    </span>
+                                </div>
+                            </div>
+                        `
+                    });
+                    marker.addListener('click', function() {
+                        infowindow.open(window.accessibleMap, marker);
+                    });
+                    window.accessibleMapMarkers.push(marker);
+                    bounds.extend(position);
+                }
+            });
+
+            if (!bounds.isEmpty()) {
+                window.accessibleMap.fitBounds(bounds);
+                const listener = google.maps.event.addListener(window.accessibleMap, 'idle', function() {
+                    if (window.accessibleMap.getZoom() > 16) {
+                        window.accessibleMap.setZoom(16);
                     }
-                })
-                .catch((error) => {
-                    console.error('Erro ao carregar locais para o mapa:', error);
+                    google.maps.event.removeListener(listener);
                 });
+            }
         }
+
+        // --- Inicialização ---
         if (window.ENV && window.ENV.GOOGLE_MAPS_API_KEY) {
             loadGoogleMapsScriptAccessible();
         } else {

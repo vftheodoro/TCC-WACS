@@ -136,6 +136,23 @@
             </form>
         </div>
     </div>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="../../public/js/env-config.js"></script>
+    <script>
+      if (!firebase.apps.length) {
+        firebase.initializeApp({
+          apiKey: window.ENV.FIREBASE_API_KEY,
+          authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+          projectId: window.ENV.FIREBASE_PROJECT_ID,
+          storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+          messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+          appId: window.ENV.FIREBASE_APP_ID,
+          measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
+        });
+      }
+    </script>
     <script src="../../public/js/script.js"></script>
     <script>
     // Controle de etapas
@@ -321,17 +338,62 @@
     }
 
     // Validação final do formulário
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', async function(e) {
         errorDiv.style.display = 'none';
         if (!document.getElementById('acceptTerms').checked) {
             e.preventDefault();
             errorDiv.textContent = 'Você deve aceitar os Termos de Uso e a Política de Privacidade.';
             errorDiv.style.display = 'block';
+            errorDiv.style.color = '';
             return;
         }
-        // Aqui você pode adicionar validação extra ou integração com backend
-        // e.preventDefault(); // Remova este comentário se for testar sem backend
+        e.preventDefault();
+
+        // Coletar dados do formulário
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+        const username = document.getElementById('username').value.trim();
+        const fullName = document.getElementById('fullName').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+        const region = document.getElementById('region').value;
+        const mobilityType = document.getElementById('mobilityType').value;
+        const comorbidades = document.getElementById('comorbidades').value;
+        // Adicione outros campos conforme necessário
+
+        try {
+            // 1. Criar usuário no Auth
+            const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+            const user = userCredential.user;
+
+            // 2. Salvar dados no Firestore
+            await firebase.firestore().collection('users').doc(user.uid).set({
+                email: email,
+                username: username,
+                fullName: fullName,
+                birthdate: birthdate,
+                region: region,
+                mobilityType: mobilityType,
+                comorbidades: comorbidades,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                // ... (adicione outros campos)
+            });
+
+            showSuccessMessage('Conta criada com sucesso! Você pode fazer login agora.');
+            // Redirecionar para login após alguns segundos
+            setTimeout(() => { window.location.href = 'login.html'; }, 2000);
+
+        } catch (error) {
+            errorDiv.textContent = 'Erro ao criar conta: ' + (error.message || error);
+            errorDiv.style.display = 'block';
+            errorDiv.style.color = 'red';
+        }
     });
+
+    function showSuccessMessage(msg) {
+        errorDiv.textContent = msg;
+        errorDiv.style.display = 'block';
+        errorDiv.style.color = 'green';
+    }
 
     // Carregar cidades do Vale do Ribeira
     const cidadesBrasil = [
