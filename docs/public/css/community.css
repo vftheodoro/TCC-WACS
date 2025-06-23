@@ -653,4 +653,13 @@
 .login-required-message .btn {
     font-size: 1.1em;
     padding: 12px 30px;
+}
+
+.like-span.liked {
+    color: #1976d2;
+    font-weight: bold;
+}
+
+.like-span.liked i {
+    color: #1976d2;
 } 

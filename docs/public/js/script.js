@@ -197,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // *** INÍCIO: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
                         // Este é um HACK específico para o protocolo file:/// para desenvolvimento local sem servidor.
                         // Em um ambiente de servidor web (http://localhost), caminhos relativos simples funcionariam.
-                        let redirectTo = 'index.html'; // Fallback padrão
+                        let redirectTo = '/'; // Fallback padrão
                         const currentHref = window.location.href;
                         // Tenta encontrar a pasta 'docs' no caminho para construir um caminho absoluto.
                         // Isso assume que 'docs' é a raiz do seu projeto quando acessado via file://
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         // *** INÍCIO: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
                         // Este é um HACK específico para o protocolo file:/// para desenvolvimento local sem servidor.
                         // Em um ambiente de servidor web (http://localhost), caminhos relativos simples funcionariam.
-                        let redirectTo = 'index.html'; // Fallback padrão
+                        let redirectTo = '/'; // Fallback padrão
                         const currentHref = window.location.href;
                         // Tenta encontrar a pasta 'docs' no caminho para construir um caminho absoluto.
                         // Isso assume que 'docs' é a raiz do seu projeto quando acessado via file://
@@ -416,43 +416,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Lógica para exibir posts na página de comunidade (apenas um exemplo simulado)
     const communityContentWrapper = document.getElementById('community-content-wrapper');
     if (currentEffectiveFileName === 'comunidade.html' && communityContentWrapper) {
-        const postsContainer = document.querySelector('.community-posts');
+        const postsContainer = document.querySelector('.posts-feed');
         const chatContainer = document.querySelector('.community-chat');
         const suggestionsContainer = document.querySelector('.community-suggestions');
         const trendingTopicsContainer = document.querySelector('.trending-topics-list');
-
-        const postsData = [
-            {
-                id: 1,
-                author: 'Usuário Teste',
-                avatar: '../public/images/fotos-perfil/user1.png',
-                time: '5 mins ago',
-                content: 'Acabei de descobrir um café super acessível no centro! As rampas são ótimas e o atendimento impecável.',
-                likes: 12,
-                comments: 3,
-                shares: 1
-            },
-            {
-                id: 2,
-                author: 'Maria S.',
-                avatar: '../public/images/fotos-perfil/user2.png',
-                time: '2 horas atrás',
-                content: 'Alguém tem recomendações de parques com boa infraestrutura para cadeirantes em São Paulo?',
-                likes: 25,
-                comments: 8,
-                shares: 2
-            },
-            {
-                id: 3,
-                author: 'João P.',
-                avatar: '../public/images/fotos-perfil/user3.png',
-                time: '1 dia atrás',
-                content: 'Participei de um evento online sobre acessibilidade digital. Muito inspirador!',
-                likes: 8,
-                comments: 1,
-                shares: 0
-            }
-        ];
 
         const chatData = [
             {
@@ -493,28 +460,6 @@ document.addEventListener('DOMContentLoaded', () => {
             { name: '#TecnologiaAssistiva', count: '600 Posts' }
         ];
 
-        const renderPosts = () => {
-            if (postsContainer) {
-                postsContainer.innerHTML = postsData.map(post => `
-                    <div class="community-post-card">
-                    <div class="post-header">
-                            <img src="${post.avatar}" alt="${post.author}" class="post-author-avatar">
-                            <div class="post-info">
-                                <span class="post-author-name">${post.author}</span>
-                                <span class="post-time">${post.time}</span>
-                            </div>
-                    </div>
-                        <p class="post-content">${post.content}</p>
-                        <div class="post-actions">
-                            <span><i class="fas fa-thumbs-up"></i> ${post.likes}</span>
-                            <span><i class="fas fa-comment"></i> ${post.comments}</span>
-                            <span><i class="fas fa-share"></i> ${post.shares}</span>
-                    </div>
-                    </div>
-                `).join('');
-            }
-        };
-
         const renderChats = () => {
             if (chatContainer) {
                 chatContainer.innerHTML = chatData.map(chat => `
@@ -553,43 +498,211 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        renderPosts();
         renderChats();
         renderSuggestions();
         renderTrendingTopics();
-}
 
-// Lógica para notificações flash
-const flashNotification = document.getElementById('flashNotification');
-const flashNotificationMessage = document.getElementById('flashNotificationMessage');
-const closeFlashNotificationBtn = document.querySelector('.close-flash-notification-btn');
+        // --- INÍCIO: Renderização dinâmica dos posts do Firestore (tempo real) ---
+        function renderPostsRealtime() {
+            if (!postsContainer) return;
+            postsContainer.innerHTML = '<h3>Feed da Comunidade</h3><p>Carregando posts...</p>';
+            getFirebaseApp();
+            const db = window.firebase.firestore();
+            db.collection('posts').orderBy('createdAt', 'desc').limit(20)
+                .onSnapshot(async snapshot => {
+                    if (snapshot.empty) {
+                        postsContainer.innerHTML = '<h3>Feed da Comunidade</h3><p>Nenhum post encontrado.</p>';
+                        return;
+                    }
+                    // Pega o usuário atual (pode ser null)
+                    let currentUid = null;
+                    try {
+                        currentUid = window.firebase.auth().currentUser?.uid || null;
+                    } catch (e) { currentUid = null; }
+                    postsContainer.innerHTML = '<h3>Feed da Comunidade</h3>' + snapshot.docs.map(doc => {
+                        const post = doc.data();
+                        // Verifica se o usuário já curtiu
+                        const likedBy = post.likedBy || [];
+                        const userLiked = currentUid && likedBy.includes(currentUid);
+                        return `
+                            <div class="post-card">
+                                <div class="post-header">
+                                    <img src="${post.avatar || 'https://randomuser.me/api/portraits/lego/1.jpg'}" alt="Foto de Perfil" class="post-author-pic">
+                                    <span class="post-author-name">${post.author || 'Anônimo'}</span>
+                                    <span class="post-timestamp">${formatPostDate(post.createdAt)}</span>
+                                </div>
+                                <div class="post-content">
+                                    <p>${post.content || ''}</p>
+                                    ${post.imageUrl ? `<img src="${post.imageUrl}" alt="Imagem do Post" class="post-image">` : ''}
+                                </div>
+                                <div class="post-footer">
+                                    <span class="post-stats like-span${userLiked ? ' liked' : ''}\" data-id="${doc.id}" style="cursor:pointer;">
+                                        <i class="fas fa-thumbs-up"></i> <span class="likes-count">${post.likes || 0}</span> Curtidas
+                                    </span>
+                                    <span class="post-stats"><i class="fas fa-comment"></i> <span class="comments-count">${post.comments || 0}</span> Comentários</span>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
 
-closeFlashNotificationBtn.addEventListener('click', () => {
-    flashNotification.classList.remove('show');
-});
+                    // Adicionar listeners de like (apenas 1 curtida por usuário)
+                    const likeSpans = postsContainer.querySelectorAll('.like-span');
+                    likeSpans.forEach(span => {
+                        span.addEventListener('click', async (e) => {
+                            const postId = span.getAttribute('data-id');
+                            if (!postId) return;
+                            // Verifica se o usuário está autenticado
+                            const user = window.firebase.auth().currentUser;
+                            if (!user) {
+                                showFlashNotification('Você precisa estar logado para curtir.', 'error');
+                                return;
+                            }
+                            try {
+                                getFirebaseApp();
+                                const db = window.firebase.firestore();
+                                const postRef = db.collection('posts').doc(postId);
+                                const postSnap = await postRef.get();
+                                const postData = postSnap.data();
+                                const likedBy = postData.likedBy || [];
+                                if (likedBy.includes(user.uid)) {
+                                    showFlashNotification('Você já curtiu este post.', 'info');
+                                    return;
+                                }
+                                await postRef.update({
+                                    likes: window.firebase.firestore.FieldValue.increment(1),
+                                    likedBy: window.firebase.firestore.FieldValue.arrayUnion(user.uid)
+                                });
+                            } catch (error) {
+                                showFlashNotification('Erro ao curtir o post.', 'error');
+                                console.error('Erro ao curtir:', error);
+                            }
+                        });
+                    });
+                }, error => {
+                    postsContainer.innerHTML = '<h3>Feed da Comunidade</h3><p>Erro ao carregar posts.</p>';
+                    console.error('Erro no listener do Firestore:', error);
+                });
+        }
+        renderPostsRealtime();
+        // --- FIM: Renderização dinâmica dos posts do Firestore (tempo real) ---
 
-function showFlashNotification(message, type = 'info') {
-    flashNotificationMessage.textContent = message;
-    flashNotification.className = 'flash-notification'; // Reset classes
-    flashNotification.classList.add(type);
-    flashNotification.classList.add('show');
-
-    // Auto-hide after 5 seconds
-    setTimeout(() => {
-        flashNotification.classList.remove('show');
-    }, 5000);
-}
-
-// Exemplo de uso (chame esta função quando precisar mostrar uma notificação)
-// showFlashNotification('Perfil atualizado com sucesso!', 'success');
-// showFlashNotification('Erro ao salvar dados.', 'error');
-
-window.addEventListener('pageshow', function(event) {
-    if (event.persisted) {
-        document.body.classList.remove('fade-out');
-        document.body.classList.add('fade-in');
+        // --- INÍCIO: Envio de novo post para o Firestore ---
+        const postTextarea = document.querySelector('.create-post-card .post-textarea');
+        const postBtn = document.querySelector('.create-post-card .post-btn');
+        if (postBtn && postTextarea) {
+            postBtn.addEventListener('click', async () => {
+                const content = postTextarea.value.trim();
+                if (!content) {
+                    showFlashNotification('Digite algo para publicar!', 'error');
+                    return;
+                }
+                // Dados do usuário logado (mock/localStorage)
+                const author = localStorage.getItem('userName') || 'Anônimo';
+                const avatar = localStorage.getItem('userProfilePic') || 'https://randomuser.me/api/portraits/lego/1.jpg';
+                postBtn.disabled = true;
+                postBtn.textContent = 'Publicando...';
+                try {
+                    getFirebaseApp();
+                    const db = window.firebase.firestore();
+                    // Buscar o número de posts já existentes
+                    const snapshot = await db.collection('posts').get();
+                    const count = snapshot.size + 1;
+                    const nomeMensagem = `mensagem${count.toString().padStart(2, '0')}`;
+                    await db.collection('posts').doc(nomeMensagem).set({
+                        content,
+                        author,
+                        avatar,
+                        createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+                        likes: 0,
+                        comments: 0
+                    });
+                    postTextarea.value = '';
+                    showFlashNotification('Post publicado com sucesso!', 'success');
+                } catch (error) {
+                    console.error('Erro ao publicar post:', error);
+                    showFlashNotification('Erro ao publicar post.', 'error');
+                }
+                postBtn.disabled = false;
+                postBtn.textContent = 'Publicar';
+            });
+        }
+        // --- FIM: Envio de novo post para o Firestore ---
     }
-}); 
+
+    // Lógica para notificações flash
+    const flashNotification = document.getElementById('flashNotification');
+    const flashNotificationMessage = document.getElementById('flashNotificationMessage');
+    const closeFlashNotificationBtn = document.querySelector('.close-flash-notification-btn');
+
+    closeFlashNotificationBtn.addEventListener('click', () => {
+        flashNotification.classList.remove('show');
+    });
+
+    function showFlashNotification(message, type = 'info') {
+        flashNotificationMessage.textContent = message;
+        flashNotification.className = 'flash-notification'; // Reset classes
+        flashNotification.classList.add(type);
+        flashNotification.classList.add('show');
+
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            flashNotification.classList.remove('show');
+        }, 5000);
+    }
+
+    // Exemplo de uso (chame esta função quando precisar mostrar uma notificação)
+    // showFlashNotification('Perfil atualizado com sucesso!', 'success');
+    // showFlashNotification('Erro ao salvar dados.', 'error');
+
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            document.body.classList.remove('fade-out');
+            document.body.classList.add('fade-in');
+        }
+    }); 
+
+    // --- INÍCIO: Firebase Firestore para Feed da Comunidade ---
+
+    // Função para inicializar o Firebase (caso ainda não esteja)
+    function getFirebaseApp() {
+        if (!window.firebase?.apps?.length) {
+            const firebaseConfig = {
+                apiKey: window.ENV.FIREBASE_API_KEY,
+                authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+                projectId: window.ENV.FIREBASE_PROJECT_ID,
+                storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+                messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+                appId: window.ENV.FIREBASE_APP_ID,
+                measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
+            };
+            window.firebase.initializeApp(firebaseConfig);
+        }
+        return window.firebase.app();
+    }
+
+    // Função para buscar posts do Firestore
+    async function fetchCommunityPosts() {
+        getFirebaseApp();
+        const db = window.firebase.firestore();
+        const posts = [];
+        try {
+            const snapshot = await db.collection('posts').orderBy('createdAt', 'desc').limit(20).get();
+            snapshot.forEach(doc => {
+                posts.push({ id: doc.id, ...doc.data() });
+            });
+        } catch (error) {
+            console.error('Erro ao buscar posts:', error);
+        }
+        return posts;
+    }
+
+    // Função para formatar data/hora (simples)
+    function formatPostDate(date) {
+        if (!date) return '';
+        const d = date.toDate ? date.toDate() : new Date(date);
+        return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    }
+    // --- FIM: Firebase Firestore para Feed da Comunidade ---
 });
 
 // Função auxiliar para obter o nome do arquivo da URL
