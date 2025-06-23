@@ -159,11 +159,12 @@ function setupEventListeners() {
             }
             
             // Atualizar telefone se alterado
-            if (phone !== originalPhone) {
-                firestoreUpdates.phoneNumber = phone;
-                originalPhone = phone;
+            const phoneNumber = phoneInput.value.trim();
+            if (phoneNumber !== originalPhone) {
+                firestoreUpdates.phoneNumber = phoneNumber;
+                originalPhone = phoneNumber;
                 
-                logDebug('Telefone atualizado:', phone);
+                logDebug('Telefone atualizado:', phoneNumber);
             }
             
             // Novos campos extras:

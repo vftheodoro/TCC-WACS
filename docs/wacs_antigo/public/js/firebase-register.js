@@ -152,6 +152,7 @@ registerForm.addEventListener('submit', (e) => {
     // Coletar múltiplas comorbidades
     const comorbidadesSelect = document.getElementById('comorbidades');
     const comorbidades = Array.from(comorbidadesSelect.selectedOptions).map(opt => opt.value);
+    const phoneNumber = phoneInput.value.trim();
     
     // Validação básica
     if (!name || !email || !password || !confirmPassword) {
@@ -197,7 +198,8 @@ registerForm.addEventListener('submit', (e) => {
                     username: username,
                     registrationMethod: 'email',
                     accountStatus: 'active',
-                    userRole: 'user'
+                    userRole: 'user',
+                    phoneNumber: phoneNumber
                 });
             }).then(() => {
                 showAlert('Conta criada com sucesso!', 'success');
