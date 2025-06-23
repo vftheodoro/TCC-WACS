@@ -53,12 +53,24 @@ function saveUserToFirestore(user, additionalData = {}) {
         uid: user.uid,
         email: user.email,
         displayName: user.displayName || additionalData.name || '',
-        photoURL: user.photoURL || '',
+        photoURL: user.photoURL || null,
         phoneNumber: user.phoneNumber || '',
         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
         lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
         ADM: 0, // Valor padrão para novos usuários
-        // Dados adicionais que podem ser fornecidos durante o registro
+        // Compatibilidade total com o app:
+        name: additionalData.name || user.displayName || '',
+        phone: additionalData.phone || user.phoneNumber || '',
+        cidade: additionalData.cidade || '',
+        birthdate: additionalData.birthdate || '',
+        mobilityType: additionalData.mobilityType || '',
+        comorbidades: additionalData.comorbidades || [],
+        acceptTerms: additionalData.acceptTerms !== undefined ? additionalData.acceptTerms : true,
+        username: additionalData.username || '',
+        registrationMethod: additionalData.registrationMethod || 'email',
+        accountStatus: additionalData.accountStatus || 'active',
+        userRole: additionalData.userRole || 'user',
+        // Outros campos extras podem ser adicionados aqui
         ...additionalData
     };
 
@@ -133,6 +145,13 @@ registerForm.addEventListener('submit', (e) => {
     const phone = phoneInput.value.trim();
     const password = passwordInput.value;
     const confirmPassword = confirmPasswordInput.value;
+    const username = document.getElementById('username').value.trim();
+    const cidade = document.getElementById('cidade').value.trim();
+    const birthdate = document.getElementById('birthdate').value;
+    const mobilityType = document.getElementById('mobilityType').value;
+    // Coletar múltiplas comorbidades
+    const comorbidadesSelect = document.getElementById('comorbidades');
+    const comorbidades = Array.from(comorbidadesSelect.selectedOptions).map(opt => opt.value);
     
     // Validação básica
     if (!name || !email || !password || !confirmPassword) {
@@ -165,13 +184,20 @@ registerForm.addEventListener('submit', (e) => {
             return user.updateProfile({
                 displayName: name
             }).then(() => {
-                // Salvar dados adicionais no Firestore
+                // Salvar dados adicionais no Firestore, compatível com o app
                 return saveUserToFirestore(user, {
                     name: name,
-                    phoneNumber: phone,
+                    phone: phone,
+                    cidade: cidade,
+                    birthdate: birthdate,
+                    mobilityType: mobilityType,
+                    comorbidades: comorbidades,
+                    acceptTerms: true,
+                    photoURL: null,
+                    username: username,
                     registrationMethod: 'email',
                     accountStatus: 'active',
-                    userRole: 'user' // Default role para novos usuários
+                    userRole: 'user'
                 });
             }).then(() => {
                 showAlert('Conta criada com sucesso!', 'success');

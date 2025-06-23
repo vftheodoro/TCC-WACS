@@ -457,6 +457,44 @@
                     <input type="password" id="confirmPassword" name="confirmPassword" required>
                 </div>
                 
+                <div class="form-group">
+                    <label for="username">Nome de usuário</label>
+                    <input type="text" id="username" name="username" maxlength="32" placeholder="Ex: joaosilva">
+                </div>
+                <div class="form-group">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade" name="cidade" placeholder="Digite sua cidade">
+                </div>
+                <div class="form-group">
+                    <label for="birthdate">Data de nascimento</label>
+                    <input type="date" id="birthdate" name="birthdate">
+                </div>
+                <div class="form-group">
+                    <label for="mobilityType">Tipo de Mobilidade</label>
+                    <select id="mobilityType" name="mobilityType">
+                        <option value="">Selecione</option>
+                        <option value="cadeira">Cadeira de rodas</option>
+                        <option value="andador">Andador</option>
+                        <option value="muleta">Muleta</option>
+                        <option value="visual">Deficiência visual</option>
+                        <option value="auditiva">Deficiência auditiva</option>
+                        <option value="outra">Outra</option>
+                        <option value="nenhuma">Nenhuma</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="comorbidades">Comorbidades / Necessidades Especiais</label>
+                    <select id="comorbidades" name="comorbidades" multiple style="height: 80px;">
+                        <option value="diabetes">Diabetes</option>
+                        <option value="hipertensao">Hipertensão</option>
+                        <option value="cardio">Doença cardiovascular</option>
+                        <option value="respiratorio">Problemas respiratórios</option>
+                        <option value="outra">Outro</option>
+                        <option value="nenhuma">Nenhuma</option>
+                    </select>
+                    <small style="font-size: 0.75rem; color: var(--text-light, #4b5563); display: block; margin-top: 0.25rem;">Segure Ctrl (Windows) ou Command (Mac) para selecionar múltiplas opções</small>
+                </div>
+                
                 <div class="terms-privacy">
                     <input type="checkbox" id="terms" name="terms" required>
                     <p>Ao criar uma conta, eu concordo com os <a href="#">Termos de Serviço</a> e <a href="#">Política de Privacidade</a> do WACS</p>

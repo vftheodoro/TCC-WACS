@@ -101,6 +101,12 @@ function setupEventListeners() {
         const currentPassword = currentPasswordInput.value;
         const newPassword = newPasswordInput.value;
         const confirmPassword = confirmPasswordInput.value;
+        const username = document.getElementById('username').value.trim();
+        const cidade = document.getElementById('cidade').value.trim();
+        const birthdate = document.getElementById('birthdate').value;
+        const mobilityType = document.getElementById('mobilityType').value;
+        const comorbidadesSelect = document.getElementById('comorbidades');
+        const comorbidades = Array.from(comorbidadesSelect.selectedOptions).map(opt => opt.value);
         
         // Validar senha se estiver alterando
         if (newPassword || currentPassword || confirmPassword) {
@@ -124,6 +130,7 @@ function setupEventListeners() {
         
         try {
             startLoading('Atualizando perfil...');
+            disableSaveButton(true);
             
             // Atualizar senha se necessário
             if (newPassword) {
@@ -159,24 +166,26 @@ function setupEventListeners() {
                 logDebug('Telefone atualizado:', phone);
             }
             
-            // Atualizar foto se alterada
+            // Novos campos extras:
+            firestoreUpdates.username = username;
+            firestoreUpdates.cidade = cidade;
+            firestoreUpdates.birthdate = birthdate;
+            firestoreUpdates.mobilityType = mobilityType;
+            firestoreUpdates.comorbidades = comorbidades;
+            
+            // Upload de foto de perfil
             if (photoChanged && photoFile) {
+                updateLoadingText('Enviando foto de perfil...');
                 const photoURL = await uploadProfilePicture(photoFile);
-                await currentUser.updateProfile({
-                    photoURL: photoURL
-                });
-                
+                await currentUser.updateProfile({ photoURL: photoURL });
                 firestoreUpdates.photoURL = photoURL;
-                
-                logDebug('Foto de perfil atualizada:', photoURL);
+                userPhotoURL = photoURL;
+                updateProfilePhotoUI(photoURL);
             } else if (photoRemoved) {
-                await currentUser.updateProfile({
-                    photoURL: null
-                });
-                
+                await currentUser.updateProfile({ photoURL: null });
                 firestoreUpdates.photoURL = null;
-                
-                logDebug('Foto de perfil removida');
+                userPhotoURL = null;
+                resetProfilePhotoUI();
             }
             
             // Atualizar dados no Firestore se houver mudanças
@@ -231,6 +240,7 @@ function setupEventListeners() {
             }
         } finally {
             stopLoading();
+            disableSaveButton(false);
         }
     });
     cancelBtn.addEventListener('click', handleCancel);
@@ -281,19 +291,37 @@ function loadUserData(user) {
                     originalPhone = userData.phoneNumber;
                     logDebug('Telefone carregado:', userData.phoneNumber);
                 }
+                
+                // Novos campos extras
+                document.getElementById('username').value = userData.username || '';
+                document.getElementById('cidade').value = userData.cidade || '';
+                document.getElementById('birthdate').value = userData.birthdate || '';
+                document.getElementById('mobilityType').value = userData.mobilityType || '';
+                const comorbidadesSelect = document.getElementById('comorbidades');
+                if (Array.isArray(userData.comorbidades)) {
+                    Array.from(comorbidadesSelect.options).forEach(opt => {
+                        opt.selected = userData.comorbidades.includes(opt.value);
+                    });
+                }
+                
+                // Foto de perfil do Firestore (prioridade se não houver no Auth)
+                if (!user.photoURL && userData.photoURL) {
+                    userPhotoURL = userData.photoURL;
+                    updateProfilePhotoUI(userData.photoURL);
+                    logDebug('Foto de perfil carregada do Firestore:', userData.photoURL);
+                }
             }
         })
         .catch(error => {
             logDebug('Erro ao buscar dados adicionais do usuário:', error);
         });
     
-    // Foto de perfil
+    // Foto de perfil do Auth
     if (user.photoURL) {
         userPhotoURL = user.photoURL;
         updateProfilePhotoUI(user.photoURL);
         logDebug('Foto de perfil carregada:', user.photoURL);
-    } else {
-        // Exibir iniciais ou ícone padrão
+    } else if (!userPhotoURL) {
         userPhotoURL = null;
         resetProfilePhotoUI();
         logDebug('Usuário não possui foto de perfil');
@@ -355,7 +383,7 @@ function handleFileSelect(event) {
     photoChanged = true;
     photoRemoved = false;
     
-    // Mostrar preview
+    // Preview imediato
     const reader = new FileReader();
     reader.onload = function(e) {
         updateProfilePhotoUI(e.target.result);
