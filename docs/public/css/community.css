@@ -608,7 +608,7 @@
     .topic-posts {
         font-size: 0.8em;
     }
-} 
+}
 
 /* Login Required Message */
 .login-required-message {
@@ -662,4 +662,424 @@
 
 .like-span.liked i {
     color: #1976d2;
+}
+
+/* Estilos para elementos carregados dinamicamente */
+.no-chats-message,
+.no-suggestions-message,
+.error-message {
+    text-align: center;
+    padding: 30px 20px;
+    color: var(--text-color-secondary);
+    font-style: italic;
+    background-color: var(--card-bg-color);
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+}
+
+.no-chats-message p,
+.no-suggestions-message p,
+.error-message p {
+    margin: 0;
+    font-size: 1em;
+}
+
+.error-message {
+    color: #e74c3c;
+    border-color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
+}
+
+/* Melhorias para chat-item dinâmico */
+.chat-item {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.chat-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.chat-item:hover::before {
+    left: 100%;
+}
+
+/* Melhorias para suggestion-item dinâmico */
+.suggestion-item {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.suggestion-item::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-color-1);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.suggestion-item:hover::after {
+    width: 100%;
+}
+
+/* Loading states */
+.chat-list.loading,
+.suggestion-list.loading {
+    position: relative;
+    min-height: 100px;
+}
+
+.chat-list.loading::after,
+.suggestion-list.loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30px;
+    height: 30px;
+    border: 3px solid var(--border-color);
+    border-top: 3px solid var(--gradient-color-1);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* Melhorias para imagens de perfil */
+.chat-pic,
+.suggestion-pic {
+    transition: transform 0.3s ease;
+}
+
+.chat-item:hover .chat-pic,
+.suggestion-item:hover .suggestion-pic {
+    transform: scale(1.1);
+}
+
+/* Melhorias para botões de conexão */
+.connect-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.connect-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.connect-btn:hover::before {
+    left: 100%;
+}
+
+.connect-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsividade para elementos dinâmicos */
+@media (max-width: 768px) {
+    .no-chats-message,
+    .no-suggestions-message,
+    .error-message {
+        padding: 20px 15px;
+        font-size: 0.9em;
+    }
+    
+    .chat-item,
+    .suggestion-item {
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .no-chats-message,
+    .no-suggestions-message,
+    .error-message {
+        padding: 15px 10px;
+        font-size: 0.85em;
+    }
+}
+
+/* Estilos para notificações */
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: #3498db;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 10000;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    max-width: 300px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.notification.notification-success {
+    background: #27ae60;
+}
+
+.notification.notification-error {
+    background: #e74c3c;
+}
+
+.notification.notification-info {
+    background: #3498db;
+}
+
+.notification-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.notification-content span {
+    flex: 1;
+    font-size: 0.9em;
+    line-height: 1.4;
+}
+
+.notification-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 0.3s ease;
+}
+
+.notification-close:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsividade para notificações */
+@media (max-width: 768px) {
+    .notification {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(-100%);
+    }
+    
+    .notification.show {
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para barra de busca */
+.search-container {
+    margin-bottom: 20px;
+}
+
+.search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 25px;
+    padding: 8px 15px;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-small);
+}
+
+.search-input-wrapper:focus-within {
+    border-color: var(--gradient-color-1);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    transform: translateY(-1px);
+}
+
+.search-icon {
+    color: var(--text-color-secondary);
+    font-size: 14px;
+    margin-right: 10px;
+    transition: color 0.3s ease;
+}
+
+.search-input-wrapper:focus-within .search-icon {
+    color: var(--gradient-color-1);
+}
+
+.search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--text-color-primary);
+    font-size: 14px;
+    font-family: 'Poppins', sans-serif;
+    padding: 0;
+}
+
+.search-input::placeholder {
+    color: var(--text-color-secondary);
+    opacity: 0.7;
+}
+
+.search-clear-btn {
+    background: none;
+    border: none;
+    color: var(--text-color-secondary);
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    margin-left: 8px;
+}
+
+.search-clear-btn:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    color: #dc3545;
+    transform: scale(1.1);
+}
+
+.search-clear-btn:active {
+    transform: scale(0.95);
+}
+
+/* Mensagem de resultado da busca */
+.search-results-info {
+    margin-top: 15px;
+    padding: 10px 15px;
+    background-color: rgba(99, 102, 241, 0.1);
+    border-radius: 8px;
+    border-left: 3px solid var(--gradient-color-1);
+}
+
+.search-results-info p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--text-color-secondary);
+    font-weight: 500;
+}
+
+/* Estados de carregamento para busca */
+.search-input-wrapper.searching {
+    border-color: var(--gradient-color-1);
+}
+
+.search-input-wrapper.searching .search-icon {
+    animation: spin 1s linear infinite;
+    color: var(--gradient-color-1);
+}
+
+/* Animações para a busca */
+@keyframes searchPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.search-input-wrapper:focus-within {
+    animation: searchPulse 0.3s ease;
+}
+
+/* Responsividade para busca */
+@media (max-width: 768px) {
+    .search-input-wrapper {
+        padding: 6px 12px;
+    }
+    
+    .search-input {
+        font-size: 13px;
+    }
+    
+    .search-icon {
+        font-size: 12px;
+        margin-right: 8px;
+    }
+    
+    .search-clear-btn {
+        padding: 4px;
+        margin-left: 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-container {
+        margin-bottom: 15px;
+    }
+    
+    .search-input-wrapper {
+        padding: 5px 10px;
+        border-radius: 20px;
+    }
+    
+    .search-input {
+        font-size: 12px;
+    }
+    
+    .search-results-info {
+        padding: 8px 12px;
+        margin-top: 10px;
+    }
+    
+    .search-results-info p {
+        font-size: 13px;
+    }
+}
+
+/* Melhorias visuais para sugestões com busca */
+.suggestion-item {
+    transition: all 0.3s ease, transform 0.2s ease;
+}
+
+.suggestion-item.highlighted {
+    background-color: rgba(99, 102, 241, 0.1);
+    border-color: var(--gradient-color-1);
+    transform: translateX(5px);
+}
+
+.suggestion-item.hidden {
+    display: none;
+}
+
+/* Indicador de busca ativa */
+.search-active .suggestion-item:not(.highlighted) {
+    opacity: 0.5;
+    filter: grayscale(0.3);
+}
+
+.search-active .suggestion-item.highlighted {
+    opacity: 1;
+    filter: none;
 } 

@@ -192,48 +192,35 @@
                     <div class="private-chats-section">
                         <h3>Chats Privados</h3>
                         <div class="chat-list">
-                            <!-- Chat Item 1 (será populado por JS) -->
-                            <div class="chat-item">
-                                <img src="https://randomuser.me/api/portraits/women/67.jpg" alt="Foto de Perfil" class="chat-pic">
-                                <div class="chat-info">
-                                    <span class="chat-contact-name">Ana Paula</span>
-                                    <span class="last-message">Olá, tudo bem?</span>
-                                </div>
-                                <span class="unread-count">2</span>
-                            </div>
-                            <!-- Chat Item 2 (será populado por JS) -->
-                            <div class="chat-item">
-                                <img src="https://randomuser.me/api/portraits/men/12.jpg" alt="Foto de Perfil" class="chat-pic">
-                                <div class="chat-info">
-                                    <span class="chat-contact-name">Carlos Diniz</span>
-                                    <span class="last-message">Ótima iniciativa!</span>
-                                </div>
-                            </div>
+                            <!-- Os chats serão carregados dinamicamente pelo JavaScript -->
                         </div>
                     </div>
 
                     <!-- Nova Seção: Sugestões para Você -->
                     <div class="suggestions-section">
                         <h3>Sugestões para Você</h3>
+                        
+                        <!-- Barra de busca -->
+                        <div class="search-container">
+                            <div class="search-input-wrapper">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" 
+                                       class="search-input" 
+                                       placeholder="Buscar usuários..." 
+                                       id="user-search-input">
+                                <button class="search-clear-btn" id="search-clear-btn" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
                         <div class="suggestion-list">
-                            <!-- Sugestão de Usuário 1 (será populado por JS) -->
-                            <div class="suggestion-item">
-                                <img src="https://randomuser.me/api/portraits/men/88.jpg" alt="Foto de Perfil" class="suggestion-pic">
-                                <div class="suggestion-info">
-                                    <span class="suggestion-name">Felipe Souza</span>
-                                    <span class="suggestion-role">Engenheiro de Dados</span>
-                                </div>
-                                <button class="btn btn-outline-gradient connect-btn"><i class="fas fa-user-plus"></i> Conectar</button>
-                            </div>
-                            <!-- Sugestão de Usuário 2 (será populado por JS) -->
-                            <div class="suggestion-item">
-                                <img src="https://randomuser.me/api/portraits/women/77.jpg" alt="Foto de Perfil" class="suggestion-pic">
-                                <div class="suggestion-info">
-                                    <span class="suggestion-name">Larissa Costa</span>
-                                    <span class="suggestion-role">UX Designer</span>
-                                </div>
-                                <button class="btn btn-outline-gradient connect-btn"><i class="fas fa-user-plus"></i> Conectar</button>
-                            </div>
+                            <!-- As sugestões serão carregadas dinamicamente pelo JavaScript -->
+                        </div>
+                        
+                        <!-- Mensagem de resultado da busca -->
+                        <div class="search-results-info" id="search-results-info" style="display: none;">
+                            <p id="search-results-text"></p>
                         </div>
                     </div>
 
@@ -302,6 +289,7 @@
     <script src="../public/js/env-config.js" defer></script>
     <script src="../public/js/auth-check.js" defer></script>
     <script src="../public/js/script.js" defer></script>
+    <script src="../public/js/community.js" defer></script>
     <div class="theme-transition-overlay"></div>
 </body>
 </html> 
