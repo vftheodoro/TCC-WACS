@@ -122,15 +122,39 @@ function performSearch(searchTerm) {
     if (!suggestionList || allUsers.length === 0) return;
 
     // Filtrar usuários baseado no termo de busca
-    const filteredUsers = allUsers.filter(user => {
+    let filteredUsers = allUsers.filter(user => {
         const userName = (user.displayName || user.name || user.email || '').toLowerCase();
         const userRole = (user.userRole || user.profession || user.mobilityType || '').toLowerCase();
         const userCity = (user.cidade || user.city || '').toLowerCase();
-        
         return userName.includes(searchTerm) || 
                userRole.includes(searchTerm) || 
                userCity.includes(searchTerm);
     });
+
+    // Adicionar o próprio usuário se o termo de busca corresponder ao seu nome/email
+    const firebase = initializeFirebase();
+    const auth = firebase.auth();
+    const currentUser = auth.currentUser;
+    if (currentUser && searchTerm.length > 0) {
+        const selfName = (currentUser.displayName || currentUser.email || '').toLowerCase();
+        if (selfName.includes(searchTerm)) {
+            // Verificar se já está na lista
+            const alreadyInList = filteredUsers.some(user => user.uid === currentUser.uid);
+            if (!alreadyInList) {
+                // Montar objeto do próprio usuário
+                const selfUser = {
+                    uid: currentUser.uid,
+                    displayName: currentUser.displayName,
+                    name: currentUser.displayName,
+                    email: currentUser.email,
+                    photoURL: currentUser.photoURL,
+                    userRole: 'Você',
+                    isSelf: true
+                };
+                filteredUsers.unshift(selfUser);
+            }
+        }
+    }
 
     // Limpar lista atual
     suggestionList.innerHTML = '';
@@ -144,6 +168,14 @@ function performSearch(searchTerm) {
             // Mostrar usuários filtrados
             filteredUsers.forEach(user => {
                 const suggestionItem = createSuggestionItem(user);
+                if (user.isSelf) {
+                    suggestionItem.classList.add('self-profile');
+                    // Adiciona indicação textual
+                    const info = document.createElement('div');
+                    info.className = 'self-profile-info';
+                    info.textContent = 'Este é o seu perfil';
+                    suggestionItem.appendChild(info);
+                }
                 suggestionItem.classList.add('highlighted');
                 suggestionList.appendChild(suggestionItem);
             });
@@ -486,7 +518,6 @@ async function loadUserSuggestions() {
         // Buscar usuários para sugestões (excluindo o usuário atual)
         const suggestionsSnapshot = await db.collection('users')
             .where('uid', '!=', currentUser.uid)
-            .limit(20) // Buscar mais usuários para ter dados para busca
             .get();
 
         // Esconder estado de carregamento
@@ -509,33 +540,26 @@ async function loadUserSuggestions() {
             allUsers.push(userData);
         });
 
-        // Filtrar usuários com foto no lado do cliente
-        const usersWithPhotos = allUsers.filter(userData => {
-            const hasPhoto = (userData.photoURL && userData.photoURL.trim() !== '') || 
-                           (userData.photo && userData.photo.trim() !== '');
-            return hasPhoto;
-        });
-
-        // Limitar a 5 usuários com foto para sugestões
-        const limitedUsers = usersWithPhotos.slice(0, 5);
+        // Limitar a 5 usuários para sugestões (sem filtrar por foto)
+        const limitedUsers = allUsers.slice(0, 5);
 
         if (limitedUsers.length === 0) {
             suggestionList.innerHTML = `
                 <div class="no-suggestions-message">
-                    <p>Nenhuma sugestão com foto disponível no momento.</p>
+                    <p>Nenhuma sugestão disponível no momento.</p>
                     <p style="font-size: 0.9em; margin-top: 10px;">Mais usuários se juntarão em breve!</p>
                 </div>
             `;
             return;
         }
 
-        // Processar cada sugestão com foto
+        // Processar cada sugestão
         limitedUsers.forEach((userData) => {
             const suggestionItem = createSuggestionItem(userData);
             suggestionList.appendChild(suggestionItem);
         });
 
-        console.log(`Carregadas ${limitedUsers.length} sugestões com foto`);
+        console.log(`Carregadas ${limitedUsers.length} sugestões de usuários`);
 
     } catch (error) {
         console.error('Erro ao carregar sugestões:', error);
@@ -565,17 +589,19 @@ function createSuggestionItem(userData) {
             <span class="suggestion-name">${userName}</span>
             <span class="suggestion-role">${formatUserRole(userRole)}</span>
         </div>
-        <button class="btn btn-outline-gradient connect-btn" data-user-id="${userData.uid}">
+        ${userData.isSelf ? '' : `<button class="btn btn-outline-gradient connect-btn" data-user-id="${userData.uid}">
             <i class="fas fa-user-plus"></i> Conectar
-        </button>
+        </button>`}
     `;
 
-    // Adicionar evento de clique para o botão conectar
-    const connectBtn = suggestionItem.querySelector('.connect-btn');
-    connectBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        connectWithUser(userData);
-    });
+    // Adicionar evento de clique para o botão conectar, se não for o próprio usuário
+    if (!userData.isSelf) {
+        const connectBtn = suggestionItem.querySelector('.connect-btn');
+        connectBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            connectWithUser(userData);
+        });
+    }
 
     return suggestionItem;
 }

@@ -265,7 +265,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         console.log('Tentando redirecionar para (mobile): ', redirectTo);
                         window.location.href = redirectTo;
                         // *** FIM: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
-
                     } catch (error) {
                         console.error("Erro ao fazer logout (mobile):", error);
                         showFlashNotification('Erro ao sair. Por favor, tente novamente.', 'error');
