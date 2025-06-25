@@ -693,4 +693,75 @@ window.CommunityManager = {
     showNotification,
     performSearch,
     initializeSearch
-}; 
+};
+
+// --- INÍCIO: Upload de imagem em post ---
+let selectedImageFile = null;
+
+document.addEventListener('DOMContentLoaded', () => {
+  const imageInput = document.querySelector('.post-image-input');
+  const imageBtn = document.querySelector('.post-image-btn');
+  const postBtn = document.querySelector('.post-btn');
+  const textarea = document.querySelector('.post-textarea');
+
+  if (imageBtn && imageInput) {
+    imageBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      imageInput.click();
+    });
+    imageInput.addEventListener('change', (e) => {
+      selectedImageFile = e.target.files[0];
+    });
+  }
+
+  if (postBtn) {
+    postBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const text = textarea.value.trim();
+      if (!text && !selectedImageFile) return;
+      const firebase = initializeFirebase();
+      if (!firebase) return showNotification('Erro ao inicializar Firebase', 'error');
+      const auth = firebase.auth();
+      const db = firebase.firestore();
+      const storage = firebase.storage();
+      const user = auth.currentUser;
+      if (!user) {
+        showNotification('Você precisa estar logado para postar.', 'error');
+        return;
+      }
+      let imageUrl = null;
+      if (selectedImageFile) {
+        try {
+          const fileName = `posts/${user.uid}_${Date.now()}`;
+          const postImageRef = storage.ref().child(fileName);
+          await postImageRef.put(selectedImageFile);
+          imageUrl = await postImageRef.getDownloadURL();
+        } catch (err) {
+          showNotification('Erro ao fazer upload da imagem: ' + err.message, 'error');
+          return;
+        }
+      }
+      try {
+        await db.collection('posts').add({
+          userId: user.uid,
+          userName: user.displayName,
+          userPhoto: user.photoURL,
+          text,
+          imageUrl,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          likes: [],
+          comments: [],
+        });
+        textarea.value = '';
+        if (imageInput) imageInput.value = '';
+        selectedImageFile = null;
+        showNotification('Post publicado com sucesso!', 'success');
+        // Recarregar o feed (implemente sua função de recarregar aqui)
+        if (typeof renderFeed === 'function') renderFeed();
+      } catch (err) {
+        showNotification('Erro ao publicar post: ' + err.message, 'error');
+      }
+    });
+  }
+});
+// --- FIM: Upload de imagem em post --- 
