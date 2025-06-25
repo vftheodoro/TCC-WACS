@@ -203,6 +203,180 @@
             background: #222; /* fallback para dark */
             box-shadow: 0 2px 8px rgba(0,0,0,0.15);
         }
+
+        .star:hover {
+            color: #ffd700;
+        }
+        .feature-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 8px 0;
+        }
+        .feature-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+        }
+        .evaluation-card {
+            transition: all 0.3s ease;
+        }
+        .evaluation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Estilos para o modal de avaliação */
+        .modal {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .modal-content {
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .rating-stars .star.active {
+            color: #ffd700 !important;
+        }
+
+        .rating-stars .star:hover {
+            color: #ffd700 !important;
+        }
+
+        /* Estilos para os botões do modal */
+        .btn-outline-gradient {
+            background: transparent;
+            border: 2px solid var(--accent-color, #4A90E2);
+            color: var(--accent-color, #4A90E2);
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-gradient:hover {
+            background: var(--accent-color, #4A90E2);
+            color: white;
+        }
+
+        /* Responsividade do modal */
+        @media (max-width: 768px) {
+            .modal-content {
+                margin: 10% auto;
+                max-width: 95%;
+                padding: 20px;
+            }
+        }
+
+        /* Estilos para campos somente leitura */
+        input[readonly] {
+            background-color: var(--card-bg, #f5f5f5) !important;
+            color: var(--text-color) !important;
+            cursor: not-allowed !important;
+            border-color: var(--border-color) !important;
+            opacity: 0.8;
+        }
+
+        body.dark-theme input[readonly] {
+            background-color: var(--dark-card, #2d3748) !important;
+            color: var(--dark-text, #e2e8f0) !important;
+        }
+
+        /* Indicador visual para campo somente leitura */
+        .readonly-indicator {
+            position: relative;
+        }
+
+        .readonly-indicator::after {
+            content: "🔒";
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            opacity: 0.6;
+        }
+
+        .eval-dark-modal {
+            background: #181c27 !important;
+            color: #fff !important;
+        }
+        .eval-local-box {
+            background: #22304a;
+            border-radius: 8px;
+            padding: 16px 18px 10px 18px;
+            margin-bottom: 18px;
+        }
+        .eval-feature-row {
+            display: flex;
+            align-items: center;
+            background: #20283a;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            padding: 8px 12px;
+            gap: 12px;
+        }
+        .eval-feature-icon {
+            color: #4A90E2;
+            font-size: 1.3rem;
+            width: 32px;
+            text-align: center;
+        }
+        .eval-feature-label {
+            flex: 1;
+            font-size: 1.08rem;
+            color: #c9d6f3;
+            font-weight: 500;
+        }
+        .eval-feature-stars {
+            min-width: 120px;
+            text-align: right;
+        }
+        .eval-feature-stars .star {
+            font-size: 1.25rem;
+            color: #3a4662;
+            cursor: pointer;
+            transition: color 0.2s;
+            margin-left: 2px;
+        }
+        .eval-feature-stars .star.active {
+            color: #ffd700;
+        }
+        .eval-feature-stars .star:hover,
+        .eval-feature-stars .star.hovered {
+            color: #ffe066;
+        }
+        .eval-btn-enviar {
+            width: 100%;
+            background: #4A90E2;
+            color: #fff;
+            border: none;
+            border-radius: 6px;
+            padding: 13px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: background 0.2s;
+        }
+        .eval-btn-enviar:hover {
+            background: #3576b8;
+        }
     </style>
 </head>
 <body class="fade-in">
@@ -280,6 +454,7 @@
             
             <div style="text-align: center; margin: 20px 0;">
                 <button class="btn btn-gradient" id="addLocationBtn">Adicionar Novo Local Acessível</button>
+                <button class="btn btn-outline-gradient" id="evaluateLocationBtn" style="margin-left: 10px;">Avaliar Local</button>
             </div>
 
             <div class="locations-container">
@@ -430,6 +605,51 @@
         </div>
     </div>
 
+    <!-- Modal para Avaliação de Local -->
+    <div id="evaluationModal" class="modal" style="display:none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.6);">
+        <div class="modal-content eval-dark-modal" style="background-color: #181c27; color: #fff; opacity: 1; margin: 5% auto; padding: 32px 32px 24px 32px; border-radius: 12px; max-width: 540px; max-height: 95vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 style="margin: 0; color: #4A90E2; font-size: 1.6rem; font-weight: 700;">Avaliar Local</h2>
+                <span class="close-btn" id="closeEvaluationModalBtn" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            <div class="eval-local-box" style="background: #22304a; border-radius: 8px; padding: 16px 18px 10px 18px; margin-bottom: 18px;">
+                <div id="evalLocalName" style="font-size: 1.15rem; font-weight: 600; color: #4A90E2; margin-bottom: 2px;"></div>
+                <div id="evalLocalAddress" style="font-size: 0.98rem; color: #c9d6f3; word-break: break-word;"></div>
+            </div>
+            <form id="evaluationForm">
+                <div style="margin-bottom: 18px;">
+                    <div style="font-weight: 600; margin-bottom: 10px; color: #fff;">Avaliação dos Recursos de Acessibilidade</div>
+                    <div class="eval-feature-row">
+                        <span class="eval-feature-icon"><i class="fas fa-wheelchair"></i></span>
+                        <span class="eval-feature-label">Cadeira de Rodas</span>
+                        <span class="eval-feature-stars" data-feature="cadeira_rodas"></span>
+                    </div>
+                    <div class="eval-feature-row">
+                        <span class="eval-feature-icon"><i class="fas fa-ruler-combined"></i></span>
+                        <span class="eval-feature-label">Rampa</span>
+                        <span class="eval-feature-stars" data-feature="rampa"></span>
+                    </div>
+                    <div class="eval-feature-row">
+                        <span class="eval-feature-icon"><i class="fas fa-elevator"></i></span>
+                        <span class="eval-feature-label">Elevador</span>
+                        <span class="eval-feature-stars" data-feature="elevador"></span>
+                    </div>
+                    <div class="eval-feature-row">
+                        <span class="eval-feature-icon"><i class="fas fa-restroom"></i></span>
+                        <span class="eval-feature-label">Banheiro Adaptado</span>
+                        <span class="eval-feature-stars" data-feature="banheiro"></span>
+                    </div>
+                </div>
+                <div style="margin-bottom: 18px;">
+                    <label for="evalComments" style="font-weight: 500; color: #c9d6f3; margin-bottom: 6px; display: block;">Comentário (opcional)</label>
+                    <textarea id="evalComments" name="comments" rows="4" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #2a3550; background: #1a2130; color: #fff; resize: vertical;"></textarea>
+                </div>
+                <div id="evaluationFormStatus" style="margin-bottom: 10px; text-align: center;"></div>
+                <button type="submit" class="eval-btn-enviar">Enviar Avaliação</button>
+            </form>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
@@ -525,6 +745,11 @@
                         <div class="user-avatar">${data.lastUser.initials || '...'}</div>
                         <span>${data.lastUser.name} - ${data.lastUser.timestamp}</span>
                     </div>` : ''}
+                    <div style="margin-top: 15px; text-align: center;">
+                        <button class="btn btn-outline-gradient" onclick="evaluateLocation('${data.name}', '${data.address}')" style="font-size: 0.9em; padding: 8px 16px;">
+                            <i class="fas fa-star"></i> Avaliar Local
+                        </button>
+                    </div>
                 `;
                 locationsList.appendChild(card);
             });
@@ -924,6 +1149,143 @@
                 }
             });
         }
+
+        // --- Botão de Avaliação ---
+        document.getElementById('evaluateLocationBtn').addEventListener('click', function() {
+            // Verifica se o usuário está logado
+            if (firebase.auth().currentUser) {
+                // Abre o modal de avaliação
+                openEvaluationModal();
+            } else {
+                // Se não estiver logado, redireciona para o login
+                alert('Você precisa estar logado para avaliar locais. Redirecionando para o login...');
+                window.location.href = '../wacs_antigo/login/login.html';
+            }
+        });
+
+        // --- Função para avaliar local específico ---
+        window.evaluateLocation = function(locationName, locationAddress) {
+            // Verifica se o usuário está logado
+            if (firebase.auth().currentUser) {
+                // Abre o modal de avaliação com os dados do local
+                openEvaluationModal(locationName, locationAddress);
+            } else {
+                // Se não estiver logado, redireciona para o login
+                alert('Você precisa estar logado para avaliar locais. Redirecionando para o login...');
+                window.location.href = '../wacs_antigo/login/login.html';
+            }
+        };
+
+        // --- Funções do Modal de Avaliação ---
+        const evaluationModal = document.getElementById('evaluationModal');
+        const closeEvaluationModalBtn = document.getElementById('closeEvaluationModalBtn');
+        const cancelEvaluationBtn = document.getElementById('cancelEvaluationBtn');
+        const evaluationForm = document.getElementById('evaluationForm');
+        const evalRatingStars = document.getElementById('evalRatingStars');
+        const evalRatingInput = document.getElementById('evalRating');
+
+        // Estado das avaliações (deve vir antes de tudo)
+        const featureRatings = { cadeira_rodas: 0, rampa: 0, elevador: 0, banheiro: 0 };
+
+        // Função para abrir o modal com nome/endereço
+        function openEvaluationModal(locationName = '', locationAddress = '') {
+            document.getElementById('evalLocalName').textContent = locationName || '';
+            document.getElementById('evalLocalAddress').textContent = locationAddress || '';
+            // Limpa estrelas
+            for (const feature of ['cadeira_rodas','rampa','elevador','banheiro']) {
+                renderStars(feature, 0);
+            }
+            document.getElementById('evalComments').value = '';
+            document.getElementById('evaluationFormStatus').textContent = '';
+            document.getElementById('evaluationModal').style.display = 'block';
+        }
+
+        // Renderiza estrelas para cada recurso
+        function renderStars(feature, value) {
+            const container = document.querySelector('.eval-feature-stars[data-feature="'+feature+'"]');
+            container.innerHTML = '';
+            for (let i=1; i<=5; i++) {
+                const star = document.createElement('i');
+                star.className = 'fas fa-star star'+(i<=value?' active':'');
+                star.dataset.value = i;
+                star.addEventListener('mouseenter', () => highlightStars(feature, i));
+                star.addEventListener('mouseleave', () => highlightStars(feature, 0));
+                star.addEventListener('click', () => setFeatureRating(feature, i));
+                container.appendChild(star);
+            }
+        }
+        function setFeatureRating(feature, value) {
+            featureRatings[feature] = value;
+            renderStars(feature, value);
+        }
+        function highlightStars(feature, value) {
+            const container = document.querySelector('.eval-feature-stars[data-feature="'+feature+'"]');
+            const stars = container.querySelectorAll('.star');
+            stars.forEach((star, idx) => {
+                if (value && idx < value) {
+                    star.classList.add('hovered');
+                } else {
+                    star.classList.remove('hovered');
+                }
+            });
+        }
+        // Inicializa estrelas
+        for (const feature of ['cadeira_rodas','rampa','elevador','banheiro']) {
+            renderStars(feature, 0);
+        }
+        // Fechar modal
+        document.getElementById('closeEvaluationModalBtn').onclick = () => {
+            document.getElementById('evaluationModal').style.display = 'none';
+        };
+        window.addEventListener('click', (event) => {
+            if (event.target == document.getElementById('evaluationModal')) {
+                document.getElementById('evaluationModal').style.display = 'none';
+            }
+        });
+        // Submissão do formulário
+        document.getElementById('evaluationForm').onsubmit = async function(e) {
+            e.preventDefault();
+            const formStatus = document.getElementById('evaluationFormStatus');
+            formStatus.textContent = 'Salvando avaliação...';
+            formStatus.style.color = '#4A90E2';
+            try {
+                // Pega dados do usuário logado
+                const user = firebase.auth().currentUser;
+                let photoURL = '';
+                if (user && user.photoURL) {
+                    photoURL = user.photoURL;
+                }
+                // Calcula média das estrelas dos recursos
+                const ratingsArr = Object.values(featureRatings);
+                const rating = ratingsArr.length > 0 ? (ratingsArr.reduce((a, b) => a + b, 0) / ratingsArr.length) : 0;
+                // Monta o objeto conforme solicitado
+                const reviewData = {
+                    comment: document.getElementById('evalComments').value,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    featureRatings: {
+                        ramp: featureRatings.rampa,
+                        wheelchair: featureRatings.cadeira_rodas,
+                        elevator: featureRatings.elevador,
+                        bathroom: featureRatings.banheiro
+                    },
+                    locationId: document.getElementById('evalLocalName').textContent,
+                    photoURL: photoURL,
+                    rating: Math.round(rating * 10) / 10, // arredonda para 1 casa decimal
+                    userId: user ? user.uid : '',
+                    userName: user ? (user.displayName || user.email) : ''
+                };
+                await firebase.firestore().collection('reviews').add(reviewData);
+                formStatus.textContent = 'Avaliação salva com sucesso!';
+                formStatus.style.color = 'green';
+                setTimeout(() => {
+                    document.getElementById('evaluationModal').style.display = 'none';
+                    formStatus.textContent = '';
+                }, 1800);
+            } catch (error) {
+                formStatus.textContent = 'Erro ao salvar avaliação: ' + error.message;
+                formStatus.style.color = 'red';
+            }
+        };
     </script>
 </body>
 </html> 

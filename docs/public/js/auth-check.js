@@ -183,7 +183,17 @@ document.addEventListener('click', (e) => {
         auth.signOut().then(() => {
             showFlashMessage('Você foi desconectado.', 'info');
             // Redireciona para a página inicial após o logout
-            window.location.href = '../../index.html';
+            // Corrigindo o caminho baseado na localização atual
+            const currentPath = window.location.pathname;
+            let redirectPath = '../index.html'; // Padrão para páginas em views/
+            
+            if (currentPath.includes('/views/')) {
+                redirectPath = '../index.html';
+            } else if (currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
+                redirectPath = 'index.html';
+            }
+            
+            window.location.href = redirectPath;
         }).catch((error) => {
             console.error('Error during logout:', error);
             showFlashMessage('Erro ao desconectar. Tente novamente.', 'error');

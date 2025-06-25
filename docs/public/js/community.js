@@ -30,6 +30,145 @@ function initializeFirebase() {
     return firebase;
 }
 
+// Função para criar dados de usuários de exemplo (apenas para desenvolvimento)
+async function createSampleUsers() {
+    const firebase = initializeFirebase();
+    if (!firebase) return;
+
+    const db = firebase.firestore();
+    const currentUser = firebase.auth().currentUser;
+
+    if (!currentUser) {
+        console.log('Usuário não está logado');
+        return;
+    }
+
+    // Verificar se já existem usuários de exemplo
+    const existingUsers = await db.collection('users').limit(5).get();
+    if (!existingUsers.empty) {
+        console.log('Já existem usuários no banco de dados');
+        return;
+    }
+
+    const sampleUsers = [
+        {
+            uid: 'sample_user_1',
+            displayName: 'João Silva',
+            name: 'João Silva',
+            email: 'joao.silva@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/men/32.jpg',
+            userRole: 'cadeirante',
+            mobilityType: 'cadeirante',
+            cidade: 'Registro',
+            profissao: 'Professor',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_2',
+            displayName: 'Maria Oliveira',
+            name: 'Maria Oliveira',
+            email: 'maria.oliveira@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/women/44.jpg',
+            userRole: 'deficiente_visual',
+            mobilityType: 'visual',
+            cidade: 'São Paulo',
+            profissao: 'Advogada',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_3',
+            displayName: 'Pedro Santos',
+            name: 'Pedro Santos',
+            email: 'pedro.santos@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/men/67.jpg',
+            userRole: 'deficiente_auditivo',
+            mobilityType: 'auditiva',
+            cidade: 'Santos',
+            profissao: 'Designer',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_4',
+            displayName: 'Ana Costa',
+            name: 'Ana Costa',
+            email: 'ana.costa@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/women/23.jpg',
+            userRole: 'cadeirante',
+            mobilityType: 'cadeirante',
+            cidade: 'Campinas',
+            profissao: 'Médica',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_5',
+            displayName: 'Carlos Ferreira',
+            name: 'Carlos Ferreira',
+            email: 'carlos.ferreira@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/men/89.jpg',
+            userRole: 'deficiente_motor',
+            mobilityType: 'muleta',
+            cidade: 'Ribeirão Preto',
+            profissao: 'Engenheiro',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_6',
+            displayName: 'Lucia Mendes',
+            name: 'Lucia Mendes',
+            email: 'lucia.mendes@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/women/56.jpg',
+            userRole: 'cadeirante',
+            mobilityType: 'cadeirante',
+            cidade: 'Sorocaba',
+            profissao: 'Fisioterapeuta',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_7',
+            displayName: 'Roberto Lima',
+            name: 'Roberto Lima',
+            email: 'roberto.lima@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/men/12.jpg',
+            userRole: 'deficiente_visual',
+            mobilityType: 'visual',
+            cidade: 'São José dos Campos',
+            profissao: 'Músico',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        },
+        {
+            uid: 'sample_user_8',
+            displayName: 'Fernanda Rocha',
+            name: 'Fernanda Rocha',
+            email: 'fernanda.rocha@example.com',
+            photoURL: 'https://randomuser.me/api/portraits/women/78.jpg',
+            userRole: 'cadeirante',
+            mobilityType: 'cadeirante',
+            cidade: 'Piracicaba',
+            profissao: 'Psicóloga',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        }
+    ];
+
+    try {
+        // Criar documentos para cada usuário de exemplo
+        for (const userData of sampleUsers) {
+            await db.collection('users').doc(userData.uid).set(userData);
+        }
+        console.log('Usuários de exemplo criados com sucesso!');
+        showNotification('Usuários de exemplo criados! Agora você pode testar a busca.', 'success');
+        
+        // Recarregar as sugestões
+        setTimeout(() => {
+            loadUserSuggestions();
+            loadUsersForPrivateChats();
+        }, 1000);
+        
+    } catch (error) {
+        console.error('Erro ao criar usuários de exemplo:', error);
+        showNotification('Erro ao criar usuários de exemplo: ' + error.message, 'error');
+    }
+}
+
 // Mostrar estado de carregamento
 function showLoading(element) {
     if (element) {

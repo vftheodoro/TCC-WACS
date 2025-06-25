@@ -197,19 +197,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         // *** INÍCIO: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
                         // Este é um HACK específico para o protocolo file:/// para desenvolvimento local sem servidor.
                         // Em um ambiente de servidor web (http://localhost), caminhos relativos simples funcionariam.
-                        let redirectTo = '/'; // Fallback padrão
-                        const currentHref = window.location.href;
-                        // Tenta encontrar a pasta 'docs' no caminho para construir um caminho absoluto.
-                        // Isso assume que 'docs' é a raiz do seu projeto quando acessado via file://
-                        const docsPathSegment = '/TCC-WACS/docs/'; // Ajuste se o nome da pasta raiz for diferente
-                        const docsIndex = currentHref.indexOf(docsPathSegment);
-
-                        if (docsIndex !== -1) {
-                            redirectTo = currentHref.substring(0, docsIndex + docsPathSegment.length) + 'index.html';
-                        } else if (window.location.pathname.includes('/views/')) {
-                            // Se não encontrou o segmento 'docs', mas está em 'views', tenta subir um nível
+                        let redirectTo = 'index.html'; // Fallback padrão
+                        const currentPath = window.location.pathname;
+                        
+                        if (currentPath.includes('/views/')) {
                             redirectTo = '../index.html';
+                        } else if (currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
+                            redirectTo = 'index.html';
                         }
+                        
                         console.log('Tentando redirecionar para (desktop): ', redirectTo);
                         window.location.href = redirectTo;
                         // *** FIM: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
@@ -249,19 +245,15 @@ document.addEventListener('DOMContentLoaded', () => {
                         // *** INÍCIO: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
                         // Este é um HACK específico para o protocolo file:/// para desenvolvimento local sem servidor.
                         // Em um ambiente de servidor web (http://localhost), caminhos relativos simples funcionariam.
-                        let redirectTo = '/'; // Fallback padrão
-                        const currentHref = window.location.href;
-                        // Tenta encontrar a pasta 'docs' no caminho para construir um caminho absoluto.
-                        // Isso assume que 'docs' é a raiz do seu projeto quando acessado via file://
-                        const docsPathSegment = '/TCC-WACS/docs/'; // Ajuste se o nome da pasta raiz for diferente
-                        const docsIndex = currentHref.indexOf(docsPathSegment);
-
-                        if (docsIndex !== -1) {
-                            redirectTo = currentHref.substring(0, docsIndex + docsPathSegment.length) + 'index.html';
-                        } else if (window.location.pathname.includes('/views/')) {
-                            // Se não encontrou o segmento 'docs', mas está em 'views', tenta subir um nível
+                        let redirectTo = 'index.html'; // Fallback padrão
+                        const currentPath = window.location.pathname;
+                        
+                        if (currentPath.includes('/views/')) {
                             redirectTo = '../index.html';
+                        } else if (currentPath.endsWith('/index.html') || currentPath.endsWith('/')) {
+                            redirectTo = 'index.html';
                         }
+                        
                         console.log('Tentando redirecionar para (mobile): ', redirectTo);
                         window.location.href = redirectTo;
                         // *** FIM: AJUSTE TEMPORÁRIO PARA AMBIENTE FILE:// ***
