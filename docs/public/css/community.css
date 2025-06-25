@@ -221,6 +221,7 @@
     gap: 14px;
     position: relative;
     transition: box-shadow 0.2s, background 0.3s;
+    margin-bottom: 28px;
 }
 
 .post-card:hover {
