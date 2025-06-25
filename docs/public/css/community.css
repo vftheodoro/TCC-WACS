@@ -1538,4 +1538,161 @@
   .image-fullscreen-close {
     top: 8px; right: 8px; width: 36px; height: 36px; font-size: 1.1em;
   }
+}
+
+/* Chat Regional Info */
+.regional-chat-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 25px;
+    background: linear-gradient(135deg, var(--gradient-color-1), var(--gradient-color-2));
+    border-radius: 12px;
+    color: white;
+    text-align: left;
+    box-shadow: var(--shadow-medium);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.regional-chat-info:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-large);
+}
+
+.regional-chat-icon {
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8em;
+}
+
+.regional-chat-content {
+    flex: 1;
+}
+
+.regional-chat-content h4 {
+    font-size: 1.4em;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: white;
+}
+
+.regional-chat-content p {
+    font-size: 0.95em;
+    line-height: 1.5;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.regional-chat-content p:last-child {
+    margin-bottom: 0;
+    font-size: 0.85em;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.regional-chat-content i {
+    margin-right: 5px;
+}
+
+.regional-chat-actions {
+    margin: 15px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.regional-chat-actions .enter-chat-btn {
+    width: 100%;
+    padding: 12px 20px;
+    font-size: 0.95em;
+    font-weight: 600;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.regional-chat-actions .enter-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+}
+
+.regional-chat-actions .enter-chat-btn i {
+    margin-right: 8px;
+    font-size: 1.1em;
+}
+
+/* Estilo específico para o botão outline */
+.regional-chat-actions .btn-outline-gradient {
+    background: transparent;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    color: white;
+}
+
+.regional-chat-actions .btn-outline-gradient:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: white;
+    color: white;
+}
+
+@media (max-width: 768px) {
+    .regional-chat-info {
+        flex-direction: column;
+        text-align: center;
+        gap: 15px;
+        padding: 20px;
+    }
+    
+    .regional-chat-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5em;
+    }
+    
+    .regional-chat-content h4 {
+        font-size: 1.2em;
+    }
+    
+    .regional-chat-content p {
+        font-size: 0.9em;
+    }
+    
+    .regional-chat-actions .enter-chat-btn {
+        padding: 10px 16px;
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    .regional-chat-info {
+        padding: 15px;
+        gap: 12px;
+    }
+    
+    .regional-chat-icon {
+        width: 45px;
+        height: 45px;
+        font-size: 1.3em;
+    }
+    
+    .regional-chat-content h4 {
+        font-size: 1.1em;
+    }
+    
+    .regional-chat-content p {
+        font-size: 0.85em;
+    }
+    
+    .regional-chat-actions .enter-chat-btn {
+        padding: 8px 14px;
+        font-size: 0.85em;
+    }
+    
+    .regional-chat-actions .enter-chat-btn i {
+        font-size: 1em;
+    }
 } 

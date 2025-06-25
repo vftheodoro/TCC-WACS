@@ -26,5 +26,55 @@ service firebase.storage {
       allow update, delete: if request.auth != null && 
                             request.auth.uid == getUserIdFromFileName();
     }
+    
+    // Imagens de posts
+    match /posts/{fileName} {
+      allow create: if request.auth != null &&
+                    request.resource.contentType.matches('image/.*') &&
+                    request.resource.size < 5 * 1024 * 1024;
+      allow read: if true;
+    }
+    
+    // Imagens de locais acessíveis
+    match /locations/{fileName} {
+      // Permitir leitura pública para imagens de locais (para visualização no mapa)
+      allow read: if true;
+      
+      // Extrair ID do usuário do nome do arquivo (userid_timestamp_filename.jpg)
+      function getUserIdFromLocationFileName() {
+        return fileName.split('_')[0];
+      }
+      
+      // Permitir criação apenas por usuários autenticados e apenas para seu próprio ID
+      allow create: if request.auth != null && 
+                    request.auth.uid == getUserIdFromLocationFileName() &&
+                    request.resource.contentType.matches('image/.*') && 
+                    request.resource.size < 10 * 1024 * 1024; // Máximo 10MB para fotos de locais
+      
+      // Permitir atualização e exclusão apenas para o próprio usuário que fez o upload
+      allow update, delete: if request.auth != null && 
+                            request.auth.uid == getUserIdFromLocationFileName();
+    }
+    
+    // Imagens do chat
+    match /chatImages/{fileName} {
+      // Permitir leitura pública para imagens do chat
+      allow read: if true;
+      
+      // Extrair ID do usuário do nome do arquivo (userid_timestamp)
+      function getUserIdFromChatFileName() {
+        return fileName.split('_')[0];
+      }
+      
+      // Permitir criação apenas por usuários autenticados e apenas para seu próprio ID
+      allow create: if request.auth != null && 
+                    request.auth.uid == getUserIdFromChatFileName() &&
+                    request.resource.contentType.matches('image/.*') && 
+                    request.resource.size < 5 * 1024 * 1024; // Máximo 5MB
+      
+      // Permitir atualização e exclusão apenas para o próprio usuário
+      allow update, delete: if request.auth != null && 
+                            request.auth.uid == getUserIdFromChatFileName();
+    }
   }
 } 

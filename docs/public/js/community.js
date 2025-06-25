@@ -356,232 +356,1456 @@ async function loadUsersForPrivateChats() {
         return;
     }
 
-    // Mostrar estado de carregamento
-    showLoading(chatList);
-
-    try {
-        // Buscar todos os usuários cadastrados, exceto o usuário atual
-        const usersSnapshot = await db.collection('users')
-            .where('uid', '!=', currentUser.uid)
-            .limit(10) // Buscar mais usuários para filtrar no cliente
-            .get();
-
-        // Esconder estado de carregamento
-        hideLoading(chatList);
-
-        if (usersSnapshot.empty) {
-            chatList.innerHTML = `
-                <div class="no-chats-message">
-                    <p>Nenhum usuário encontrado para iniciar conversas.</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Convide amigos para se juntarem à comunidade WACS!</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Filtrar usuários com foto no lado do cliente
-        const usersWithPhotos = [];
-        usersSnapshot.forEach((doc) => {
-            const userData = doc.data();
-            const hasPhoto = (userData.photoURL && userData.photoURL.trim() !== '') || 
-                           (userData.photo && userData.photo.trim() !== '');
-            
-            if (hasPhoto) {
-                usersWithPhotos.push(userData);
-            }
-        });
-
-        // Limitar a 2 usuários com foto
-        const limitedUsers = usersWithPhotos.slice(0, 2);
-
-        if (limitedUsers.length === 0) {
-            chatList.innerHTML = `
-                <div class="no-chats-message">
-                    <p>Nenhum usuário com foto de perfil encontrado.</p>
-                    <p style="font-size: 0.9em; margin-top: 10px;">Convide amigos para se juntarem à comunidade WACS!</p>
-                </div>
-            `;
-            return;
-        }
-
-        // Verificar se "Aguinaldo" está presente, se não, adicionar
-        const hasAguinaldo = limitedUsers.some(user => 
-            (user.displayName && user.displayName.toLowerCase().includes('aguinaldo')) ||
-            (user.name && user.name.toLowerCase().includes('aguinaldo')) ||
-            (user.email && user.email.toLowerCase().includes('aguinaldo'))
-        );
-
-        if (!hasAguinaldo && limitedUsers.length < 2) {
-            const aguinaldoUser = {
-                uid: 'aguinaldo_sample',
-                displayName: 'Aguinaldo',
-                name: 'Aguinaldo',
-                email: 'aguinaldo@wacs.com',
-                photoURL: 'https://randomuser.me/api/portraits/men/75.jpg',
-                photo: 'https://randomuser.me/api/portraits/men/75.jpg',
-                userRole: 'Membro da Comunidade',
-                mobilityType: 'cadeirante'
-            };
-            limitedUsers.unshift(aguinaldoUser);
-        }
-
-        // Processar cada usuário encontrado com foto
-        limitedUsers.forEach((userData) => {
-            const chatItem = createChatItem(userData);
-            chatList.appendChild(chatItem);
-        });
-
-        console.log(`Carregados ${limitedUsers.length} usuários com foto para chats privados`);
-
-    } catch (error) {
-        console.error('Erro ao carregar usuários para chats privados:', error);
-        hideLoading(chatList);
-        
-        chatList.innerHTML = `
-            <div class="error-message">
-                <p>Erro ao carregar usuários. Tente novamente mais tarde.</p>
-                <p style="font-size: 0.9em; margin-top: 10px;">Detalhes: ${error.message}</p>
+    // Mostrar mensagem informativa sobre o chat regional com botões para entrar
+    chatList.innerHTML = `
+        <div class="regional-chat-info">
+            <div class="regional-chat-icon">
+                <i class="fas fa-map-marker-alt"></i>
             </div>
-        `;
-    }
-}
-
-// Criar elemento de chat para um usuário
-function createChatItem(userData) {
-    const chatItem = document.createElement('div');
-    chatItem.className = 'chat-item';
-    chatItem.setAttribute('data-user-id', userData.uid);
-
-    // Usar foto do usuário ou foto padrão
-    const userPhoto = userData.photoURL || userData.photo || '../public/images/fotos-perfil/default-avatar.png';
-    
-    // Usar nome do usuário ou email como fallback
-    const userName = userData.displayName || userData.name || userData.email || 'Usuário';
-    
-    // Gerar mensagem de exemplo baseada no tipo de usuário
-    const lastMessage = generateExampleMessage(userData);
-
-    // Determinar se deve mostrar contador de mensagens não lidas
-    const hasUnreadMessages = Math.random() > 0.7; // 30% de chance de ter mensagens não lidas
-    const unreadCount = hasUnreadMessages ? Math.floor(Math.random() * 5) + 1 : 0;
-
-    chatItem.innerHTML = `
-        <img src="${userPhoto}" alt="Foto de ${userName}" class="chat-pic" onerror="this.src='../public/images/fotos-perfil/default-avatar.png'">
-        <div class="chat-info">
-            <span class="chat-contact-name">${userName}</span>
-            <span class="last-message">${lastMessage}</span>
+            <div class="regional-chat-content">
+                <h4>Chat Regional</h4>
+                <p>Conecte-se com usuários da sua região para trocar experiências sobre acessibilidade local.</p>
+                <div class="regional-chat-actions">
+                    <button class="btn btn-gradient enter-chat-btn" onclick="enterValeRibeiraChat()">
+                        <i class="fas fa-comments"></i>
+                        Chat do Vale do Ribeira
+                    </button>
+                    <button class="btn btn-outline-gradient enter-chat-btn" onclick="enterRegistroChat()">
+                        <i class="fas fa-city"></i>
+                        Chat de Registro
+                    </button>
+                </div>
+                <p style="font-size: 0.85em; margin-top: 10px; color: rgba(255, 255, 255, 0.8);">
+                    <i class="fas fa-info-circle"></i>
+                    Chat do Vale do Ribeira: Geral da região | Chat de Registro: Exclusivo para usuários da cidade de Registro e administradores
+                </p>
+            </div>
         </div>
-        ${hasUnreadMessages ? `<span class="unread-count">${unreadCount}</span>` : ''}
     `;
 
-    // Adicionar evento de clique para iniciar chat
-    chatItem.addEventListener('click', () => {
-        initiatePrivateChat(userData);
-    });
-
-    return chatItem;
+    console.log('Chat Regional configurado - com opções para Chat do Vale do Ribeira e Chat de Registro');
 }
 
-// Gerar mensagem de exemplo baseada nos dados do usuário
-function generateExampleMessage(userData) {
-    const messages = [
-        'Olá! Como você está?',
-        'Gostaria de conversar sobre acessibilidade?',
-        'Que tal trocarmos experiências?',
-        'Oi! Tudo bem?',
-        'Interessante seu perfil!',
-        'Podemos conversar?',
-        'Olá! Bem-vindo à comunidade WACS!',
-        'Que tal compartilharmos experiências?',
-        'Muito legal conhecer você!',
-        'Tem alguma dica de acessibilidade?'
-    ];
-
-    // Se o usuário tem informações específicas, personalizar a mensagem
-    if (userData.mobilityType) {
-        const mobilityMessages = {
-            'cadeirante': 'Olá! Que tal conversarmos sobre acessibilidade?',
-            'deficiente_visual': 'Oi! Como está sua experiência com acessibilidade?',
-            'deficiente_auditivo': 'Olá! Podemos trocar experiências?',
-            'deficiente_motor': 'Oi! Que tal compartilharmos experiências?'
-        };
-        return mobilityMessages[userData.mobilityType] || messages[Math.floor(Math.random() * messages.length)];
+// Função para entrar no Chat do Vale do Ribeira
+function enterValeRibeiraChat() {
+    const firebase = initializeFirebase();
+    if (!firebase) {
+        showNotification('Erro ao inicializar Firebase', 'error');
+        return;
     }
 
-    // Se o usuário tem cidade, personalizar a mensagem
-    if (userData.cidade) {
-        return `Olá! Que tal conversarmos sobre acessibilidade em ${userData.cidade}?`;
+    const auth = firebase.auth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        showNotification('Você precisa estar logado para acessar o chat.', 'error');
+        return;
     }
 
-    return messages[Math.floor(Math.random() * messages.length)];
-}
-
-// Iniciar chat privado com um usuário
-function initiatePrivateChat(userData) {
-    const userName = userData.displayName || userData.name || userData.email || 'Usuário';
-    
-    // Abrir chat em nova janela
-    const chatWindow = window.open('', '_blank', 'width=400,height=600,scrollbars=yes,resizable=yes');
+    // Abrir chat do Vale do Ribeira em nova janela
+    const chatWindow = window.open('', '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes');
     
     if (chatWindow) {
         chatWindow.document.write(`
             <!DOCTYPE html>
-            <html>
+            <html lang="pt-BR">
             <head>
-                <title>Chat com ${userName} - WACS</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Chat do Vale do Ribeira - WACS</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
                 <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f5f5f5; }
-                    .chat-header { background: #6366f1; color: white; padding: 15px; border-radius: 8px; margin-bottom: 20px; }
-                    .chat-messages { height: 400px; overflow-y: auto; background: white; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
-                    .message { margin-bottom: 10px; padding: 10px; border-radius: 8px; }
-                    .message.sent { background: #6366f1; color: white; margin-left: 20%; }
-                    .message.received { background: #e5e7eb; color: black; margin-right: 20%; }
-                    .chat-input { display: flex; gap: 10px; }
-                    .chat-input input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
-                    .chat-input button { padding: 10px 20px; background: #6366f1; color: white; border: none; border-radius: 8px; cursor: pointer; }
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    
+                    body {
+                        font-family: 'Poppins', sans-serif;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    
+                    .chat-header {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 20px;
+                        color: white;
+                        text-align: center;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .chat-header h1 {
+                        font-size: 1.5em;
+                        font-weight: 600;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .chat-header p {
+                        font-size: 0.9em;
+                        opacity: 0.9;
+                    }
+                    
+                    .chat-messages {
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 20px;
+                        background: rgba(255, 255, 255, 0.05);
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar-track {
+                        background: rgba(255, 255, 255, 0.1);
+                        border-radius: 3px;
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar-thumb {
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 3px;
+                    }
+                    
+                    .message {
+                        margin-bottom: 15px;
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 10px;
+                        max-width: 80%;
+                    }
+                    
+                    .message.sent {
+                        flex-direction: row-reverse;
+                        margin-left: auto;
+                    }
+                    
+                    .message.received {
+                        margin-right: auto;
+                    }
+                    
+                    .message-avatar {
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 0.8em;
+                        font-weight: 600;
+                        flex-shrink: 0;
+                    }
+                    
+                    .message-content {
+                        max-width: 100%;
+                        padding: 12px 16px;
+                        border-radius: 18px;
+                        position: relative;
+                    }
+                    
+                    .message.received .message-content {
+                        background: rgba(255, 255, 255, 0.9);
+                        color: #333;
+                        border-bottom-left-radius: 4px;
+                    }
+                    
+                    .message.sent .message-content {
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        color: white;
+                        border-bottom-right-radius: 4px;
+                    }
+                    
+                    .message-user {
+                        font-size: 0.8em;
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                        opacity: 0.8;
+                    }
+                    
+                    .message-text {
+                        font-size: 0.95em;
+                        line-height: 1.4;
+                        word-break: break-word;
+                    }
+                    
+                    .message-time {
+                        font-size: 0.7em;
+                        opacity: 0.6;
+                        margin-top: 4px;
+                        text-align: right;
+                    }
+                    
+                    .chat-input-container {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 20px;
+                        border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .chat-input-row {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                    }
+                    
+                    .chat-input {
+                        flex: 1;
+                        padding: 12px 16px;
+                        border: none;
+                        border-radius: 25px;
+                        background: rgba(255, 255, 255, 0.9);
+                        font-family: 'Poppins', sans-serif;
+                        font-size: 0.95em;
+                        outline: none;
+                        resize: none;
+                        min-height: 45px;
+                        max-height: 120px;
+                    }
+                    
+                    .chat-input:focus {
+                        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+                    }
+                    
+                    .send-btn {
+                        width: 45px;
+                        height: 45px;
+                        border: none;
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        color: white;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.1em;
+                        transition: transform 0.2s ease;
+                        flex-shrink: 0;
+                    }
+                    
+                    .send-btn:hover {
+                        transform: scale(1.05);
+                    }
+                    
+                    .send-btn:active {
+                        transform: scale(0.95);
+                    }
+                    
+                    .send-btn:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                        transform: none;
+                    }
+                    
+                    .welcome-message {
+                        text-align: center;
+                        padding: 20px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-style: italic;
+                    }
+                    
+                    .system-message {
+                        text-align: center;
+                        padding: 1rem;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-style: italic;
+                    }
+                    
+                    .chat-loading {
+                        text-align: center;
+                        padding: 2rem;
+                        color: rgba(255, 255, 255, 0.7);
+                    }
+                    
+                    .message-delete-btn {
+                        position: absolute;
+                        top: 0.25rem;
+                        right: 0.25rem;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                        cursor: pointer;
+                        color: rgba(255, 255, 255, 0.6);
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        font-size: 0.8rem;
+                        background: rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .message.received .message-delete-btn {
+                        color: rgba(0, 0, 0, 0.5);
+                    }
+                    
+                    .message:hover .message-delete-btn {
+                        opacity: 1;
+                    }
+                    
+                    .message-delete-btn:hover {
+                        background-color: rgba(0, 0, 0, 0.2);
+                        color: rgba(255, 255, 255, 0.9);
+                    }
+                    
+                    .message.received .message-delete-btn:hover {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        color: rgba(0, 0, 0, 0.8);
+                    }
+                    
+                    .deleted-message {
+                        font-style: italic;
+                        opacity: 0.7;
+                    }
+                    
+                    .deleted-message i {
+                        margin-right: 0.25rem;
+                    }
+                    
+                    /* Estilos para mensagens do sistema */
+                    .system-message-item {
+                        text-align: center;
+                        margin: 15px 0;
+                        padding: 8px 0;
+                    }
+                    
+                    .system-message-content {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-size: 0.85em;
+                        font-style: italic;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .system-message-content i {
+                        color: #4CAF50;
+                        font-size: 0.9em;
+                    }
+                    
+                    .system-text {
+                        font-weight: 500;
+                    }
+                    
+                    .system-time {
+                        font-size: 0.8em;
+                        opacity: 0.7;
+                        margin-left: 4px;
+                    }
+                    
+                    @media (max-width: 600px) {
+                        .system-message-content {
+                            font-size: 0.8em;
+                            padding: 6px 12px;
+                        }
+                        
+                        .system-message-content i {
+                            font-size: 0.8em;
+                        }
+                    }
+                    
+                    @media (max-width: 600px) {
+                        .chat-header h1 {
+                            font-size: 1.3em;
+                        }
+                        
+                        .message {
+                            max-width: 90%;
+                        }
+                        
+                        .chat-input {
+                            font-size: 0.9em;
+                        }
+                        
+                        .chat-messages {
+                            padding: 15px;
+                        }
+                        
+                        .chat-input-container {
+                            padding: 15px;
+                        }
+                    }
                 </style>
             </head>
             <body>
                 <div class="chat-header">
-                    <h2>Chat com ${userName}</h2>
+                    <h1><i class="fas fa-map-marker-alt"></i> Chat do Vale do Ribeira</h1>
+                    <p>Conecte-se com usuários de toda a região</p>
                 </div>
+                
                 <div class="chat-messages" id="chatMessages">
-                    <div class="message received">
-                        <strong>${userName}:</strong> Olá! Como você está?
+                    <div class="chat-loading">
+                        <i class="fas fa-spinner fa-pulse"></i> Carregando mensagens...
                     </div>
                 </div>
-                <div class="chat-input">
-                    <input type="text" id="messageInput" placeholder="Digite sua mensagem...">
-                    <button onclick="sendMessage()">Enviar</button>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-row">
+                        <textarea 
+                            class="chat-input" 
+                            id="messageInput" 
+                            placeholder="Digite sua mensagem..."
+                            maxlength="500"
+                            rows="1"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
                 </div>
+                
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+                
                 <script>
-                    function sendMessage() {
-                        const input = document.getElementById('messageInput');
-                        const messages = document.getElementById('chatMessages');
-                        const message = input.value.trim();
+                    // Configuração do Firebase
+                    const firebaseConfig = {
+                        apiKey: '${window.ENV.FIREBASE_API_KEY}',
+                        authDomain: '${window.ENV.FIREBASE_AUTH_DOMAIN}',
+                        projectId: '${window.ENV.FIREBASE_PROJECT_ID}',
+                        storageBucket: '${window.ENV.FIREBASE_STORAGE_BUCKET}',
+                        messagingSenderId: '${window.ENV.FIREBASE_MESSAGING_SENDER_ID}',
+                        appId: '${window.ENV.FIREBASE_APP_ID}',
+                        measurementId: '${window.ENV.FIREBASE_MEASUREMENT_ID}'
+                    };
+                    
+                    // Inicializar Firebase
+                    firebase.initializeApp(firebaseConfig);
+                    const auth = firebase.auth();
+                    const db = firebase.firestore();
+                    
+                    // Elementos do DOM
+                    const messageInput = document.getElementById('messageInput');
+                    const sendBtn = document.getElementById('sendBtn');
+                    const chatMessages = document.getElementById('chatMessages');
+                    
+                    let currentUser = null;
+                    let unsubscribe = null;
+                    
+                    // Verificar autenticação
+                    auth.onAuthStateChanged(function(user) {
+                        if (user) {
+                            currentUser = user;
+                            loadChatMessages();
+                            setupChatListeners();
+                            setupInputListeners();
+                        } else {
+                            chatMessages.innerHTML = '<div class="system-message">Erro: Usuário não autenticado</div>';
+                        }
+                    });
+                    
+                    // Carregar mensagens existentes
+                    function loadChatMessages() {
+                        db.collection('chats').doc('vale_do_ribeira').collection('messages')
+                            .orderBy('timestamp', 'desc')
+                            .limit(50)
+                            .get()
+                            .then((querySnapshot) => {
+                                chatMessages.innerHTML = '';
+                                
+                                const messages = [];
+                                querySnapshot.forEach((doc) => {
+                                    messages.push({id: doc.id, ...doc.data()});
+                                });
+                                
+                                if (messages.length === 0) {
+                                    chatMessages.innerHTML = \`
+                                        <div class="welcome-message">
+                                            <i class="fas fa-users"></i>
+                                            <p>Bem-vindo ao Chat do Vale do Ribeira!</p>
+                                            <p>Compartilhe experiências sobre acessibilidade na região.</p>
+                                        </div>
+                                    \`;
+                                } else {
+                                    messages.reverse().forEach(message => {
+                                        addMessageToUI(message);
+                                    });
+                                    scrollToBottom();
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao carregar mensagens:", error);
+                                chatMessages.innerHTML = \`
+                                    <div class="system-message">
+                                        <p>Erro ao carregar mensagens. Por favor, tente novamente.</p>
+                                    </div>
+                                \`;
+                            });
+                    }
+                    
+                    // Configurar listeners para novas mensagens
+                    function setupChatListeners() {
+                        unsubscribe = db.collection('chats').doc('vale_do_ribeira').collection('messages')
+                            .orderBy('timestamp', 'desc')
+                            .limit(50)
+                            .onSnapshot((snapshot) => {
+                                snapshot.docChanges().forEach((change) => {
+                                    if (change.type === 'added') {
+                                        const message = {id: change.doc.id, ...change.doc.data()};
+                                        
+                                        if (!document.getElementById(\`message-\${message.id}\`)) {
+                                            addMessageToUI(message);
+                                            scrollToBottom();
+                                        }
+                                    } else if (change.type === 'modified') {
+                                        const message = {id: change.doc.id, ...change.doc.data()};
+                                        const messageElement = document.getElementById(\`message-\${message.id}\`);
+                                        
+                                        if (message.deleted && messageElement) {
+                                            const messageText = messageElement.querySelector('.message-text');
+                                            if (messageText) {
+                                                messageText.innerHTML = \`<i class="fas fa-ban"></i> Esta mensagem foi apagada\`;
+                                                messageText.classList.add('deleted-message');
+                                            }
+                                            
+                                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                                            if (deleteBtn) {
+                                                deleteBtn.remove();
+                                            }
+                                        }
+                                    }
+                                });
+                            }, (error) => {
+                                console.error("Erro no listener de mensagens:", error);
+                            });
+                    }
+                    
+                    // Configurar listeners de input
+                    function setupInputListeners() {
+                        sendBtn.addEventListener('click', sendMessage);
                         
-                        if (message) {
-                            messages.innerHTML += '<div class="message sent"><strong>Você:</strong> ' + message + '</div>';
-                            input.value = '';
-                            messages.scrollTop = messages.scrollHeight;
+                        messageInput.addEventListener('keydown', function(event) {
+                            if (event.key === 'Enter' && !event.shiftKey) {
+                                event.preventDefault();
+                                sendMessage();
+                            }
+                        });
+                        
+                        // Auto-resize do textarea
+                        messageInput.addEventListener('input', function() {
+                            this.style.height = 'auto';
+                            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                        });
+                    }
+                    
+                    // Enviar mensagem
+                    function sendMessage() {
+                        const messageText = messageInput.value.trim();
+                        
+                        if (!messageText || !currentUser) return;
+                        
+                        sendBtn.disabled = true;
+                        
+                        // Primeiro, contar as mensagens existentes para gerar o próximo número
+                        db.collection('chats').doc('vale_do_ribeira').collection('messages')
+                            .get()
+                            .then((querySnapshot) => {
+                                const messageCount = querySnapshot.size;
+                                const nextNumber = messageCount + 1;
+                                const messageId = \`mensagem\${String(nextNumber).padStart(2, '0')}\`;
+                                
+                                const message = {
+                                    text: messageText,
+                                    userId: currentUser.uid,
+                                    userName: currentUser.displayName || currentUser.email || 'Usuário',
+                                    userEmail: currentUser.email,
+                                    photoURL: currentUser.photoURL || '',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    messageNumber: nextNumber
+                                };
+                                
+                                // Salvar mensagem com ID personalizado
+                                return db.collection('chats').doc('vale_do_ribeira').collection('messages').doc(messageId).set(message);
+                            })
+                            .then(() => {
+                                messageInput.value = '';
+                                messageInput.style.height = 'auto';
+                                sendBtn.disabled = false;
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao enviar mensagem:", error);
+                                alert("Erro ao enviar mensagem. Tente novamente.");
+                                sendBtn.disabled = false;
+                            });
+                    }
+                    
+                    // Adicionar mensagem à interface
+                    function addMessageToUI(message) {
+                        const isCurrentUser = currentUser && message.userId === currentUser.uid;
+                        const isSystemMessage = message.isSystemMessage || message.userId === 'system';
+                        
+                        // Se for mensagem do sistema, usar estilo especial
+                        if (isSystemMessage) {
+                            const systemElement = document.createElement('div');
+                            systemElement.className = 'system-message-item';
+                            systemElement.id = \`message-\${message.id}\`;
                             
-                            // Simular resposta
-                            setTimeout(() => {
-                                messages.innerHTML += '<div class="message received"><strong>${userName}:</strong> Obrigado pela mensagem! Vou responder em breve.</div>';
-                                messages.scrollTop = messages.scrollHeight;
-                            }, 1000);
+                            const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+                            const timeFormatted = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            
+                            systemElement.innerHTML = \`
+                                <div class="system-message-content">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span class="system-text">\${message.text}</span>
+                                    <span class="system-time">\${timeFormatted}</span>
+                                </div>
+                            \`;
+                            
+                            chatMessages.appendChild(systemElement);
+                            return;
+                        }
+                        
+                        const messageElement = document.createElement('div');
+                        messageElement.className = \`message \${isCurrentUser ? 'sent' : 'received'}\`;
+                        messageElement.id = \`message-\${message.id}\`;
+                        
+                        const isDeleted = message.deleted === true;
+                        const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+                        const timeFormatted = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        let avatarContent = '';
+                        if (message.photoURL) {
+                            avatarContent = \`<div class="message-avatar" style="background-image: url('\${message.photoURL}'); background-size: cover;"></div>\`;
+                        } else if (message.userName && message.userName !== 'Usuário') {
+                            const initials = message.userName.split(' ').map(name => name[0]).join('').toUpperCase();
+                            avatarContent = \`<div class="message-avatar">\${initials}</div>\`;
+                        } else {
+                            avatarContent = \`<div class="message-avatar"><i class="fas fa-user" style="font-size: 0.7rem"></i></div>\`;
+                        }
+                        
+                        let messageText = '';
+                        if (isDeleted) {
+                            messageText = \`<p class="message-text deleted-message"><i class="fas fa-ban"></i> Esta mensagem foi apagada</p>\`;
+                        } else {
+                            messageText = \`<p class="message-text">\${escapeHtml(message.text)}</p>\`;
+                        }
+                        
+                        if (!isDeleted && isCurrentUser) {
+                            messageText += \`<div class="message-delete-btn" data-message-id="\${message.id}"><i class="fas fa-trash-alt"></i></div>\`;
+                        }
+                        
+                        messageElement.innerHTML = \`
+                            \${avatarContent}
+                            <div class="message-content">
+                                <div class="message-user">\${message.userName}</div>
+                                \${messageText}
+                                <div class="message-time">\${timeFormatted}</div>
+                            </div>
+                        \`;
+                        
+                        chatMessages.appendChild(messageElement);
+                        
+                        if (!isDeleted && isCurrentUser) {
+                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                            if (deleteBtn) {
+                                deleteBtn.addEventListener('click', function() {
+                                    const messageId = this.getAttribute('data-message-id');
+                                    if (confirm('Tem certeza que deseja apagar esta mensagem?')) {
+                                        deleteMessage(messageId);
+                                    }
+                                });
+                            }
                         }
                     }
                     
-                    document.getElementById('messageInput').addEventListener('keypress', function(e) {
-                        if (e.key === 'Enter') {
-                            sendMessage();
+                    // Apagar mensagem
+                    function deleteMessage(messageId) {
+                        if (!messageId || !currentUser) return;
+                        
+                        db.collection('chats').doc('vale_do_ribeira').collection('messages').doc(messageId).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const message = doc.data();
+                                    
+                                    if (message.userId === currentUser.uid) {
+                                        return db.collection('chats').doc('vale_do_ribeira').collection('messages').doc(messageId).update({
+                                            deleted: true
+                                        });
+                                    } else {
+                                        throw new Error('Você não tem permissão para apagar esta mensagem');
+                                    }
+                                } else {
+                                    throw new Error('Mensagem não encontrada');
+                                }
+                            })
+                            .then(() => {
+                                console.log('Mensagem marcada como deletada');
+                            })
+                            .catch(error => {
+                                console.error('Erro ao deletar mensagem:', error);
+                                alert('Erro ao deletar mensagem: ' + error.message);
+                            });
+                    }
+                    
+                    // Funções auxiliares
+                    function escapeHtml(unsafe) {
+                        return unsafe
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+                    }
+                    
+                    function scrollToBottom() {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                    
+                    // Foco no input quando a janela carrega
+                    window.addEventListener('load', function() {
+                        messageInput.focus();
+                    });
+                    
+                    // Limpar listener quando a janela for fechada
+                    window.addEventListener('beforeunload', function() {
+                        if (unsubscribe) {
+                            unsubscribe();
                         }
                     });
                 </script>
             </body>
             </html>
         `);
+        
+        showNotification('Chat do Vale do Ribeira aberto!', 'success');
+    } else {
+        showNotification('Erro ao abrir o chat. Verifique se o pop-up está bloqueado.', 'error');
+    }
+}
+
+// Função para entrar no Chat de Registro
+function enterRegistroChat() {
+    const firebase = initializeFirebase();
+    if (!firebase) {
+        showNotification('Erro ao inicializar Firebase', 'error');
+        return;
+    }
+
+    const auth = firebase.auth();
+    const currentUser = auth.currentUser;
+
+    if (!currentUser) {
+        showNotification('Você precisa estar logado para acessar o chat.', 'error');
+        return;
+    }
+
+    // Verificar se o usuário tem cidade = "Registro" ou é administrador
+    const db = firebase.firestore();
+    db.collection('users').doc(currentUser.uid).get()
+        .then((doc) => {
+            if (doc.exists) {
+                const userData = doc.data();
+                const userCity = userData.cidade || userData.city || '';
+                const isAdmin = userData.ADM === 1 || userData.adm === 1 || userData.admin === 1;
+                
+                if (userCity.toLowerCase() === 'registro' || isAdmin) {
+                    // Usuário tem cidade = Registro ou é administrador, permitir acesso
+                    openRegistroChat();
+                } else {
+                    // Usuário não tem cidade = Registro nem é administrador
+                    showNotification('Acesso restrito: Este chat é exclusivo para usuários da cidade de Registro ou administradores.', 'error');
+                }
+            } else {
+                // Usuário não encontrado no banco
+                showNotification('Erro: Dados do usuário não encontrados.', 'error');
+            }
+        })
+        .catch((error) => {
+            console.error('Erro ao verificar dados do usuário:', error);
+            showNotification('Erro ao verificar permissão de acesso.', 'error');
+        });
+}
+
+// Função para abrir o chat de Registro (separada para reutilização)
+function openRegistroChat() {
+    // Abrir chat de Registro em nova janela
+    const chatWindow = window.open('', '_blank', 'width=800,height=700,scrollbars=yes,resizable=yes');
+    
+    if (chatWindow) {
+        chatWindow.document.write(`
+            <!DOCTYPE html>
+            <html lang="pt-BR">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>Chat de Registro - WACS</title>
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+                <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+                <style>
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    
+                    body {
+                        font-family: 'Poppins', sans-serif;
+                        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                        height: 100vh;
+                        display: flex;
+                        flex-direction: column;
+                    }
+                    
+                    .chat-header {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 20px;
+                        color: white;
+                        text-align: center;
+                        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .chat-header h1 {
+                        font-size: 1.5em;
+                        font-weight: 600;
+                        margin-bottom: 5px;
+                    }
+                    
+                    .chat-header p {
+                        font-size: 0.9em;
+                        opacity: 0.9;
+                    }
+                    
+                    .chat-messages {
+                        flex: 1;
+                        overflow-y: auto;
+                        padding: 20px;
+                        background: rgba(255, 255, 255, 0.05);
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar {
+                        width: 6px;
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar-track {
+                        background: rgba(255, 255, 255, 0.1);
+                        border-radius: 3px;
+                    }
+                    
+                    .chat-messages::-webkit-scrollbar-thumb {
+                        background: rgba(255, 255, 255, 0.3);
+                        border-radius: 3px;
+                    }
+                    
+                    .message {
+                        margin-bottom: 15px;
+                        display: flex;
+                        align-items: flex-start;
+                        gap: 10px;
+                        max-width: 80%;
+                    }
+                    
+                    .message.sent {
+                        flex-direction: row-reverse;
+                        margin-left: auto;
+                    }
+                    
+                    .message.received {
+                        margin-right: auto;
+                    }
+                    
+                    .message-avatar {
+                        width: 35px;
+                        height: 35px;
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: white;
+                        font-size: 0.8em;
+                        font-weight: 600;
+                        flex-shrink: 0;
+                    }
+                    
+                    .message-content {
+                        max-width: 100%;
+                        padding: 12px 16px;
+                        border-radius: 18px;
+                        position: relative;
+                    }
+                    
+                    .message.received .message-content {
+                        background: rgba(255, 255, 255, 0.9);
+                        color: #333;
+                        border-bottom-left-radius: 4px;
+                    }
+                    
+                    .message.sent .message-content {
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        color: white;
+                        border-bottom-right-radius: 4px;
+                    }
+                    
+                    .message-user {
+                        font-size: 0.8em;
+                        font-weight: 600;
+                        margin-bottom: 4px;
+                        opacity: 0.8;
+                    }
+                    
+                    .message-text {
+                        font-size: 0.95em;
+                        line-height: 1.4;
+                        word-break: break-word;
+                    }
+                    
+                    .message-time {
+                        font-size: 0.7em;
+                        opacity: 0.6;
+                        margin-top: 4px;
+                        text-align: right;
+                    }
+                    
+                    .chat-input-container {
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 20px;
+                        border-top: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .chat-input-row {
+                        display: flex;
+                        gap: 10px;
+                        align-items: center;
+                    }
+                    
+                    .chat-input {
+                        flex: 1;
+                        padding: 12px 16px;
+                        border: none;
+                        border-radius: 25px;
+                        background: rgba(255, 255, 255, 0.9);
+                        font-family: 'Poppins', sans-serif;
+                        font-size: 0.95em;
+                        outline: none;
+                        resize: none;
+                        min-height: 45px;
+                        max-height: 120px;
+                    }
+                    
+                    .chat-input:focus {
+                        box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.3);
+                    }
+                    
+                    .send-btn {
+                        width: 45px;
+                        height: 45px;
+                        border: none;
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, #667eea, #764ba2);
+                        color: white;
+                        cursor: pointer;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 1.1em;
+                        transition: transform 0.2s ease;
+                        flex-shrink: 0;
+                    }
+                    
+                    .send-btn:hover {
+                        transform: scale(1.05);
+                    }
+                    
+                    .send-btn:active {
+                        transform: scale(0.95);
+                    }
+                    
+                    .send-btn:disabled {
+                        opacity: 0.6;
+                        cursor: not-allowed;
+                        transform: none;
+                    }
+                    
+                    .welcome-message {
+                        text-align: center;
+                        padding: 20px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-style: italic;
+                    }
+                    
+                    .system-message {
+                        text-align: center;
+                        padding: 1rem;
+                        color: rgba(255, 255, 255, 0.7);
+                        font-style: italic;
+                    }
+                    
+                    .chat-loading {
+                        text-align: center;
+                        padding: 2rem;
+                        color: rgba(255, 255, 255, 0.7);
+                    }
+                    
+                    .message-delete-btn {
+                        position: absolute;
+                        top: 0.25rem;
+                        right: 0.25rem;
+                        opacity: 0;
+                        transition: opacity 0.2s ease;
+                        cursor: pointer;
+                        color: rgba(255, 255, 255, 0.6);
+                        width: 24px;
+                        height: 24px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        border-radius: 50%;
+                        font-size: 0.8rem;
+                        background: rgba(0, 0, 0, 0.1);
+                    }
+                    
+                    .message.received .message-delete-btn {
+                        color: rgba(0, 0, 0, 0.5);
+                    }
+                    
+                    .message:hover .message-delete-btn {
+                        opacity: 1;
+                    }
+                    
+                    .message-delete-btn:hover {
+                        background-color: rgba(0, 0, 0, 0.2);
+                        color: rgba(255, 255, 255, 0.9);
+                    }
+                    
+                    .message.received .message-delete-btn:hover {
+                        background-color: rgba(0, 0, 0, 0.1);
+                        color: rgba(0, 0, 0, 0.8);
+                    }
+                    
+                    .deleted-message {
+                        font-style: italic;
+                        opacity: 0.7;
+                    }
+                    
+                    .deleted-message i {
+                        margin-right: 0.25rem;
+                    }
+                    
+                    /* Estilos para mensagens do sistema */
+                    .system-message-item {
+                        text-align: center;
+                        margin: 15px 0;
+                        padding: 8px 0;
+                    }
+                    
+                    .system-message-content {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 8px;
+                        background: rgba(255, 255, 255, 0.1);
+                        backdrop-filter: blur(10px);
+                        padding: 8px 16px;
+                        border-radius: 20px;
+                        color: rgba(255, 255, 255, 0.8);
+                        font-size: 0.85em;
+                        font-style: italic;
+                        border: 1px solid rgba(255, 255, 255, 0.2);
+                    }
+                    
+                    .system-message-content i {
+                        color: #4CAF50;
+                        font-size: 0.9em;
+                    }
+                    
+                    .system-text {
+                        font-weight: 500;
+                    }
+                    
+                    .system-time {
+                        font-size: 0.8em;
+                        opacity: 0.7;
+                        margin-left: 4px;
+                    }
+                    
+                    @media (max-width: 600px) {
+                        .system-message-content {
+                            font-size: 0.8em;
+                            padding: 6px 12px;
+                        }
+                        
+                        .system-message-content i {
+                            font-size: 0.8em;
+                        }
+                    }
+                    
+                    @media (max-width: 600px) {
+                        .chat-header h1 {
+                            font-size: 1.3em;
+                        }
+                        
+                        .message {
+                            max-width: 90%;
+                        }
+                        
+                        .chat-input {
+                            font-size: 0.9em;
+                        }
+                        
+                        .chat-messages {
+                            padding: 15px;
+                        }
+                        
+                        .chat-input-container {
+                            padding: 15px;
+                        }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="chat-header">
+                    <h1><i class="fas fa-map-marker-alt"></i> Chat de Registro</h1>
+                    <p>Conecte-se com usuários da cidade de Registro</p>
+                </div>
+                
+                <div class="chat-messages" id="chatMessages">
+                    <div class="chat-loading">
+                        <i class="fas fa-spinner fa-pulse"></i> Carregando mensagens...
+                    </div>
+                </div>
+                
+                <div class="chat-input-container">
+                    <div class="chat-input-row">
+                        <textarea 
+                            class="chat-input" 
+                            id="messageInput" 
+                            placeholder="Digite sua mensagem..."
+                            maxlength="500"
+                            rows="1"></textarea>
+                        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+                <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+                
+                <script>
+                    // Configuração do Firebase
+                    const firebaseConfig = {
+                        apiKey: '${window.ENV.FIREBASE_API_KEY}',
+                        authDomain: '${window.ENV.FIREBASE_AUTH_DOMAIN}',
+                        projectId: '${window.ENV.FIREBASE_PROJECT_ID}',
+                        storageBucket: '${window.ENV.FIREBASE_STORAGE_BUCKET}',
+                        messagingSenderId: '${window.ENV.FIREBASE_MESSAGING_SENDER_ID}',
+                        appId: '${window.ENV.FIREBASE_APP_ID}',
+                        measurementId: '${window.ENV.FIREBASE_MEASUREMENT_ID}'
+                    };
+                    
+                    // Inicializar Firebase
+                    firebase.initializeApp(firebaseConfig);
+                    const auth = firebase.auth();
+                    const db = firebase.firestore();
+                    
+                    // Elementos do DOM
+                    const messageInput = document.getElementById('messageInput');
+                    const sendBtn = document.getElementById('sendBtn');
+                    const chatMessages = document.getElementById('chatMessages');
+                    
+                    let currentUser = null;
+                    let unsubscribe = null;
+                    
+                    // Verificar autenticação
+                    auth.onAuthStateChanged(function(user) {
+                        if (user) {
+                            currentUser = user;
+                            loadChatMessages();
+                            setupChatListeners();
+                            setupInputListeners();
+                        } else {
+                            chatMessages.innerHTML = '<div class="system-message">Erro: Usuário não autenticado</div>';
+                        }
+                    });
+                    
+                    // Carregar mensagens existentes
+                    function loadChatMessages() {
+                        db.collection('chats').doc('registro').collection('messages')
+                            .orderBy('timestamp', 'desc')
+                            .limit(50)
+                            .get()
+                            .then((querySnapshot) => {
+                                chatMessages.innerHTML = '';
+                                
+                                const messages = [];
+                                querySnapshot.forEach((doc) => {
+                                    messages.push({id: doc.id, ...doc.data()});
+                                });
+                                
+                                if (messages.length === 0) {
+                                    chatMessages.innerHTML = \`
+                                        <div class="welcome-message">
+                                            <i class="fas fa-users"></i>
+                                            <p>Bem-vindo ao Chat de Registro!</p>
+                                            <p>Compartilhe experiências sobre acessibilidade na cidade de Registro.</p>
+                                        </div>
+                                    \`;
+                                } else {
+                                    messages.reverse().forEach(message => {
+                                        addMessageToUI(message);
+                                    });
+                                    scrollToBottom();
+                                }
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao carregar mensagens:", error);
+                                chatMessages.innerHTML = \`
+                                    <div class="system-message">
+                                        <p>Erro ao carregar mensagens. Por favor, tente novamente.</p>
+                                    </div>
+                                \`;
+                            });
+                    }
+                    
+                    // Configurar listeners para novas mensagens
+                    function setupChatListeners() {
+                        unsubscribe = db.collection('chats').doc('registro').collection('messages')
+                            .orderBy('timestamp', 'desc')
+                            .limit(50)
+                            .onSnapshot((snapshot) => {
+                                snapshot.docChanges().forEach((change) => {
+                                    if (change.type === 'added') {
+                                        const message = {id: change.doc.id, ...change.doc.data()};
+                                        
+                                        if (!document.getElementById(\`message-\${message.id}\`)) {
+                                            addMessageToUI(message);
+                                            scrollToBottom();
+                                        }
+                                    } else if (change.type === 'modified') {
+                                        const message = {id: change.doc.id, ...change.doc.data()};
+                                        const messageElement = document.getElementById(\`message-\${message.id}\`);
+                                        
+                                        if (message.deleted && messageElement) {
+                                            const messageText = messageElement.querySelector('.message-text');
+                                            if (messageText) {
+                                                messageText.innerHTML = \`<i class="fas fa-ban"></i> Esta mensagem foi apagada\`;
+                                                messageText.classList.add('deleted-message');
+                                            }
+                                            
+                                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                                            if (deleteBtn) {
+                                                deleteBtn.remove();
+                                            }
+                                        }
+                                    }
+                                });
+                            }, (error) => {
+                                console.error("Erro no listener de mensagens:", error);
+                            });
+                    }
+                    
+                    // Configurar listeners de input
+                    function setupInputListeners() {
+                        sendBtn.addEventListener('click', sendMessage);
+                        
+                        messageInput.addEventListener('keydown', function(event) {
+                            if (event.key === 'Enter' && !event.shiftKey) {
+                                event.preventDefault();
+                                sendMessage();
+                            }
+                        });
+                        
+                        // Auto-resize do textarea
+                        messageInput.addEventListener('input', function() {
+                            this.style.height = 'auto';
+                            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+                        });
+                    }
+                    
+                    // Enviar mensagem
+                    function sendMessage() {
+                        const messageText = messageInput.value.trim();
+                        
+                        if (!messageText || !currentUser) return;
+                        
+                        sendBtn.disabled = true;
+                        
+                        // Primeiro, contar as mensagens existentes para gerar o próximo número
+                        db.collection('chats').doc('registro').collection('messages')
+                            .get()
+                            .then((querySnapshot) => {
+                                const messageCount = querySnapshot.size;
+                                const nextNumber = messageCount + 1;
+                                const messageId = \`mensagem\${String(nextNumber).padStart(2, '0')}\`;
+                                
+                                const message = {
+                                    text: messageText,
+                                    userId: currentUser.uid,
+                                    userName: currentUser.displayName || currentUser.email || 'Usuário',
+                                    userEmail: currentUser.email,
+                                    photoURL: currentUser.photoURL || '',
+                                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                                    messageNumber: nextNumber
+                                };
+                                
+                                // Salvar mensagem com ID personalizado
+                                return db.collection('chats').doc('registro').collection('messages').doc(messageId).set(message);
+                            })
+                            .then(() => {
+                                messageInput.value = '';
+                                messageInput.style.height = 'auto';
+                                sendBtn.disabled = false;
+                            })
+                            .catch((error) => {
+                                console.error("Erro ao enviar mensagem:", error);
+                                alert("Erro ao enviar mensagem. Tente novamente.");
+                                sendBtn.disabled = false;
+                            });
+                    }
+                    
+                    // Adicionar mensagem à interface
+                    function addMessageToUI(message) {
+                        const isCurrentUser = currentUser && message.userId === currentUser.uid;
+                        const isSystemMessage = message.isSystemMessage || message.userId === 'system';
+                        
+                        // Se for mensagem do sistema, usar estilo especial
+                        if (isSystemMessage) {
+                            const systemElement = document.createElement('div');
+                            systemElement.className = 'system-message-item';
+                            systemElement.id = \`message-\${message.id}\`;
+                            
+                            const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+                            const timeFormatted = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                            
+                            systemElement.innerHTML = \`
+                                <div class="system-message-content">
+                                    <i class="fas fa-user-plus"></i>
+                                    <span class="system-text">\${message.text}</span>
+                                    <span class="system-time">\${timeFormatted}</span>
+                                </div>
+                            \`;
+                            
+                            chatMessages.appendChild(systemElement);
+                            return;
+                        }
+                        
+                        const messageElement = document.createElement('div');
+                        messageElement.className = \`message \${isCurrentUser ? 'sent' : 'received'}\`;
+                        messageElement.id = \`message-\${message.id}\`;
+                        
+                        const isDeleted = message.deleted === true;
+                        const timestamp = message.timestamp ? message.timestamp.toDate() : new Date();
+                        const timeFormatted = timestamp.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        
+                        let avatarContent = '';
+                        if (message.photoURL) {
+                            avatarContent = \`<div class="message-avatar" style="background-image: url('\${message.photoURL}'); background-size: cover;"></div>\`;
+                        } else if (message.userName && message.userName !== 'Usuário') {
+                            const initials = message.userName.split(' ').map(name => name[0]).join('').toUpperCase();
+                            avatarContent = \`<div class="message-avatar">\${initials}</div>\`;
+                        } else {
+                            avatarContent = \`<div class="message-avatar"><i class="fas fa-user" style="font-size: 0.7rem"></i></div>\`;
+                        }
+                        
+                        let messageText = '';
+                        if (isDeleted) {
+                            messageText = \`<p class="message-text deleted-message"><i class="fas fa-ban"></i> Esta mensagem foi apagada</p>\`;
+                        } else {
+                            messageText = \`<p class="message-text">\${escapeHtml(message.text)}</p>\`;
+                        }
+                        
+                        if (!isDeleted && isCurrentUser) {
+                            messageText += \`<div class="message-delete-btn" data-message-id="\${message.id}"><i class="fas fa-trash-alt"></i></div>\`;
+                        }
+                        
+                        messageElement.innerHTML = \`
+                            \${avatarContent}
+                            <div class="message-content">
+                                <div class="message-user">\${message.userName}</div>
+                                \${messageText}
+                                <div class="message-time">\${timeFormatted}</div>
+                            </div>
+                        \`;
+                        
+                        chatMessages.appendChild(messageElement);
+                        
+                        if (!isDeleted && isCurrentUser) {
+                            const deleteBtn = messageElement.querySelector('.message-delete-btn');
+                            if (deleteBtn) {
+                                deleteBtn.addEventListener('click', function() {
+                                    const messageId = this.getAttribute('data-message-id');
+                                    if (confirm('Tem certeza que deseja apagar esta mensagem?')) {
+                                        deleteMessage(messageId);
+                                    }
+                                });
+                            }
+                        }
+                    }
+                    
+                    // Apagar mensagem
+                    function deleteMessage(messageId) {
+                        if (!messageId || !currentUser) return;
+                        
+                        db.collection('chats').doc('registro').collection('messages').doc(messageId).get()
+                            .then(doc => {
+                                if (doc.exists) {
+                                    const message = doc.data();
+                                    
+                                    if (message.userId === currentUser.uid) {
+                                        return db.collection('chats').doc('registro').collection('messages').doc(messageId).update({
+                                            deleted: true
+                                        });
+                                    } else {
+                                        throw new Error('Você não tem permissão para apagar esta mensagem');
+                                    }
+                                } else {
+                                    throw new Error('Mensagem não encontrada');
+                                }
+                            })
+                            .then(() => {
+                                console.log('Mensagem marcada como deletada');
+                            })
+                            .catch(error => {
+                                console.error('Erro ao deletar mensagem:', error);
+                                alert('Erro ao deletar mensagem: ' + error.message);
+                            });
+                    }
+                    
+                    // Funções auxiliares
+                    function escapeHtml(unsafe) {
+                        return unsafe
+                            .replace(/&/g, "&amp;")
+                            .replace(/</g, "&lt;")
+                            .replace(/>/g, "&gt;")
+                            .replace(/"/g, "&quot;")
+                            .replace(/'/g, "&#039;");
+                    }
+                    
+                    function scrollToBottom() {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                    
+                    // Foco no input quando a janela carrega
+                    window.addEventListener('load', function() {
+                        messageInput.focus();
+                    });
+                    
+                    // Limpar listener quando a janela for fechada
+                    window.addEventListener('beforeunload', function() {
+                        if (unsubscribe) {
+                            unsubscribe();
+                        }
+                    });
+                </script>
+            </body>
+            </html>
+        `);
+        
+        showNotification('Chat de Registro aberto!', 'success');
+    } else {
+        showNotification('Erro ao abrir o chat. Verifique se o pop-up está bloqueado.', 'error');
     }
 }
 
@@ -827,7 +2051,7 @@ document.addEventListener('DOMContentLoaded', initializeCommunityPage);
 window.CommunityManager = {
     loadUsersForPrivateChats,
     loadUserSuggestions,
-    initiatePrivateChat,
+    enterValeRibeiraChat,
     connectWithUser,
     showNotification,
     performSearch,
