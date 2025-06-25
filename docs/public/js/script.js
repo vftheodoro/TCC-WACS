@@ -576,48 +576,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         renderPostsRealtime();
         // --- FIM: Renderização dinâmica dos posts do Firestore (tempo real) ---
-
-        // --- INÍCIO: Envio de novo post para o Firestore ---
-        const postTextarea = document.querySelector('.create-post-card .post-textarea');
-        const postBtn = document.querySelector('.create-post-card .post-btn');
-        if (postBtn && postTextarea) {
-            postBtn.addEventListener('click', async () => {
-                const content = postTextarea.value.trim();
-                if (!content) {
-                    showFlashNotification('Digite algo para publicar!', 'error');
-                    return;
-                }
-                // Dados do usuário logado (mock/localStorage)
-                const author = localStorage.getItem('userName') || 'Anônimo';
-                const avatar = localStorage.getItem('userProfilePic') || 'https://randomuser.me/api/portraits/lego/1.jpg';
-                postBtn.disabled = true;
-                postBtn.textContent = 'Publicando...';
-                try {
-                    getFirebaseApp();
-                    const db = window.firebase.firestore();
-                    // Buscar o número de posts já existentes
-                    const snapshot = await db.collection('posts').get();
-                    const count = snapshot.size + 1;
-                    const nomeMensagem = `mensagem${count.toString().padStart(2, '0')}`;
-                    await db.collection('posts').doc(nomeMensagem).set({
-                        content,
-                        author,
-                        avatar,
-                        createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
-                        likes: 0,
-                        comments: 0
-                    });
-                    postTextarea.value = '';
-                    showFlashNotification('Post publicado com sucesso!', 'success');
-                } catch (error) {
-                    console.error('Erro ao publicar post:', error);
-                    showFlashNotification('Erro ao publicar post.', 'error');
-                }
-                postBtn.disabled = false;
-                postBtn.textContent = 'Publicar';
-            });
-        }
-        // --- FIM: Envio de novo post para o Firestore ---
     }
 
     // Lógica para notificações flash

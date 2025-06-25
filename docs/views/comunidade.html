@@ -105,55 +105,15 @@
 
             <div class="community-main-content">
                 <div class="community-feed-area">
-                    <div class="create-post-card">
+                    <div class="create-post-card" id="create-post-card">
                         <textarea placeholder="O que você gostaria de compartilhar com a comunidade WACS?" class="post-textarea"></textarea>
                         <input type="file" accept="image/*" class="post-image-input" style="display:none" />
                         <div class="post-actions">
                             <button class="btn btn-outline-gradient post-image-btn"><i class="fas fa-image"></i> Foto</button>
-                            <button class="btn btn-outline-gradient"><i class="fas fa-video"></i> Vídeo</button>
                             <button class="btn btn-gradient post-btn">Publicar</button>
                         </div>
                     </div>
-
-                    <!-- Seção de Feed de Posts -->
-                    <div class="posts-feed">
-                        <h3>Feed da Comunidade</h3>
-
-                        <!-- Exemplo de Post 1 (será populado por JS) -->
-                        <div class="post-card">
-                            <div class="post-header">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Foto de Perfil" class="post-author-pic">
-                                <span class="post-author-name">João Silva</span>
-                                <span class="post-timestamp">há 1 hora</span>
-                            </div>
-                            <div class="post-content">
-                                <p>Acabei de mapear um novo local acessível na minha cidade! É incrível como pequenos atos podem fazer uma grande diferença. #Acessibilidade #WACS</p>
-                                <!-- <img src="https://picsum.photos/600/400?random=1" alt="Imagem do Post" class="post-image"> -->
-                            </div>
-                            <div class="post-footer">
-                                <span class="post-stats"><i class="fas fa-thumbs-up"></i> <span class="likes-count">15</span> Curtidas</span>
-                                <span class="post-stats"><i class="fas fa-comment"></i> <span class="comments-count">3</span> Comentários</span>
-                            </div>
-                        </div>
-
-                        <!-- Exemplo de Post 2 (será populado por JS) -->
-                        <div class="post-card">
-                            <div class="post-header">
-                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Foto de Perfil" class="post-author-pic">
-                                <span class="post-author-name">Maria Oliveira</span>
-                                <span class="post-timestamp">há 3 horas</span>
-                            </div>
-                            <div class="post-content">
-                                <p>Muito feliz em ver a comunidade WACS crescendo! Juntos somos mais fortes para promover a inclusão. #ComunidadeWACS</p>
-                                <img src="https://picsum.photos/600/400?random=2" alt="Imagem do Post" class="post-image">
-                            </div>
-                            <div class="post-footer">
-                                <span class="post-stats"><i class="fas fa-thumbs-up"></i> <span class="likes-count">28</span> Curtidas</span>
-                                <span class="post-stats"><i class="fas fa-comment"></i> <span class="comments-count">7</span> Comentários</span>
-                            </div>
-                        </div>
-
-                    </div>
+                    <div class="community-feed"><!-- Feed será populado por JS --></div>
                 </div>
 
                 <div class="community-sidebar-area">
@@ -286,11 +246,13 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js" defer></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js" defer></script>
 
     <script src="../public/js/env-config.js" defer></script>
     <script src="../public/js/auth-check.js" defer></script>
     <script src="../public/js/script.js" defer></script>
-    <script src="../public/js/community.js" defer></script>
+    <!-- Novo sistema de feed, inspirado no app mobile -->
+    <script src="../public/js/communityFeed.js" defer></script>
     <div class="theme-transition-overlay"></div>
 </body>
 </html> 
