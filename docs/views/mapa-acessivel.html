@@ -613,7 +613,10 @@
                 <span class="close-btn" id="closeEvaluationModalBtn" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
             </div>
             <div class="eval-local-box" style="background: #22304a; border-radius: 8px; padding: 16px 18px 10px 18px; margin-bottom: 18px;">
-                <div id="evalLocalName" style="font-size: 1.15rem; font-weight: 600; color: #4A90E2; margin-bottom: 2px;"></div>
+                <label for="evalLocalName" style="display:none"></label>
+                <input type="text" id="evalLocalName" placeholder="Digite o nome do local" autocomplete="off" style="width:100%;margin-bottom:10px;padding:8px;border-radius:4px;border:1px solid var(--border-color);background:var(--input-bg);color:var(--text-color);display:none;">
+                <div id="evalLocalNameSuggestions" style="position:relative;"></div>
+                <div id="evalLocalNameReadonly" style="width:100%;margin-bottom:10px;padding:8px;border-radius:4px;background:var(--input-bg);color:var(--text-color);font-weight:600;display:none;"></div>
                 <div id="evalLocalAddress" style="font-size: 0.98rem; color: #c9d6f3; word-break: break-word;"></div>
             </div>
             <form id="evaluationForm">
@@ -1189,7 +1192,24 @@
 
         // Função para abrir o modal com nome/endereço
         function openEvaluationModal(locationName = '', locationAddress = '') {
-            document.getElementById('evalLocalName').textContent = locationName || '';
+            const input = document.getElementById('evalLocalName');
+            const readonly = document.getElementById('evalLocalNameReadonly');
+            const suggestions = document.getElementById('evalLocalNameSuggestions');
+            if (locationName) {
+                // Se vier nome, mostrar campo readonly
+                input.style.display = 'none';
+                suggestions.innerHTML = '';
+                readonly.style.display = 'block';
+                readonly.textContent = locationName;
+                input.value = locationName;
+                input.setAttribute('data-readonly', '1');
+            } else {
+                // Se não vier nome, mostrar input editável com autocomplete
+                input.style.display = 'block';
+                readonly.style.display = 'none';
+                input.value = '';
+                input.removeAttribute('data-readonly');
+            }
             document.getElementById('evalLocalAddress').textContent = locationAddress || '';
             // Limpa estrelas
             for (const feature of ['cadeira_rodas','rampa','elevador','banheiro']) {
@@ -1246,6 +1266,19 @@
         document.getElementById('evaluationForm').onsubmit = async function(e) {
             e.preventDefault();
             const formStatus = document.getElementById('evaluationFormStatus');
+            const input = document.getElementById('evalLocalName');
+            let localName = input.value.trim();
+            // Se for readonly, pega o valor do input (que já está preenchido)
+            if (input.getAttribute('data-readonly') === '1') {
+                // Não precisa validar, pois já veio de um card
+            } else {
+                // Validação: só permite se o nome estiver no banco
+                if (!allLocationNames.includes(localName)) {
+                    formStatus.textContent = 'Selecione um local válido da lista.';
+                    formStatus.style.color = 'red';
+                    return;
+                }
+            }
             formStatus.textContent = 'Salvando avaliação...';
             formStatus.style.color = '#4A90E2';
             try {
@@ -1268,7 +1301,7 @@
                         elevator: featureRatings.elevador,
                         bathroom: featureRatings.banheiro
                     },
-                    locationId: document.getElementById('evalLocalName').textContent,
+                    locationId: localName,
                     photoURL: photoURL,
                     rating: Math.round(rating * 10) / 10, // arredonda para 1 casa decimal
                     userId: user ? user.uid : '',
@@ -1286,6 +1319,60 @@
                 formStatus.style.color = 'red';
             }
         };
+
+        // --- Lista global de nomes de locais ---
+        let allLocationNames = [];
+
+        // Buscar nomes dos locais ao carregar a página
+        async function fetchAllLocationNames() {
+            if (!firebase || !firebase.firestore) return;
+            try {
+                const snapshot = await firebase.firestore().collection('accessibleLocations').get();
+                allLocationNames = snapshot.docs.map(doc => doc.data().name).filter(Boolean);
+            } catch (e) {
+                allLocationNames = [];
+            }
+        }
+        fetchAllLocationNames();
+
+        // --- Autocomplete no input do modal de avaliação ---
+        const evalLocalNameInput = document.getElementById('evalLocalName');
+        const suggestionsContainer = document.getElementById('evalLocalNameSuggestions');
+
+        if (evalLocalNameInput && suggestionsContainer) {
+            evalLocalNameInput.addEventListener('input', function() {
+                const value = this.value.trim().toLowerCase();
+                suggestionsContainer.innerHTML = '';
+                if (!value || allLocationNames.length === 0) return;
+                const filtered = allLocationNames.filter(name => name.toLowerCase().includes(value));
+                if (filtered.length === 0) return;
+                const list = document.createElement('div');
+                list.style.position = 'absolute';
+                list.style.background = 'var(--card-bg, #222)';
+                list.style.border = '1px solid var(--border-color, #444)';
+                list.style.width = '100%';
+                list.style.zIndex = '1001';
+                list.style.maxHeight = '180px';
+                list.style.overflowY = 'auto';
+                filtered.forEach(name => {
+                    const item = document.createElement('div');
+                    item.textContent = name;
+                    item.style.padding = '8px';
+                    item.style.cursor = 'pointer';
+                    item.addEventListener('mousedown', function(e) {
+                        e.preventDefault();
+                        evalLocalNameInput.value = name;
+                        suggestionsContainer.innerHTML = '';
+                    });
+                    list.appendChild(item);
+                });
+                suggestionsContainer.appendChild(list);
+            });
+            // Esconde sugestões ao perder o foco
+            evalLocalNameInput.addEventListener('blur', function() {
+                setTimeout(() => { suggestionsContainer.innerHTML = ''; }, 150);
+            });
+        }
     </script>
 </body>
 </html> 

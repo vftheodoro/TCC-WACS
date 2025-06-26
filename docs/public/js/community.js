@@ -1113,16 +1113,16 @@ function enterRegistroChat() {
                     openRegistroChat();
                 } else {
                     // Usuário não tem cidade = Registro nem é administrador
-                    showNotification('Acesso restrito: Este chat é exclusivo para usuários da cidade de Registro ou administradores.', 'error');
+                    showNotification('Acesso restrito: Este chat é exclusivo para usuários da cidade de Registro ou administradores.', 'error', 'center');
                 }
             } else {
                 // Usuário não encontrado no banco
-                showNotification('Erro: Dados do usuário não encontrados.', 'error');
+                showNotification('Erro: Dados do usuário não encontrados.', 'error', 'center');
             }
         })
         .catch((error) => {
             console.error('Erro ao verificar dados do usuário:', error);
-            showNotification('Erro ao verificar permissão de acesso.', 'error');
+            showNotification('Erro ao verificar permissão de acesso.', 'error', 'center');
         });
 }
 
@@ -1810,7 +1810,7 @@ function openRegistroChat() {
 }
 
 // Mostrar notificação
-function showNotification(message, type = 'info') {
+function showNotification(message, type = 'info', position = 'top-right') {
     // Remover notificação existente
     const existingNotification = document.querySelector('.notification');
     if (existingNotification) {
@@ -1819,7 +1819,7 @@ function showNotification(message, type = 'info') {
 
     // Criar nova notificação
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
+    notification.className = `notification notification-${type} notification-${position}`;
     notification.innerHTML = `
         <div class="notification-content">
             <span>${message}</span>
@@ -1846,15 +1846,17 @@ function showNotification(message, type = 'info') {
         }, 300);
     });
 
-    // Auto-remover após 5 segundos
-    setTimeout(() => {
-        if (notification.parentNode) {
-            notification.classList.remove('show');
-            setTimeout(() => {
-                notification.remove();
-            }, 300);
-        }
-    }, 5000);
+    // Auto-remover após 5 segundos (apenas para notificações do canto)
+    if (position === 'top-right') {
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    notification.remove();
+                }, 300);
+            }
+        }, 5000);
+    }
 }
 
 // Carregar sugestões de usuários

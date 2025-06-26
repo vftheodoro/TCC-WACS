@@ -355,4 +355,19 @@ button, input {
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+}
+
+/* Força a cor do texto do select e das opções para branco em tema escuro */
+select, select option {
+  color: #fff !important;
+  background: #222 !important;
+}
+
+select {
+  -webkit-text-fill-color: #fff !important;
+}
+
+select:-moz-focusring {
+  color: #fff !important;
+  text-shadow: 0 0 0 #fff;
 } 
