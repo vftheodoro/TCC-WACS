@@ -370,4 +370,36 @@ select {
 select:-moz-focusring {
   color: #fff !important;
   text-shadow: 0 0 0 #fff;
+}
+
+/* Estilo bonito para atributos dos locais acessíveis nos cards */
+.accessibility-features {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin: 14px 0 0 0;
+}
+.feature-tag {
+  background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+  color: #fff;
+  font-size: 0.98em;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(74,144,226,0.08);
+  letter-spacing: 0.5px;
+  transition: background 0.3s, color 0.3s, transform 0.2s;
+  display: flex;
+  align-items: center;
+  border: none;
+}
+.feature-tag i {
+  margin-right: 7px;
+  font-size: 1.1em;
+}
+.feature-tag:hover {
+  background: linear-gradient(90deg, var(--gradient-end), var(--gradient-start));
+  color: #fff;
+  transform: translateY(-2px) scale(1.04);
 } 

@@ -648,7 +648,9 @@
                     <textarea id="evalComments" name="comments" rows="4" style="width: 100%; padding: 10px; border-radius: 6px; border: 1px solid #2a3550; background: #1a2130; color: #fff; resize: vertical;"></textarea>
                 </div>
                 <div id="evaluationFormStatus" style="margin-bottom: 10px; text-align: center;"></div>
-                <button type="submit" class="eval-btn-enviar">Enviar Avaliação</button>
+                <div style="margin-top:10px; text-align:center; display: flex; justify-content: center; gap: 12px;">
+                    <button type="submit" class="eval-btn-enviar">Enviar Avaliação</button>
+                </div>
             </form>
         </div>
     </div>
@@ -780,25 +782,53 @@
                                     ${r.comment ? `<div style='font-size:0.97em;margin-top:2px;'><i class='fas fa-comment'></i> "${r.comment}"</div>` : ''}
                                 </div>
                             `).join('') : '<span style="color:#aaa;">Sem avaliações ainda.</span>'}
-                            <div style="margin-top:10px; text-align:right;">
+                            <div style="margin-top:10px; text-align:center; display: flex; justify-content: center; gap: 12px;">
                                 <button class="btn btn-outline-gradient" onclick="showAllReviewsModal('${data.name.replace(/'/g, "\\'")}')" style="font-size:0.92em; padding:6px 14px; margin-top:4px;">
                                     <i class="fas fa-list"></i> Ver todas avaliações
+                                </button>
+                                <button class="btn btn-outline-gradient" onclick="evaluateLocation('${data.name}', '${data.address}')" style="font-size: 0.9em; padding: 8px 16px;">
+                                    <i class="fas fa-star"></i> Avaliar Local
                                 </button>
                             </div>
                         </div>
                         <div class="accessibility-features">
-                            ${(data.features || []).map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                            ${(data.features || []).map(f => {
+                                let icon = '';
+                                switch (f.toLowerCase()) {
+                                    case 'rampas':
+                                    case 'rampa':
+                                        icon = '<i class="fas fa-ruler-combined"></i>';
+                                        break;
+                                    case 'elevadores':
+                                    case 'elevador':
+                                        icon = '<i class="fas fa-elevator"></i>';
+                                        break;
+                                    case 'banheiro adaptado':
+                                    case 'banheiro':
+                                        icon = '<i class="fas fa-restroom"></i>';
+                                        break;
+                                    case 'sinalização em braile':
+                                    case 'braile':
+                                        icon = '<i class="fas fa-braille"></i>';
+                                        break;
+                                    case 'atendimento em libras':
+                                    case 'libras':
+                                        icon = '<i class="fas fa-sign-language"></i>';
+                                        break;
+                                    case 'cadeira de rodas':
+                                        icon = '<i class="fas fa-wheelchair"></i>';
+                                        break;
+                                    default:
+                                        icon = '<i class="fas fa-universal-access"></i>';
+                                }
+                                return `<span class='feature-tag'>${icon} ${f}</span>`;
+                            }).join('')}
                         </div>
                         ${data.lastUser ? `
                         <div class="user-info">
                             <div class="user-avatar">${data.lastUser.initials || '...'}</div>
                             <span>${data.lastUser.name} - ${data.lastUser.timestamp}</span>
                         </div>` : ''}
-                        <div style="margin-top: 15px; text-align: center;">
-                            <button class="btn btn-outline-gradient" onclick="evaluateLocation('${data.name}', '${data.address}')" style="font-size: 0.9em; padding: 8px 16px;">
-                                <i class="fas fa-star"></i> Avaliar Local
-                            </button>
-                        </div>
                     `;
                     locationsList.appendChild(card);
                 }
