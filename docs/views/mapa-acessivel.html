@@ -653,6 +653,19 @@
         </div>
     </div>
 
+    <!-- Modal para ver todas avaliações de um local -->
+    <div id="allReviewsModal" class="modal" style="display:none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.7);">
+        <div class="modal-content" style="background-color: #181c27; color: #fff; opacity: 1; margin: 5% auto; padding: 32px 32px 24px 32px; border-radius: 12px; max-width: 540px; max-height: 95vh; overflow-y: auto; box-shadow: 0 5px 15px rgba(0,0,0,0.3);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <h2 id="allReviewsModalTitle" style="margin: 0; color: #4A90E2; font-size: 1.3rem; font-weight: 700;">Avaliações do Local</h2>
+                <span class="close-btn" id="closeAllReviewsModalBtn" style="color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer;">&times;</span>
+            </div>
+            <div id="allReviewsModalContent">
+                <p style="text-align:center;">Carregando avaliações...</p>
+            </div>
+        </div>
+    </div>
+
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
@@ -716,48 +729,81 @@
             const endIndex = startIndex + cardsPerPage;
             const paginatedLocations = locations.slice(startIndex, endIndex);
 
-            paginatedLocations.forEach(data => {
-                const card = document.createElement('div');
-                card.className = 'location-card';
-                card.dataset.type = data.type || 'geral';
-                card.dataset.rating = data.rating || 0;
-                card.dataset.features = (data.features || []).join(',');
+            // Função auxiliar para buscar imagem do local se não houver
+            async function getLocationImageUrl(data) {
+                let imageUrl = data.imageUrl || data.image || data.photoUrl || '';
+                if (!imageUrl && data.id) {
+                    try {
+                        const doc = await firebase.firestore().collection('accessibleLocations').doc(data.id).get();
+                        if (doc.exists) {
+                            const docData = doc.data();
+                            imageUrl = docData.imageUrl || docData.image || docData.photoUrl || '';
+                        }
+                    } catch (e) { /* ignora erro */ }
+                }
+                if (!imageUrl) {
+                    imageUrl = '../public/images/logos-wacs/logo_padrao.png'; // imagem padrão
+                }
+                return imageUrl;
+            }
 
-                const rating = data.rating || 0;
-                const imageUrl = data.imageUrl || data.image || data.photoUrl || '';
+            // Renderização assíncrona dos cards
+            (async () => {
+                for (const data of paginatedLocations) {
+                    const card = document.createElement('div');
+                    card.className = 'location-card';
+                    card.dataset.type = data.type || 'geral';
+                    card.dataset.rating = data.rating || 0;
+                    card.dataset.features = (data.features || []).join(',');
 
-                // Monta o HTML do card
-                card.innerHTML = `
-                    ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width: calc(100% + 40px); margin: -20px -20px 15px -20px; border-radius: 8px 8px 0 0; height: 140px; object-fit: cover;" onerror="this.style.display='none'">` : ''}
-                    <div class="location-header">
-                        <span class="location-name">${data.name}</span>
-                        <span class="location-rating">
-                            ${getRatingStars(rating)}
-                            <span style="font-size: 0.9em; margin-left: 4px;">${rating.toFixed(1)}</span>
-                        </span>
-                    </div>
-                    <div class="location-details">
-                        <p><i class="fas fa-map-marker-alt"></i> ${data.address || 'Endereço não informado'}</p>
-                        ${data.latestReview ? `<p><i class="fas fa-comment"></i> "${data.latestReview}"</p>` : ''}
-                    </div>
-                    <div class="accessibility-features">
-                        ${(data.features || []).map(f => `<span class="feature-tag">${f}</span>`).join('')}
-                    </div>
-                    ${data.lastUser ? `
-                    <div class="user-info">
-                        <div class="user-avatar">${data.lastUser.initials || '...'}</div>
-                        <span>${data.lastUser.name} - ${data.lastUser.timestamp}</span>
-                    </div>` : ''}
-                    <div style="margin-top: 15px; text-align: center;">
-                        <button class="btn btn-outline-gradient" onclick="evaluateLocation('${data.name}', '${data.address}')" style="font-size: 0.9em; padding: 8px 16px;">
-                            <i class="fas fa-star"></i> Avaliar Local
-                        </button>
-                    </div>
-                `;
-                locationsList.appendChild(card);
-            });
-            
-            updatePaginationControls(locations.length);
+                    const rating = data.rating || 0;
+                    const imageUrl = await getLocationImageUrl(data);
+
+                    // Monta o HTML do card
+                    card.innerHTML = `
+                        ${imageUrl ? `<img src="${imageUrl}" alt="Foto de ${data.name}" style="width: calc(100% + 40px); margin: -20px -20px 15px -20px; border-radius: 8px 8px 0 0; height: 140px; object-fit: cover;" onerror="this.style.display='none'">` : ''}
+                        <div class="location-header">
+                            <span class="location-name">${data.name}</span>
+                            <span class="location-rating">
+                                ${getRatingStars(rating)}
+                                <span style="font-size: 0.9em; margin-left: 4px;">${rating.toFixed(1)}</span>
+                            </span>
+                        </div>
+                        <div class="location-details">
+                            <p><i class="fas fa-map-marker-alt"></i> ${data.address || 'Endereço não informado'}</p>
+                            ${(data.recentReviews && data.recentReviews.length > 0) ? data.recentReviews.map(r => `
+                                <div style='margin-bottom:8px;'>
+                                    <span style='color:#ffd700;'>${getRatingStars(r.rating)}</span>
+                                    <b style='margin-left:6px;'>${r.rating.toFixed(1)}</b>
+                                    ${r.userName ? `<span style='margin-left:8px;font-size:0.9em;color:#888;'>por ${r.userName}</span>` : ''}
+                                    ${r.createdAt ? `<span style='margin-left:8px;font-size:0.85em;color:#aaa;'>${(new Date(r.createdAt)).toLocaleDateString('pt-BR')}</span>` : ''}
+                                    ${r.comment ? `<div style='font-size:0.97em;margin-top:2px;'><i class='fas fa-comment'></i> "${r.comment}"</div>` : ''}
+                                </div>
+                            `).join('') : '<span style="color:#aaa;">Sem avaliações ainda.</span>'}
+                            <div style="margin-top:10px; text-align:right;">
+                                <button class="btn btn-outline-gradient" onclick="showAllReviewsModal('${data.name.replace(/'/g, "\\'")}')" style="font-size:0.92em; padding:6px 14px; margin-top:4px;">
+                                    <i class="fas fa-list"></i> Ver todas avaliações
+                                </button>
+                            </div>
+                        </div>
+                        <div class="accessibility-features">
+                            ${(data.features || []).map(f => `<span class="feature-tag">${f}</span>`).join('')}
+                        </div>
+                        ${data.lastUser ? `
+                        <div class="user-info">
+                            <div class="user-avatar">${data.lastUser.initials || '...'}</div>
+                            <span>${data.lastUser.name} - ${data.lastUser.timestamp}</span>
+                        </div>` : ''}
+                        <div style="margin-top: 15px; text-align: center;">
+                            <button class="btn btn-outline-gradient" onclick="evaluateLocation('${data.name}', '${data.address}')" style="font-size: 0.9em; padding: 8px 16px;">
+                                <i class="fas fa-star"></i> Avaliar Local
+                            </button>
+                        </div>
+                    `;
+                    locationsList.appendChild(card);
+                }
+                updatePaginationControls(locations.length);
+            })();
         }
 
         /**
@@ -937,9 +983,9 @@
             }
 
             try {
+                const user = firebase.auth().currentUser;
                 let imageUrl = '';
                 if (imageFile) {
-                    const user = firebase.auth().currentUser;
                     const fileName = `${user.uid}_${Date.now()}_${imageFile.name}`;
                     const storageRef = firebase.storage().ref();
                     const imageRef = storageRef.child(`locations/${fileName}`);
@@ -957,7 +1003,8 @@
                     rating: 0,
                     reviewCount: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    addedBy: firebase.auth().currentUser.uid
+                    addedBy: user.uid,
+                    addedByName: user.displayName || user.email
                 };
 
                 // Salvar os dados no Firestore
@@ -1054,12 +1101,36 @@
                 console.error("Firebase não está configurado.");
                 return;
             }
-            firebase.firestore().collection('accessibleLocations').get().then((querySnapshot) => {
+            firebase.firestore().collection('accessibleLocations').get().then(async (querySnapshot) => {
                 allLocationsData = [];
+                const locationsById = {};
                 querySnapshot.forEach((doc) => {
-                    allLocationsData.push({ id: doc.id, ...doc.data() });
+                    const data = { id: doc.id, ...doc.data() };
+                    allLocationsData.push(data);
+                    locationsById[data.name] = data; // indexa por nome para facilitar
                 });
-                
+                // Busca todas as avaliações
+                const reviewsSnapshot = await firebase.firestore().collection('reviews').get();
+                // Agrupa avaliações por local
+                const reviewsByLocation = {};
+                reviewsSnapshot.forEach((doc) => {
+                    const review = doc.data();
+                    const locId = review.locationId;
+                    if (!reviewsByLocation[locId]) reviewsByLocation[locId] = [];
+                    reviewsByLocation[locId].push(review);
+                });
+                // Calcula média e quantidade de avaliações para cada local
+                allLocationsData.forEach(loc => {
+                    const reviews = reviewsByLocation[loc.name] || [];
+                    if (reviews.length > 0) {
+                        const avg = reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length;
+                        loc.rating = Math.round(avg * 10) / 10;
+                        loc.reviewCount = reviews.length;
+                    } else {
+                        loc.rating = 0;
+                        loc.reviewCount = 0;
+                    }
+                });
                 // Renderiza os cards e marcadores iniciais
                 filterAndRender();
             }).catch((error) => {
@@ -1373,6 +1444,94 @@
                 setTimeout(() => { suggestionsContainer.innerHTML = ''; }, 150);
             });
         }
+
+        // --- Função para mostrar todas avaliações de um local ---
+        window.showAllReviewsModal = function(locationName) {
+            const modal = document.getElementById('allReviewsModal');
+            const modalTitle = document.getElementById('allReviewsModalTitle');
+            const modalContent = document.getElementById('allReviewsModalContent');
+            modalTitle.textContent = `Avaliações de "${locationName}"`;
+            modalContent.innerHTML = '<p style="text-align:center;">Carregando avaliações...</p>';
+            modal.style.display = 'block';
+            // Buscar avaliações do banco (sem orderBy para evitar erro de campo ausente)
+            firebase.firestore().collection('reviews')
+                .where('locationId', '==', locationName)
+                .get()
+                .then((querySnap) => {
+                    if (querySnap.empty) {
+                        modalContent.innerHTML = '<p style="text-align:center;color:#aaa;">Nenhuma avaliação encontrada para este local.</p>';
+                        return;
+                    }
+                    let html = '';
+                    // Função para pegar iniciais
+                    function getInitials(name) {
+                        if (!name) return '?';
+                        const parts = name.trim().split(' ');
+                        if (parts.length === 1) return parts[0][0].toUpperCase();
+                        return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
+                    }
+                    // Função auxiliar para montar o card da avaliação
+                    async function renderReviewCard(r) {
+                        const nome = r.userName || 'Usuário';
+                        const data = r.createdAt ? (r.createdAt.toDate ? r.createdAt.toDate() : new Date(r.createdAt)) : null;
+                        let photoURL = r.photoURL;
+                        // Se não houver photoURL, tenta buscar na coleção users
+                        if (!photoURL && r.userId) {
+                            try {
+                                const userDoc = await firebase.firestore().collection('users').doc(r.userId).get();
+                                if (userDoc.exists) {
+                                    const userData = userDoc.data();
+                                    photoURL = userData.photoURL || userData.photo || '';
+                                }
+                            } catch (e) { /* ignora erro */ }
+                        }
+                        let avatarHtml = '';
+                        if (photoURL) {
+                            avatarHtml = `<img src="${photoURL}" alt="Avatar" style="width:48px;height:48px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid #4A90E2;background:#222;">`;
+                        } else {
+                            const initials = getInitials(nome);
+                            avatarHtml = `<div style="width:48px;height:48px;border-radius:50%;background:#4A90E2;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:1.2em;flex-shrink:0;">${initials}</div>`;
+                        }
+                        return `
+                            <div style='display:flex;gap:14px;padding:18px 0 14px 0;border-bottom:1px solid #333;'>
+                                ${avatarHtml}
+                                <div style="flex:1;">
+                                    <div style="display:flex;align-items:center;gap:8px;">
+                                        <span style="font-weight:600;font-size:1.08em;">${nome}</span>
+                                        ${data ? `<span style="font-size:0.93em;color:#aaa;">${data.toLocaleDateString('pt-BR')}</span>` : ''}
+                                    </div>
+                                    <div style="margin:2px 0 6px 0;">
+                                        <span style='color:#ffd700;'>${getRatingStars(r.rating)}</span>
+                                        <b style='margin-left:6px;'>${r.rating ? r.rating.toFixed(1) : '-'}</b>
+                                    </div>
+                                    ${r.comment ? `<div style='font-size:1.01em;margin-top:2px;line-height:1.5;'><i class='fas fa-comment'></i> ${r.comment}</div>` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }
+                    // Monta todos os cards de avaliação de forma assíncrona
+                    (async () => {
+                        const cards = [];
+                        for (const doc of querySnap.docs) {
+                            const r = doc.data();
+                            cards.push(await renderReviewCard(r));
+                        }
+                        modalContent.innerHTML = cards.join('');
+                    })();
+                })
+                .catch(() => {
+                    modalContent.innerHTML = '<p style="text-align:center;color:#f66;">Erro ao buscar avaliações.</p>';
+                });
+        };
+        // Fechar modal de avaliações
+        document.getElementById('closeAllReviewsModalBtn').onclick = () => {
+            document.getElementById('allReviewsModal').style.display = 'none';
+        };
+        window.addEventListener('click', (event) => {
+            if (event.target == document.getElementById('allReviewsModal')) {
+                document.getElementById('allReviewsModal').style.display = 'none';
+            }
+        });
     </script>
 </body>
 </html> 
