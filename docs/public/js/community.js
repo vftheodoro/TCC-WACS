@@ -2079,6 +2079,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // --- PUBLICAÇÃO DE POST DESABILITADA PARA EVITAR DUPLICIDADE ---
+  /*
   if (postBtn) {
     postBtn.addEventListener('click', async (e) => {
       e.preventDefault();
@@ -2127,6 +2129,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   }
+  */
 });
 // --- FIM: Upload de imagem em post ---
 
@@ -2146,7 +2149,8 @@ function getRelativeDate(date) {
   return d.toLocaleDateString('pt-BR', { dateStyle: 'short' });
 }
 
-// Renderizar o feed de posts
+// --- RENDERIZAÇÃO DE FEED DESABILITADA PARA EVITAR DUPLICIDADE ---
+/*
 async function renderFeed() {
   const firebase = initializeFirebase();
   if (!firebase) return;
@@ -2271,173 +2275,5 @@ function showEditPostModal(post, user) {
     renderFeed();
   };
 }
-
-// Modal de comentários
-async function renderCommentsModal(post, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  let modal = document.querySelector('.comments-modal');
-  if (modal) modal.remove();
-  modal = document.createElement('div');
-  modal.className = 'comments-modal';
-  modal.innerHTML = `
-    <div class="comments-content">
-      <div class="comments-header">
-        <span>Comentários</span>
-        <button class="close-comments-btn"><i class="fas fa-times"></i></button>
-      </div>
-      <div class="comments-list loading-comments">Carregando...</div>
-      <div class="comments-input-row">
-        <img src="${user.photoURL || '../public/images/fotos-perfil/default-avatar.png'}" class="comments-avatar">
-        <input type="text" class="comments-input" placeholder="Adicionar um comentário...">
-        <button class="send-comment-btn"><i class="fas fa-paper-plane"></i></button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  modal.querySelector('.close-comments-btn').onclick = () => modal.remove();
-  // Carregar comentários
-  const commentsList = modal.querySelector('.comments-list');
-  let comments = await fetchCommentsWeb(post.id);
-  renderCommentsList(commentsList, comments, user, post);
-  // Enviar comentário
-  modal.querySelector('.send-comment-btn').onclick = async () => {
-    const input = modal.querySelector('.comments-input');
-    const text = input.value.trim();
-    if (!text) return;
-    await handleAddComment(post, user, text);
-    comments = await fetchCommentsWeb(post.id);
-    renderCommentsList(commentsList, comments, user, post);
-    input.value = '';
-    updateCommentsCount(post.id, comments.length);
-    renderFeed();
-  };
-}
-
-// Renderizar lista de comentários
-function renderCommentsList(listEl, comments, user, post) {
-  if (!comments || comments.length === 0) {
-    listEl.innerHTML = '<div class="no-comments">Nenhum comentário ainda.</div>';
-    return;
-  }
-  // Ordenar por likes, depois por data
-  comments.sort((a, b) => (b.likes?.length || 0) - (a.likes?.length || 0) || new Date(b.createdAt) - new Date(a.createdAt));
-  listEl.innerHTML = '';
-  comments.forEach(comment => {
-    const isOwner = user && (user.uid === comment.userId);
-    const item = document.createElement('div');
-    item.className = 'comment-item';
-    item.innerHTML = `
-      <img src="${comment.userPhoto || '../public/images/fotos-perfil/default-avatar.png'}" class="comment-avatar">
-      <div class="comment-content">
-        <div class="comment-header">
-          <span class="comment-user">${comment.userName}</span>
-          <span class="comment-date">${getRelativeDate(comment.createdAt)}</span>
-          <button class="like-comment-btn${comment.likes && user && comment.likes.includes(user.uid) ? ' liked' : ''}"><i class="fas fa-heart"></i> <span class="like-count">${comment.likes ? comment.likes.length : 0}</span></button>
-          ${isOwner ? `<button class="delete-comment-btn"><i class="fas fa-trash"></i></button>` : ''}
-        </div>
-        <div class="comment-text">${comment.text}</div>
-      </div>
-    `;
-    // Like comentário
-    item.querySelector('.like-comment-btn').onclick = async () => {
-      await handleLikeComment(post, comment, user);
-      const updated = await fetchCommentsWeb(post.id);
-      renderCommentsList(listEl, updated, user, post);
-    };
-    // Deletar comentário
-    if (isOwner) {
-      item.querySelector('.delete-comment-btn').onclick = async () => {
-        await handleDeleteComment(post, comment, user);
-        const updated = await fetchCommentsWeb(post.id);
-        renderCommentsList(listEl, updated, user, post);
-        updateCommentsCount(post.id, updated.length);
-        renderFeed();
-      };
-    }
-    listEl.appendChild(item);
-  });
-}
-
-// --- Funções de backend para web ---
-async function fetchCommentsWeb(postId) {
-  const firebase = initializeFirebase();
-  if (!firebase) return [];
-  const db = firebase.firestore();
-  const snap = await db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', 'desc').limit(50).get();
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data(), likes: Array.isArray(doc.data().likes) ? doc.data().likes : [] }));
-}
-
-async function handleLikePost(post, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  const liked = post.likes && post.likes.includes(user.uid);
-  const postRef = db.collection('posts').doc(post.id);
-  await postRef.update({
-    likes: liked ? firebase.firestore.FieldValue.arrayRemove(user.uid) : firebase.firestore.FieldValue.arrayUnion(user.uid)
-  });
-}
-
-async function handleAddComment(post, user, text) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  const commentData = {
-    userId: user.uid,
-    userName: user.displayName,
-    userPhoto: user.photoURL,
-    text,
-    createdAt: new Date().toISOString(),
-    likes: [],
-  };
-  await db.collection('posts').doc(post.id).collection('comments').add(commentData);
-  await db.collection('posts').doc(post.id).update({
-    commentsCount: firebase.firestore.FieldValue.increment(1)
-  });
-}
-
-async function handleLikeComment(post, comment, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  const liked = comment.likes && comment.likes.includes(user.uid);
-  const commentRef = db.collection('posts').doc(post.id).collection('comments').doc(comment.id);
-  await commentRef.update({
-    likes: liked ? firebase.firestore.FieldValue.arrayRemove(user.uid) : firebase.firestore.FieldValue.arrayUnion(user.uid)
-  });
-}
-
-async function handleDeleteComment(post, comment, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  const commentRef = db.collection('posts').doc(post.id).collection('comments').doc(comment.id);
-  await commentRef.delete();
-  await db.collection('posts').doc(post.id).update({
-    commentsCount: firebase.firestore.FieldValue.increment(-1)
-  });
-}
-
-async function handleDeletePost(post, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  await db.collection('posts').doc(post.id).delete();
-}
-
-async function handleEditPost(post, newText, user) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  await db.collection('posts').doc(post.id).update({ text: newText });
-}
-
-function updateCommentsCount(postId, count) {
-  const firebase = initializeFirebase();
-  if (!firebase) return;
-  const db = firebase.firestore();
-  db.collection('posts').doc(postId).update({ commentsCount: count });
-}
+*/
 // --- FIM: Feed e comentários avançados --- 
