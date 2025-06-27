@@ -2032,6 +2032,23 @@ function initializeCommunityPage() {
                     console.log('Usuário logado, carregando dados da comunidade...');
                     loadUsersForPrivateChats();
                     loadUserSuggestions();
+
+                    // --- NOVO: Buscar dados do perfil do usuário logado ---
+                    const db = firebase.firestore();
+                    db.collection('users').doc(user.uid).get().then(doc => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            // XP
+                            const xp = userData.xp || 0;
+                            const pointsEl = document.getElementById('user-points');
+                            if (pointsEl) pointsEl.textContent = xp;
+                            // Contribuições
+                            const contrib = userData.contribuicoes || userData.contributions || 0;
+                            const contribEl = document.getElementById('user-contributions');
+                            if (contribEl) contribEl.textContent = contrib;
+                        }
+                    });
+                    // --- FIM NOVO ---
                 } else {
                     console.log('Usuário não logado');
                 }
