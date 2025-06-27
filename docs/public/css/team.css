@@ -62,13 +62,13 @@
 .team-member {
     background-color: var(--card-background);
     border-radius: 12px;
-    padding: 20px; /* Reduzido o padding para tornar o card mais quadrado */
-    height: 340px; /* Altura fixa para padronizar o tamanho */
+    padding: 32px 24px 24px 24px;
+    min-height: 420px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     display: flex;
     flex-direction: column;
     align-items: center;
-    text-align: center; /* Centraliza o texto */
+    text-align: center;
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -126,32 +126,32 @@
 }
 
 .member-name {
-    font-size: 1.4em; /* Reduzido o tamanho da fonte */
+    font-size: 1.4em;
     font-weight: 700;
     color: var(--heading-color);
     margin-bottom: 5px;
     text-transform: uppercase;
     line-height: 1.2;
-    height: 2.4em; /* Fixa a altura para duas linhas (1.2 * 2) */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 2; /* Limita o nome a 2 linhas */
-    -webkit-box-orient: vertical;
+    overflow: visible;
+    text-overflow: unset;
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    white-space: normal;
 }
 
 .member-role {
-    font-size: 0.9em; /* Reduzido o tamanho da fonte */
+    font-size: 0.9em;
     color: var(--gradient-start);
     font-weight: 500;
-    margin-bottom: 10px;
-    line-height: 1.2; /* Ajuste para o cargo */
-    height: 1.2em; /* Fixa a altura para uma linha */
-    overflow: hidden;
-    text-overflow: ellipsis;
-    display: -webkit-box;
-    -webkit-line-clamp: 1; /* Limita o cargo a 1 linha */
-    -webkit-box-orient: vertical;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    overflow: visible;
+    text-overflow: unset;
+    display: block;
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    white-space: normal;
 }
 
 .member-bio {
