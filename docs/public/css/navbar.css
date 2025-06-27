@@ -118,6 +118,15 @@
     align-items: center;
     gap: 10px;
     color: var(--text-color);
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: var(--border-radius-medium);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.user-profile:hover {
+    background-color: var(--background-color-hover);
+    transform: translateY(-1px);
 }
 
 .profile-pic {
@@ -126,12 +135,25 @@
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid var(--gradient-start);
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.3s ease;
+}
+
+.profile-pic:hover {
+    transform: scale(1.05);
+    border-color: var(--gradient-end);
 }
 
 .user-name {
     font-weight: 600;
     font-size: 1rem;
     color: var(--text-color);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.user-name:hover {
+    color: var(--gradient-start);
 }
 
 .logout-btn {
@@ -334,7 +356,13 @@
         border-radius: 50%;
         object-fit: cover;
         border: 2px solid var(--gradient-start);
-        display: block;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.3s ease;
+    }
+    
+    .mobile-user-status .profile-pic-mobile:hover {
+        transform: scale(1.05);
+        border-color: var(--gradient-end);
     }
 
     .mobile-user-status .login-btn-mobile {

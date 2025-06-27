@@ -470,6 +470,10 @@
                                 <option value="restaurante">Restaurante</option>
                                 <option value="parque">Parque</option>
                                 <option value="teatro">Teatro</option>
+                                <option value="museu">Museu</option>
+                                <option value="hotel">Hotel</option>
+                                <option value="escola">Escola</option>
+                                <option value="outro">Outro</option>
                             </select>
                         </div>
                         
@@ -581,6 +585,8 @@
                         <option value="parque">Parque</option>
                         <option value="teatro">Teatro</option>
                         <option value="museu">Museu</option>
+                        <option value="hotel">Hotel</option>
+                        <option value="escola">Escola</option>
                         <option value="outro">Outro</option>
                     </select>
                 </div>
@@ -873,6 +879,22 @@
                 const matchesFeature = !selectedFeature || features.includes(selectedFeature);
 
                 return matchesSearch && matchesType && matchesRating && matchesFeature;
+            });
+
+            // Ordenar por média de avaliação (do maior para o menor)
+            filteredLocationsData.sort((a, b) => {
+                const ratingA = a.rating || 0;
+                const ratingB = b.rating || 0;
+                
+                // Se as avaliações são iguais, ordenar por quantidade de avaliações (mais avaliações primeiro)
+                if (ratingA === ratingB) {
+                    const reviewCountA = a.reviewCount || 0;
+                    const reviewCountB = b.reviewCount || 0;
+                    return reviewCountB - reviewCountA;
+                }
+                
+                // Ordenar por avaliação (maior primeiro)
+                return ratingB - ratingA;
             });
             
             renderLocationCards(filteredLocationsData, 0); // Renderiza a primeira página dos resultados

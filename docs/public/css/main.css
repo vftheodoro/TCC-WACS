@@ -3,6 +3,7 @@
 :root {
     /* Variáveis do Tema Escuro (Padrão) */
     --background-color: #0A0A0A;
+    --background-color-hover: #1A1A1A;
     --text-color: #FFFFFF;
     --card-background: #181A1B;
     --border-color: rgba(255, 255, 255, 0.1);
@@ -36,6 +37,7 @@
 /* Tema Claro */
 :root.light-theme {
     --background-color: #FFFFFF; /* Fundo branco puro para maior clareza */
+    --background-color-hover: #F5F5F5;
     --text-color: #212121; /* Texto mais escuro para alto contraste */
     --card-background: #F0F2F5; /* Fundo de card sutilmente cinza claro */
     --border-color: rgba(0, 0, 0, 0.15); /* Borda mais visível no claro */

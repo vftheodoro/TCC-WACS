@@ -199,4 +199,41 @@ document.addEventListener('click', (e) => {
             showFlashMessage('Erro ao desconectar. Tente novamente.', 'error');
         });
     }
+    
+    // --- Redirecionamento para comunidade ao clicar na foto/nome do usuário ---
+    // Desktop: foto e nome do usuário na navbar
+    if (e.target.closest('.user-profile') && !e.target.closest('.logout-btn')) {
+        const currentPath = window.location.pathname;
+        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
+        
+        if (currentPath.includes('/views/')) {
+            redirectPath = 'comunidade.html'; // Se já estiver em views/
+        }
+        
+        window.location.href = redirectPath;
+    }
+    
+    // Mobile: foto do usuário no cabeçalho mobile
+    if (e.target.closest('.profile-pic-mobile')) {
+        const currentPath = window.location.pathname;
+        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
+        
+        if (currentPath.includes('/views/')) {
+            redirectPath = 'comunidade.html'; // Se já estiver em views/
+        }
+        
+        window.location.href = redirectPath;
+    }
+    
+    // Mobile: foto e nome do usuário no menu overlay
+    if (e.target.closest('.mobile-menu-overlay .user-profile') && !e.target.closest('.logout-btn')) {
+        const currentPath = window.location.pathname;
+        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
+        
+        if (currentPath.includes('/views/')) {
+            redirectPath = 'comunidade.html'; // Se já estiver em views/
+        }
+        
+        window.location.href = redirectPath;
+    }
 }); 
