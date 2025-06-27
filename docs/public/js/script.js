@@ -67,17 +67,24 @@ document.addEventListener('DOMContentLoaded', () => {
         // Ignora links que são âncoras internas ou não têm href
         if (link.getAttribute('href') && !link.getAttribute('href').startsWith('#')) {
             link.addEventListener('click', (event) => {
-                // Evita o comportamento padrão imediatamente
                 event.preventDefault();
+
+                const targetHref = link.getAttribute('href');
+                const currentUrl = window.location.pathname.replace(/^\//, '');
+                const targetUrl = targetHref.replace(/^\//, '');
 
                 if (loadingOverlay) {
                     loadingOverlay.classList.add('show');
                 }
 
-                // Pequeno atraso para a animação do carregamento aparecer
                 setTimeout(() => {
-                    window.location.href = link.getAttribute('href');
-                }, 300); // Ajuste este tempo para corresponder ao início da sua animação de carregamento
+                    // Se o destino for igual ao endereço atual, recarrega a página
+                    if (currentUrl === targetUrl) {
+                        window.location.reload();
+                    } else {
+                        window.location.href = targetHref;
+                    }
+                }, 300);
             });
         }
     });
