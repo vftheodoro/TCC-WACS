@@ -590,9 +590,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const flashNotificationMessage = document.getElementById('flashNotificationMessage');
     const closeFlashNotificationBtn = document.querySelector('.close-flash-notification-btn');
 
-    closeFlashNotificationBtn.addEventListener('click', () => {
-        flashNotification.classList.remove('show');
-    });
+    if (closeFlashNotificationBtn) {
+        closeFlashNotificationBtn.addEventListener('click', () => {
+            flashNotification.classList.remove('show');
+        });
+    }
 
     function showFlashNotification(message, type = 'info') {
         flashNotificationMessage.textContent = message;
@@ -659,6 +661,25 @@ document.addEventListener('DOMContentLoaded', () => {
         return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
     }
     // --- FIM: Firebase Firestore para Feed da Comunidade ---
+
+    // --- INÍCIO: Estatísticas dinâmicas do Firebase (index.html) ---
+    if (document.getElementById('usuarios-cadastrados') && document.getElementById('locais-mapeados')) {
+        getFirebaseApp();
+        const db = window.firebase.firestore();
+        // Coleção de usuários (ajuste o nome se necessário)
+        db.collection('users').get().then(snapshot => {
+            document.getElementById('usuarios-cadastrados').textContent = snapshot.size;
+        }).catch(() => {
+            document.getElementById('usuarios-cadastrados').textContent = '0';
+        });
+        // Coleção de locais (ajuste o nome se necessário)
+        db.collection('accessibleLocations').get().then(snapshot => {
+            document.getElementById('locais-mapeados').textContent = snapshot.size;
+        }).catch(() => {
+            document.getElementById('locais-mapeados').textContent = '0';
+        });
+    }
+    // --- FIM: Estatísticas dinâmicas do Firebase (index.html) ---
 });
 
 // Função auxiliar para obter o nome do arquivo da URL
