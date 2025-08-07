@@ -20,6 +20,17 @@ const db = firebase.firestore();
 
 // --- Utility Functions (moved or adapted from script.js and login.js) ---
 
+// Function to get the correct path for default avatar image
+function getDefaultAvatarPath() {
+    // Check if we're in a subdirectory (like /views/)
+    const currentPath = window.location.pathname;
+    if (currentPath.includes('/views/')) {
+        return '../public/images/fotos-perfil/default-avatar.png';
+    } else {
+        return '/public/images/fotos-perfil/default-avatar.png';
+    }
+}
+
 // Global flash message utility (ensure it's only created once)
 let flashNotification = document.querySelector('.flash-notification');
 if (!flashNotification) {
@@ -80,18 +91,18 @@ function updateUIForAuthState(user) {
         // Update localStorage (for older parts of the system or direct checks)
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('userName', user.displayName || user.email);
-        localStorage.setItem('userProfilePic', user.photoURL || '../public/images/fotos-perfil/default-avatar.png');
+        localStorage.setItem('userProfilePic', user.photoURL || getDefaultAvatarPath());
 
         // Update desktop navbar
         if (loggedOutActions) loggedOutActions.classList.add('hidden');
         if (loggedInActions) loggedInActions.classList.remove('hidden');
-        if (userProfilePicElement) userProfilePicElement.src = user.photoURL || '../public/images/fotos-perfil/default-avatar.png';
+        if (userProfilePicElement) userProfilePicElement.src = user.photoURL || getDefaultAvatarPath();
         if (userNameElement) userNameElement.textContent = user.displayName || user.email;
 
         // Update mobile header status
         if (mobileUserStatus) {
             if (mobileProfilePicElement) {
-                mobileProfilePicElement.src = user.photoURL || '../public/images/fotos-perfil/default-avatar.png';
+                mobileProfilePicElement.src = user.photoURL || getDefaultAvatarPath();
                 mobileProfilePicElement.classList.remove('hidden');
             }
             if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
@@ -100,7 +111,7 @@ function updateUIForAuthState(user) {
         // Update mobile menu overlay
         if (loggedOutActionsMobile) loggedOutActionsMobile.classList.add('hidden');
         if (loggedInActionsMobile) loggedInActionsMobile.classList.remove('hidden');
-        if (mobileMenuProfilePicElement) mobileMenuProfilePicElement.src = user.photoURL || '../public/images/fotos-perfil/default-avatar.png';
+        if (mobileMenuProfilePicElement) mobileMenuProfilePicElement.src = user.photoURL || getDefaultAvatarPath();
         if (mobileMenuUserNameElement) mobileMenuUserNameElement.textContent = user.displayName || user.email;
 
         // Community page specific logic
@@ -111,7 +122,7 @@ function updateUIForAuthState(user) {
             // Populate community profile section
             const profileCardPic = document.querySelector('.profile-card-pic');
             const profileCardName = document.querySelector('.profile-card-name');
-            if (profileCardPic) profileCardPic.src = user.photoURL || '../public/images/fotos-perfil/default-avatar.png';
+            if (profileCardPic) profileCardPic.src = user.photoURL || getDefaultAvatarPath();
             if (profileCardName) profileCardName.textContent = user.displayName || user.email;
 
             // Simulate user data for the community page (replace with actual data fetch in production)

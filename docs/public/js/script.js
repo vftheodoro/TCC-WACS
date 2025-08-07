@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isLoggedIn) {
             if (loggedOutActions) loggedOutActions.classList.add('hidden');
             if (loggedInActions) loggedInActions.classList.remove('hidden');
-            if (userProfilePicElement) userProfilePicElement.src = userProfilePic || '../public/images/fotos-perfil/default-avatar.png';
+            if (userProfilePicElement) userProfilePicElement.src = userProfilePic || '/public/images/fotos-perfil/default-avatar.png';
             if (userNameElement) userNameElement.textContent = userName || 'Usuário';
 
             // Simula dados do usuário para a página da comunidade
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const userRatings = document.getElementById('user-ratings');
                 const userPoints = document.getElementById('user-points');
 
-                if (profileCardPic) profileCardPic.src = userProfilePic || '../public/images/fotos-perfil/default-avatar.png';
+                if (profileCardPic) profileCardPic.src = userProfilePic || '/public/images/fotos-perfil/default-avatar.png';
                 if (profileCardName) profileCardName.textContent = userName || 'Usuário';
                 if (userContributions) userContributions.textContent = userData.contributions;
                 if (userRatings) userRatings.textContent = userData.ratings;
@@ -162,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mobileUserStatus) {
             if (isLoggedIn) {
                 if (mobileProfilePicElement) {
-                    mobileProfilePicElement.src = userProfilePic || '../public/images/fotos-perfil/default-avatar.png';
+                    mobileProfilePicElement.src = userProfilePic || '/public/images/fotos-perfil/default-avatar.png';
                     mobileProfilePicElement.classList.remove('hidden');
                 }
                 if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (isLoggedIn) {
                 if (loggedOutActionsMobile) loggedOutActionsMobile.classList.add('hidden');
                 if (loggedInActionsMobile) loggedInActionsMobile.classList.remove('hidden');
-                if (mobileMenuProfilePicElement) mobileMenuProfilePicElement.src = userProfilePic || '../public/images/fotos-perfil/default-avatar.png';
+                if (mobileMenuProfilePicElement) mobileMenuProfilePicElement.src = userProfilePic || '/public/images/fotos-perfil/default-avatar.png';
                 if (mobileMenuUserNameElement) mobileMenuUserNameElement.textContent = userName || 'Usuário';
             } else {
                 if (loggedOutActionsMobile) loggedOutActionsMobile.classList.remove('hidden');

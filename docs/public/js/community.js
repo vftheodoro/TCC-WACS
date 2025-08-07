@@ -1944,12 +1944,12 @@ function createSuggestionItem(userData) {
     suggestionItem.className = 'suggestion-item';
     suggestionItem.setAttribute('data-user-id', userData.uid);
 
-    const userPhoto = userData.photoURL || userData.photo || '../public/images/fotos-perfil/default-avatar.png';
+            const userPhoto = userData.photoURL || userData.photo || '/public/images/fotos-perfil/default-avatar.png';
     const userName = userData.displayName || userData.name || userData.email || 'Usuário';
     const userRole = userData.userRole || userData.profession || userData.mobilityType || 'Membro da Comunidade';
 
     suggestionItem.innerHTML = `
-        <img src="${userPhoto}" alt="Foto de ${userName}" class="suggestion-pic" onerror="this.src='../public/images/fotos-perfil/default-avatar.png'">
+                        <img src="${userPhoto}" alt="Foto de ${userName}" class="suggestion-pic" onerror="this.src='/public/images/fotos-perfil/default-avatar.png'">
         <div class="suggestion-info">
             <span class="suggestion-name">${userName}</span>
             <span class="suggestion-role">${formatUserRole(userRole)}</span>
@@ -2205,7 +2205,7 @@ function createPostCard(post, user) {
   card.className = 'post-card' + (isOwner ? ' post-card-owner' : '');
   card.innerHTML = `
     <div class="post-header">
-      <img src="${post.userPhoto || '../public/images/fotos-perfil/default-avatar.png'}" class="post-avatar" onerror="this.src='../public/images/fotos-perfil/default-avatar.png'">
+                      <img src="${post.userPhoto || '/public/images/fotos-perfil/default-avatar.png'}" class="post-avatar" onerror="this.src='/public/images/fotos-perfil/default-avatar.png'">
       <div class="post-header-info">
         <span class="post-user">${post.userName || 'Usuário'}</span>
         <span class="post-date">${getRelativeDate(post.createdAt)}</span>
