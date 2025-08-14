@@ -1,0 +1,270 @@
+/* Estilos para a nova página do Mapa Acessível */
+
+/* Estrutura Principal (Layout de Tela Dividida) */
+.map-container {
+    display: flex;
+    height: calc(100vh - 60px); /* 60px é a altura da navbar */
+    width: 100%;
+    overflow: hidden;
+}
+
+/* Painel Lateral */
+.side-panel {
+    width: 380px;
+    flex-shrink: 0;
+    background: var(--background-color);
+    border-right: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.side-panel-header {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.side-panel-header h2 {
+    margin: 0;
+    font-size: 1.4rem;
+    color: var(--text-color);
+}
+
+.add-location-btn {
+    font-size: 0.9rem;
+}
+
+/* Filtros */
+.filters-container {
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.search-bar, #category-filter {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+    font-size: 1rem;
+}
+
+#category-filter {
+    margin-top: 10px;
+}
+
+/* Lista de Locais */
+.locations-list {
+    flex-grow: 1;
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.location-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.location-item-content {
+    flex-grow: 1;
+}
+
+.btn-edit-location {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: color 0.2s, background-color 0.2s;
+}
+
+.btn-edit-location:hover {
+    color: var(--primary-color);
+    background-color: var(--card-bg-hover);
+}
+
+.location-item:hover, .location-item.active {
+    background-color: var(--card-bg-hover);
+}
+
+.location-item h3 {
+    margin: 0 0 5px 0;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.location-item p {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.features-display {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.feature-tag {
+    background-color: var(--primary-color-light);
+    color: var(--primary-color);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.location-item-placeholder {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-secondary);
+}
+
+/* Visual do Mapa */
+.map-view {
+    flex-grow: 1;
+    background-color: #e0e0e0; /* Cor de fundo enquanto o mapa carrega */
+}
+
+/* Estilos para a InfoWindow do Google Maps */
+.info-window-content {
+    color: var(--text-color);
+}
+
+.info-window-content h4 {
+    margin: 0 0 8px 0;
+    color: var(--primary-color);
+}
+
+.info-window-content p {
+    margin: 0 0 10px 0;
+}
+
+.info-window-content ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.info-window-content li {
+    padding: 2px 0;
+}
+
+/* Modal */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1001; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,0.5);
+    animation: fadeIn 0.3s;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    margin: 10% auto; 
+    padding: 25px;
+    border: 1px solid var(--border-color);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    position: relative;
+    animation: slideIn 0.3s;
+}
+
+.close-btn {
+    color: var(--text-secondary);
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover, .close-btn:focus {
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    background: var(--input-bg);
+    color: var(--text-color);
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.feature-item label {
+    color: var(--text-color);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .map-container {
+        flex-direction: column;
+        height: auto;
+    }
+
+    .side-panel {
+        width: 100%;
+        height: 40vh; /* Ocupa 40% da altura da tela */
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .map-view {
+        height: 60vh; /* Ocupa 60% da altura da tela */
+    }
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-50px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
