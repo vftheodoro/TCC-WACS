@@ -163,7 +163,7 @@
     const registerForm = document.getElementById('registerForm');
     const errorDiv = document.getElementById('register-error');
 
-    nextStepBtn.addEventListener('click', function() {
+    nextStepBtn.addEventListener('click', async function() {
         errorDiv.style.display = 'none';
         const username = document.getElementById('username').value.trim();
         const email = document.getElementById('email').value.trim();
@@ -177,6 +177,21 @@
         }
         if (password !== confirmPassword) {
             errorDiv.textContent = 'As senhas não coincidem.';
+            errorDiv.style.display = 'block';
+            return;
+        }
+        // Validação de username único (consulta Firestore)
+        try {
+            const db = firebase.firestore();
+            const existing = await db.collection('users').doc(username).get();
+            if (existing.exists) {
+                errorDiv.textContent = 'Esse username já está em uso. Escolha outro.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+        } catch (err) {
+            console.error('Erro ao validar username:', err);
+            errorDiv.textContent = 'Não foi possível validar o username. Tente novamente.';
             errorDiv.style.display = 'block';
             return;
         }
@@ -355,12 +370,53 @@
         const username = document.getElementById('username').value.trim();
         const fullName = document.getElementById('fullName').value.trim();
         const birthdate = document.getElementById('birthdate').value;
-        const region = document.getElementById('region').value;
+        const uf = document.getElementById('ufSelect').value;
+        const cidade = document.getElementById('cidadeInput').value.trim();
+        let region = document.getElementById('region').value;
         const mobilityType = document.getElementById('mobilityType').value;
         const comorbidades = document.getElementById('comorbidades').value;
         // Adicione outros campos conforme necessário
 
         try {
+            // Validações obrigatórias de localização e mobilidade
+            if (!uf) {
+                errorDiv.textContent = 'Selecione seu estado (UF).';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = 'red';
+                return;
+            }
+            if (!cidade) {
+                errorDiv.textContent = 'Selecione sua cidade.';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = 'red';
+                return;
+            }
+            // Se region não estiver preenchido mas temos UF e cidade, derivar automaticamente
+            if (!region && uf && cidade) {
+                region = uf + ' - ' + cidade;
+                document.getElementById('region').value = region;
+            }
+            if (!region) {
+                errorDiv.textContent = 'Não foi possível definir a região. Selecione a cidade novamente.';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = 'red';
+                return;
+            }
+            if (!mobilityType) {
+                errorDiv.textContent = 'Selecione o tipo de mobilidade.';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = 'red';
+                return;
+            }
+            // Checar novamente se username segue único (proteção contra corrida)
+            const db = firebase.firestore();
+            const existing = await db.collection('users').doc(username).get();
+            if (existing.exists) {
+                errorDiv.textContent = 'Esse username já está em uso. Escolha outro.';
+                errorDiv.style.display = 'block';
+                errorDiv.style.color = 'red';
+                return;
+            }
             // 1. Criar usuário no Auth
             const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             const user = userCredential.user;
@@ -372,6 +428,8 @@
                 username: username,
                 fullName: fullName,
                 birthdate: birthdate,
+                uf: uf,
+                cidade: cidade,
                 region: region,
                 mobilityType: mobilityType,
                 comorbidades: comorbidades,

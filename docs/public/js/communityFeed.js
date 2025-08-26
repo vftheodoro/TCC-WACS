@@ -25,7 +25,7 @@ function getFirebaseApp() {
   return firebase;
 }
 
-function initializeFirebase() {
+function initializeFirebaseFeed() {
   const firebase = getFirebaseApp();
   if (!firebase) return null;
   if (!firebase.apps.length) {
@@ -43,14 +43,14 @@ function initializeFirebase() {
   return firebase;
 }
 
-function getCurrentUser() {
-  const firebase = initializeFirebase();
+function getCurrentUserFeed() {
+  const firebase = initializeFirebaseFeed();
   if (!firebase) return null;
   return firebase.auth().currentUser;
 }
 
-function getCurrentUserId() {
-  const user = getCurrentUser();
+function getCurrentUserIdFeed() {
+  const user = getCurrentUserFeed();
   return user ? user.uid : null;
 }
 
@@ -78,7 +78,7 @@ function renderToast() {
 
 // --- Funções de Feed ---
 async function fetchPostsPaginated({ pageSize, lastDoc }) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
   let query = db.collection('posts').orderBy('createdAt', 'desc').limit(pageSize);
@@ -92,7 +92,7 @@ async function fetchPostsPaginated({ pageSize, lastDoc }) {
 }
 
 async function updateCommentsCountIfNeeded(post) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) return;
   const db = firebase.firestore();
   if (typeof post.commentsCount === 'number' && post.commentsCount > 0) return;
@@ -144,10 +144,10 @@ async function loadMorePosts() {
 }
 
 async function toggleLikePostWeb(postId, liked) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
-  const userId = getCurrentUserId();
+  const userId = getCurrentUserIdFeed();
   if (!userId) throw new Error('Usuário não autenticado');
   const postRef = db.collection('posts').doc(postId);
   await postRef.update({
@@ -156,7 +156,7 @@ async function toggleLikePostWeb(postId, liked) {
 }
 
 async function fetchCommentsWeb(postId) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) return [];
   const db = firebase.firestore();
   const snap = await db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', 'desc').limit(50).get();
@@ -164,10 +164,10 @@ async function fetchCommentsWeb(postId) {
 }
 
 async function addCommentWeb(postId, text) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
-  const user = getCurrentUser();
+  const user = getCurrentUserFeed();
   if (!user) throw new Error('Usuário não autenticado');
   const commentData = {
     userId: user.uid,
@@ -184,7 +184,7 @@ async function addCommentWeb(postId, text) {
 }
 
 async function deleteCommentWeb(postId, commentId) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
   await db.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
@@ -194,10 +194,10 @@ async function deleteCommentWeb(postId, commentId) {
 }
 
 async function toggleLikeCommentWeb(postId, commentId, liked) {
-  const firebase = initializeFirebase();
+  const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
-  const userId = getCurrentUserId();
+  const userId = getCurrentUserIdFeed();
   if (!userId) throw new Error('Usuário não autenticado');
   const commentRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
   await commentRef.update({
@@ -234,7 +234,7 @@ function renderFeedUI() {
 }
 
 function createPostCardWeb(post) {
-  const user = getCurrentUser();
+  const user = getCurrentUserFeed();
   const isOwner = user && (user.uid === post.userId);
   const card = document.createElement('div');
   card.className = 'post-card' + (isOwner ? ' post-card-owner' : '');
@@ -381,7 +381,7 @@ function renderCommentsModalWeb() {
       </div>
       <div class="comments-list">${FeedState.commentsLoading ? 'Carregando...' : ''}</div>
       <div class="comments-input-row">
-                        <img src="${getCurrentUser()?.photoURL || '/public/images/fotos-perfil/default-avatar.png'}" class="comments-avatar">
+                        <img src="${getCurrentUserFeed()?.photoURL || '/public/images/fotos-perfil/default-avatar.png'}" class="comments-avatar">
         <input type="text" class="comments-input" placeholder="Adicionar um comentário...">
         <button class="send-comment-btn"><i class="fas fa-paper-plane"></i></button>
       </div>
@@ -447,10 +447,10 @@ async function handleAddComment(text) {
   FeedState.commentsLoading = true;
   renderCommentsModalWeb();
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
-    const user = getCurrentUser();
+    const user = getCurrentUserFeed();
     if (!user) throw new Error('Usuário não autenticado');
     const commentData = {
       userId: user.uid,
@@ -485,7 +485,7 @@ async function handleDeleteComment(comment) {
   FeedState.commentsLoading = true;
   renderCommentsModalWeb();
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     await db.collection('posts').doc(FeedState.selectedPost.id).collection('comments').doc(comment.id).delete();
@@ -513,10 +513,10 @@ async function handleLikeComment(comment) {
   FeedState.commentsLoading = true;
   renderCommentsModalWeb();
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
-    const userId = getCurrentUserId();
+    const userId = getCurrentUserIdFeed();
     if (!userId) throw new Error('Usuário não autenticado');
     const commentRef = db.collection('posts').doc(FeedState.selectedPost.id).collection('comments').doc(comment.id);
     await commentRef.update({
@@ -533,7 +533,7 @@ async function handleLikeComment(comment) {
 
 async function handleDeletePost(post) {
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     const storage = firebase.storage();
@@ -568,7 +568,7 @@ async function handleDeletePost(post) {
 
 async function handleEditPost(post, newText) {
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     await db.collection('posts').doc(post.id).update({ text: newText });
@@ -645,10 +645,10 @@ window.CommunityFeed = {
 
 async function handleLike(postId, liked) {
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
-    const userId = getCurrentUserId();
+    const userId = getCurrentUserIdFeed();
     if (!userId) throw new Error('Usuário não autenticado');
     const postRef = db.collection('posts').doc(postId);
     await postRef.update({
@@ -677,11 +677,11 @@ async function handlePublish({ text, imageFile }) {
   FeedState.loading = true;
   renderFeedUI();
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     const storage = firebase.storage();
-    const user = getCurrentUser();
+    const user = getCurrentUserFeed();
     if (!user) throw new Error('Usuário não autenticado');
     let imageUrl = null;
     if (imageFile) {
@@ -717,7 +717,7 @@ async function handlePublish({ text, imageFile }) {
 // --- Função de editar post igual ao app ---
 async function handleEditPost(post, newText) {
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     await db.collection('posts').doc(post.id).update({ text: newText });
@@ -732,7 +732,7 @@ async function handleEditPost(post, newText) {
 // --- Função de excluir post igual ao app ---
 async function handleDeletePost(post) {
   try {
-    const firebase = initializeFirebase();
+    const firebase = initializeFirebaseFeed();
     if (!firebase) throw new Error('Firebase não inicializado');
     const db = firebase.firestore();
     const storage = firebase.storage();
