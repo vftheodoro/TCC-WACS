@@ -365,8 +365,9 @@
             const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
             const user = userCredential.user;
 
-            // 2. Salvar dados no Firestore
-            await firebase.firestore().collection('users').doc(user.uid).set({
+            // 2. Salvar dados no Firestore usando o username como ID do documento
+            const userData = {
+                uid: user.uid, // Manter o UID do Firebase Auth para referência
                 email: email,
                 username: username,
                 fullName: fullName,
@@ -376,7 +377,9 @@
                 comorbidades: comorbidades,
                 createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 // ... (adicione outros campos)
-            });
+            };
+            
+            await window.saveUserDocument(username, userData);
 
             showSuccessMessage('Conta criada com sucesso! Você pode fazer login agora.');
             // Redirecionar para login após alguns segundos

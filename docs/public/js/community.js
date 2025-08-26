@@ -2034,10 +2034,10 @@ function initializeCommunityPage() {
                     loadUserSuggestions();
 
                     // --- NOVO: Buscar dados do perfil do usuário logado ---
-                    const db = firebase.firestore();
-                    db.collection('users').doc(user.uid).get().then(doc => {
-                        if (doc.exists) {
-                            const userData = doc.data();
+                    // Buscar documento do usuário usando função utilitária
+                    window.getUserDocument(user.uid).then(userDoc => {
+                        if (userDoc) {
+                            const userData = userDoc.data();
                             // XP
                             const xp = userData.xp || 0;
                             const pointsEl = document.getElementById('user-points');
@@ -2047,6 +2047,8 @@ function initializeCommunityPage() {
                             const contribEl = document.getElementById('user-contributions');
                             if (contribEl) contribEl.textContent = contrib;
                         }
+                    }).catch(error => {
+                        console.error('Erro ao buscar dados do usuário:', error);
                     });
                     // --- FIM NOVO ---
                 } else {

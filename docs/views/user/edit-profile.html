@@ -877,9 +877,10 @@
             }
             // Busca dados adicionais do Firestore
             try {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    const data = userDoc.data();
+                            // Buscar documento do usuário usando função utilitária
+            const userDoc = await window.getUserDocument(user.uid);
+            if (userDoc) {
+                const data = userDoc.data();
                     if (data.fullName) fullNameInput.value = data.fullName;
                     if (data.birthdate) birthdateInput.value = data.birthdate;
                     if (data.uf) ufSelect.value = data.uf;
@@ -967,8 +968,9 @@
                 await user.reauthenticateWithCredential(credential);
                 await user.updatePassword(newPassword);
             }
-            // Atualizar dados no Firestore
-            await db.collection('users').doc(user.uid).set({
+            // Atualizar dados no Firestore usando o username (ID do documento)
+            const userData = {
+                uid: user.uid, // Manter o UID do Firebase Auth para referência
                 displayName,
                 fullName,
                 birthdate,
@@ -982,7 +984,12 @@
                 instagram,
                 photoURL,
                 lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
+            };
+            
+            // manter o mesmo ID do documento (username). Caso o doc seja do modelo antigo, caia para displayName
+            const existingDoc = await window.getUserDocument(user.uid);
+            const docId = existingDoc ? existingDoc.id : (displayName || fullName);
+            await window.saveUserDocument(docId, userData);
             showFlashMessage('Perfil atualizado com sucesso!', 'success');
             // Limpar campos de senha
             document.getElementById('currentPassword').value = '';
