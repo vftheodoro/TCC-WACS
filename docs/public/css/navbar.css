@@ -31,6 +31,18 @@
     background-clip: text;
 }
 
+.navbar-logo img {
+    height: 32px;
+    width: auto;
+    margin-right: 8px;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.navbar-logo img:hover {
+    transform: scale(1.05);
+}
+
 .navbar-menu {
     list-style: none;
     display: flex;
@@ -400,7 +412,15 @@
     }
     
     .mobile-menu-header .navbar-logo {
-        display: none !important; /* Esconder a logo no cabeçalho do menu mobile */
+        display: flex !important; /* Mostrar a logo no cabeçalho do menu mobile */
+        align-items: center;
+        font-size: 24px;
+    }
+
+    .mobile-menu-header .navbar-logo img {
+        height: 28px;
+        width: auto;
+        margin-right: 8px;
     }
 
     .close-menu-btn {
@@ -467,6 +487,11 @@
     }
     .navbar-logo i {
         font-size: 28px;
+    }
+    .navbar-logo img {
+        height: 28px;
+        width: auto;
+        margin-right: 8px;
     }
 
     .mobile-menu-header,

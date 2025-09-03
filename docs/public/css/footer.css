@@ -38,6 +38,19 @@
     color: var(--footer-text); /* Garantindo que o ícone use a cor do texto do rodapé */
 }
 
+.footer-brand img {
+    height: 32px;
+    width: auto;
+    margin-right: 8px;
+    margin-bottom: 8px;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.footer-brand img:hover {
+    transform: scale(1.05);
+}
+
 .footer-brand span {
     font-size: 28px; /* Título da marca maior */
     font-weight: 700;

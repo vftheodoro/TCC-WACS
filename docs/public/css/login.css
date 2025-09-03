@@ -43,6 +43,18 @@ body {
     margin-bottom: 10px;
 }
 
+.login-header img {
+    height: 48px;
+    width: auto;
+    margin-right: 12px;
+    border-radius: 4px;
+    transition: transform 0.3s ease;
+}
+
+.login-header img:hover {
+    transform: scale(1.05);
+}
+
 .login-logo-text {
     font-size: 36px;
     font-weight: 700;
