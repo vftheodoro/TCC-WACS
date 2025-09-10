@@ -30,6 +30,16 @@ function initializeFirebase() {
     return firebase;
 }
 
+// Utilitário para obter caminho correto do avatar padrão considerando /views/
+function resolveDefaultAvatar() {
+    try {
+        if (typeof getDefaultAvatarPath === 'function') {
+            return getDefaultAvatarPath();
+        }
+    } catch {}
+    return '/public/images/fotos-perfil/default-avatar.png';
+}
+
 // Função para criar dados de usuários de exemplo (apenas para desenvolvimento)
 async function createSampleUsers() {
     const firebase = initializeFirebase();
@@ -1944,12 +1954,12 @@ function createSuggestionItem(userData) {
     suggestionItem.className = 'suggestion-item';
     suggestionItem.setAttribute('data-user-id', userData.uid);
 
-            const userPhoto = userData.photoURL || userData.photo || '/public/images/fotos-perfil/default-avatar.png';
+    const userPhoto = userData.photoURL || userData.photo || resolveDefaultAvatar();
     const userName = userData.displayName || userData.name || userData.email || 'Usuário';
     const userRole = userData.userRole || userData.profession || userData.mobilityType || 'Membro da Comunidade';
 
     suggestionItem.innerHTML = `
-                        <img src="${userPhoto}" alt="Foto de ${userName}" class="suggestion-pic" onerror="this.src='/public/images/fotos-perfil/default-avatar.png'">
+        <img src="${userPhoto}" alt="Foto de ${userName}" class="suggestion-pic" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
         <div class="suggestion-info">
             <span class="suggestion-name">${userName}</span>
             <span class="suggestion-role">${formatUserRole(userRole)}</span>

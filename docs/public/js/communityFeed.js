@@ -16,6 +16,16 @@ const FeedState = {
   PAGE_SIZE: 10,
 };
 
+// Utilitário para obter caminho correto do avatar padrão considerando /views/
+function resolveDefaultAvatar() {
+  try {
+    if (typeof getDefaultAvatarPath === 'function') {
+      return getDefaultAvatarPath();
+    }
+  } catch {}
+  return '/public/images/fotos-perfil/default-avatar.png';
+}
+
 // --- Utilitários Firebase ---
 function getFirebaseApp() {
   if (typeof firebase === 'undefined') {
@@ -240,7 +250,7 @@ function createPostCardWeb(post) {
   card.className = 'post-card' + (isOwner ? ' post-card-owner' : '');
   card.innerHTML = `
     <div class="post-header">
-                      <img src="${post.userPhoto || '/public/images/fotos-perfil/default-avatar.png'}" class="post-avatar" onerror="this.src='/public/images/fotos-perfil/default-avatar.png'">
+      <img src="${post.userPhoto || resolveDefaultAvatar()}" class="post-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
       <div class="post-header-info">
         <span class="post-user">${post.userName || 'Usuário'}</span>
         <span class="post-date">${getRelativeDate(post.createdAt)}</span>
@@ -381,7 +391,7 @@ function renderCommentsModalWeb() {
       </div>
       <div class="comments-list">${FeedState.commentsLoading ? 'Carregando...' : ''}</div>
       <div class="comments-input-row">
-                        <img src="${getCurrentUserFeed()?.photoURL || '/public/images/fotos-perfil/default-avatar.png'}" class="comments-avatar">
+        <img src="${getCurrentUserFeed()?.photoURL || resolveDefaultAvatar()}" class="comments-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
         <input type="text" class="comments-input" placeholder="Adicionar um comentário...">
         <button class="send-comment-btn"><i class="fas fa-paper-plane"></i></button>
       </div>
@@ -417,7 +427,7 @@ function renderCommentsListWeb(listEl) {
     const item = document.createElement('div');
     item.className = 'comment-item';
     item.innerHTML = `
-                      <img src="${comment.userPhoto || '/public/images/fotos-perfil/default-avatar.png'}" class="comment-avatar">
+      <img src="${comment.userPhoto || resolveDefaultAvatar()}" class="comment-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
       <div class="comment-content">
         <div class="comment-header">
           <span class="comment-user">${comment.userName}</span>
