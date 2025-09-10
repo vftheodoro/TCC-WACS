@@ -190,6 +190,16 @@ auth.onAuthStateChanged((user) => {
 // --- Logout functionality ---
 // This assumes there's a .logout-btn in your HTML that will trigger this
 document.addEventListener('click', (e) => {
+    // Helper to navigate to community with correct relative path
+    function navigateToCommunity() {
+        const currentPath = window.location.pathname;
+        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
+        if (currentPath.includes('/views/')) {
+            redirectPath = 'comunidade.html'; // Se já estiver em views/
+        }
+        window.location.href = redirectPath;
+    }
+
     if (e.target.closest('.logout-btn')) {
         auth.signOut().then(() => {
             showFlashMessage('Você foi desconectado.', 'info');
@@ -214,37 +224,27 @@ document.addEventListener('click', (e) => {
     // --- Redirecionamento para comunidade ao clicar na foto/nome do usuário ---
     // Desktop: foto e nome do usuário na navbar
     if (e.target.closest('.user-profile') && !e.target.closest('.logout-btn')) {
-        const currentPath = window.location.pathname;
-        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
-        
-        if (currentPath.includes('/views/')) {
-            redirectPath = 'comunidade.html'; // Se já estiver em views/
-        }
-        
-        window.location.href = redirectPath;
+        navigateToCommunity();
     }
     
     // Mobile: foto do usuário no cabeçalho mobile
     if (e.target.closest('.profile-pic-mobile')) {
-        const currentPath = window.location.pathname;
-        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
-        
-        if (currentPath.includes('/views/')) {
-            redirectPath = 'comunidade.html'; // Se já estiver em views/
-        }
-        
-        window.location.href = redirectPath;
+        navigateToCommunity();
     }
     
     // Mobile: foto e nome do usuário no menu overlay
     if (e.target.closest('.mobile-menu-overlay .user-profile') && !e.target.closest('.logout-btn')) {
-        const currentPath = window.location.pathname;
-        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
-        
-        if (currentPath.includes('/views/')) {
-            redirectPath = 'comunidade.html'; // Se já estiver em views/
+        navigateToCommunity();
+    }
+
+    // Botão/Link da Comunidade (desktop e mobile): usar mesma lógica do clique no nome
+    const communityAnchor = e.target.closest('a');
+    if (communityAnchor) {
+        const href = communityAnchor.getAttribute('href') || '';
+        // Links que apontam para a página comunidade, em qualquer contexto
+        if (/(^|\/)comunidade\.html(\?|#|$)/.test(href)) {
+            e.preventDefault();
+            navigateToCommunity();
         }
-        
-        window.location.href = redirectPath;
     }
 }); 
