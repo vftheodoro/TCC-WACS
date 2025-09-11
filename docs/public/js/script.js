@@ -705,3 +705,42 @@ function showFlashNotification(message, type = 'info') {
     }, 5000);
 }
 */ 
+
+// --- Helpers globais de usuário (compatíveis com mudanças de ID do documento) ---
+// Disponibiliza window.saveUserDocument e window.getUserDocument para páginas como register.html e edit-profile.html
+// Usa Firebase compat já carregado na página
+(function ensureUserHelpers() {
+	try {
+		if (!window.saveUserDocument) {
+			window.saveUserDocument = async function saveUserDocument(documentId, userData) {
+				if (!window.firebase?.apps?.length) {
+					throw new Error('Firebase não inicializado');
+				}
+				const db = window.firebase.firestore();
+				await db.collection('users').doc(documentId).set(userData, { merge: true });
+			};
+		}
+
+		if (!window.getUserDocument) {
+			window.getUserDocument = async function getUserDocument(userUid) {
+				if (!window.firebase?.apps?.length) {
+					throw new Error('Firebase não inicializado');
+				}
+				const db = window.firebase.firestore();
+				// 1) Tenta direto pelo UID como ID do doc (modelo antigo)
+				const byUidIdSnap = await db.collection('users').doc(userUid).get();
+				if (byUidIdSnap.exists) {
+					return byUidIdSnap;
+				}
+				// 2) Tenta query por campo uid (modelo atual)
+				const querySnap = await db.collection('users').where('uid', '==', userUid).limit(1).get();
+				if (!querySnap.empty) {
+					return querySnap.docs[0];
+				}
+				return null;
+			};
+		}
+	} catch (e) {
+		console.error('Erro ao definir helpers globais de usuário:', e);
+	}
+})();
