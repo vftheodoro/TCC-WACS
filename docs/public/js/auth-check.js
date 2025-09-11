@@ -241,8 +241,8 @@ document.addEventListener('click', (e) => {
     const communityAnchor = e.target.closest('a');
     if (communityAnchor) {
         const href = communityAnchor.getAttribute('href') || '';
-        // Links que apontam para a página comunidade, em qualquer contexto
-        if (/(^|\/)comunidade\.html(\?|#|$)/.test(href)) {
+        // Links que apontam para a página comunidade, com ou sem extensão .html, e com ou sem prefixo views/
+        if (/(^|\/)(?:views\/)?comunidade(?:\.html)?(\?|#|$)/.test(href)) {
             e.preventDefault();
             navigateToCommunity();
         }
