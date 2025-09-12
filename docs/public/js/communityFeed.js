@@ -32,13 +32,26 @@ function getFirebaseApp() {
     console.error('Firebase não está carregado');
     return null;
   }
+  console.log('Firebase disponível:', firebase);
   return firebase;
 }
 
 function initializeFirebaseFeed() {
+  console.log('Inicializando Firebase Feed...');
   const firebase = getFirebaseApp();
-  if (!firebase) return null;
+  if (!firebase) {
+    console.error('Firebase não está disponível');
+    return null;
+  }
+  
+  // Verificar se as variáveis de ambiente estão disponíveis
+  if (!window.ENV) {
+    console.error('Variáveis de ambiente não estão disponíveis');
+    return null;
+  }
+  
   if (!firebase.apps.length) {
+    console.log('Configurando Firebase com as credenciais...');
     const firebaseConfig = {
       apiKey: window.ENV.FIREBASE_API_KEY,
       authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
@@ -48,15 +61,30 @@ function initializeFirebaseFeed() {
       appId: window.ENV.FIREBASE_APP_ID,
       measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
     };
-    firebase.initializeApp(firebaseConfig);
+    console.log('Configuração do Firebase:', firebaseConfig);
+    
+    try {
+      firebase.initializeApp(firebaseConfig);
+      console.log('Firebase inicializado com sucesso');
+    } catch (error) {
+      console.error('Erro ao inicializar Firebase:', error);
+      return null;
+    }
+  } else {
+    console.log('Firebase já inicializado');
   }
   return firebase;
 }
 
 function getCurrentUserFeed() {
   const firebase = initializeFirebaseFeed();
-  if (!firebase) return null;
-  return firebase.auth().currentUser;
+  if (!firebase) {
+    console.error('Firebase não inicializado para obter usuário');
+    return null;
+  }
+  const user = firebase.auth().currentUser;
+  console.log('Usuário atual:', user ? user.uid : 'Não autenticado');
+  return user;
 }
 
 function getCurrentUserIdFeed() {
@@ -88,6 +116,7 @@ function renderToast() {
 
 // --- Funções de Feed ---
 async function fetchPostsPaginated({ pageSize, lastDoc }) {
+  console.log('Buscando posts paginados...');
   const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
   const db = firebase.firestore();
@@ -98,30 +127,45 @@ async function fetchPostsPaginated({ pageSize, lastDoc }) {
   snap.forEach(doc => {
     posts.push({ id: doc.id, ...doc.data() });
   });
+  console.log('Posts buscados do Firebase:', posts.length, posts);
   return { posts, lastDoc: snap.docs[snap.docs.length - 1] || null };
 }
 
 async function updateCommentsCountIfNeeded(post) {
+  console.log('Atualizando contagem de comentários para post:', post.id);
   const firebase = initializeFirebaseFeed();
   if (!firebase) return;
   const db = firebase.firestore();
-  if (typeof post.commentsCount === 'number' && post.commentsCount > 0) return;
+  if (typeof post.commentsCount === 'number' && post.commentsCount > 0) {
+    console.log('Post já tem contagem de comentários:', post.commentsCount);
+    return;
+  }
   let count = 0;
   try {
     const commentsSnap = await db.collection('posts').doc(post.id).collection('comments').get();
     count = commentsSnap.size;
-  } catch {
+    console.log('Contagem de comentários do Firebase:', count);
+  } catch (error) {
+    console.error('Erro ao buscar comentários para contagem:', error);
     if (Array.isArray(post.comments)) count = post.comments.length;
   }
-  await db.collection('posts').doc(post.id).update({ commentsCount: count });
+  try {
+    await db.collection('posts').doc(post.id).update({ commentsCount: count });
+    console.log('Contagem de comentários atualizada para:', count);
+  } catch (error) {
+    console.error('Erro ao atualizar contagem de comentários:', error);
+  }
 }
 
 async function loadPosts() {
+  console.log('Carregando posts...');
   FeedState.loading = true;
   FeedState.error = null;
   renderFeedUI();
   try {
     const { posts, lastDoc } = await fetchPostsPaginated({ pageSize: FeedState.PAGE_SIZE });
+    console.log('Posts carregados:', posts.length, posts);
+    
     for (const post of posts) {
       if (typeof post.commentsCount !== 'number' || post.commentsCount === 0) {
         await updateCommentsCountIfNeeded(post);
@@ -129,7 +173,9 @@ async function loadPosts() {
     }
     FeedState.posts = posts;
     FeedState.lastDoc = lastDoc;
+    console.log('Posts processados e adicionados ao estado');
   } catch (e) {
+    console.error('Erro ao carregar posts:', e);
     FeedState.error = 'Não foi possível carregar o feed. ' + (e?.message || '');
   } finally {
     FeedState.loading = false;
@@ -166,19 +212,43 @@ async function toggleLikePostWeb(postId, liked) {
 }
 
 async function fetchCommentsWeb(postId) {
-  const firebase = initializeFirebaseFeed();
-  if (!firebase) return [];
-  const db = firebase.firestore();
-  const snap = await db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', 'desc').limit(50).get();
-  return snap.docs.map(doc => ({ id: doc.id, ...doc.data(), likes: Array.isArray(doc.data().likes) ? doc.data().likes : [] }));
+  try {
+    if (!postId) {
+      console.error('ID do post não fornecido para buscar comentários');
+      return [];
+    }
+    
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) {
+      console.error('Firebase não inicializado para buscar comentários');
+      return [];
+    }
+    
+    const db = firebase.firestore();
+    console.log(`Buscando comentários para post: ${postId}`);
+    
+    const snap = await db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', 'desc').limit(50).get();
+    const comments = snap.docs.map(doc => ({ id: doc.id, ...doc.data(), likes: Array.isArray(doc.data().likes) ? doc.data().likes : [] }));
+    console.log(`Comentários carregados para post ${postId}:`, comments.length, comments);
+    return comments;
+  } catch (error) {
+    console.error('Erro ao buscar comentários:', error);
+    return [];
+  }
 }
 
 async function addCommentWeb(postId, text) {
+  console.log('addCommentWeb chamada com:', { postId, text });
+  
   const firebase = initializeFirebaseFeed();
   if (!firebase) throw new Error('Firebase não inicializado');
+  
   const db = firebase.firestore();
   const user = getCurrentUserFeed();
   if (!user) throw new Error('Usuário não autenticado');
+  
+  console.log('Usuário autenticado:', { uid: user.uid, displayName: user.displayName });
+  
   const commentData = {
     userId: user.uid,
     userName: user.displayName,
@@ -187,10 +257,22 @@ async function addCommentWeb(postId, text) {
     createdAt: new Date().toISOString(),
     likes: [],
   };
-  await db.collection('posts').doc(postId).collection('comments').add(commentData);
-  await db.collection('posts').doc(postId).update({
-    commentsCount: firebase.firestore.FieldValue.increment(1)
-  });
+  
+  console.log('Dados do comentário a serem salvos:', commentData);
+  
+  try {
+    const docRef = await db.collection('posts').doc(postId).collection('comments').add(commentData);
+    console.log('Comentário salvo no Firebase com ID:', docRef.id);
+    
+    await db.collection('posts').doc(postId).update({
+      commentsCount: firebase.firestore.FieldValue.increment(1)
+    });
+    console.log('Contador de comentários incrementado para post:', postId);
+    
+  } catch (error) {
+    console.error('Erro ao salvar comentário no Firebase:', error);
+    throw error;
+  }
 }
 
 async function deleteCommentWeb(postId, commentId) {
@@ -217,24 +299,44 @@ async function toggleLikeCommentWeb(postId, commentId, liked) {
 
 // --- Renderização do Feed ---
 function renderFeedUI() {
+  console.log('Renderizando UI do feed...');
   const feedEl = document.querySelector('.community-feed');
-  if (!feedEl) return;
+  if (!feedEl) {
+    console.error('Elemento .community-feed não encontrado');
+    return;
+  }
+  
   feedEl.innerHTML = '';
+  
   if (FeedState.loading) {
+    console.log('Mostrando estado de carregamento');
     feedEl.innerHTML = '<div class="loading-feed">Carregando posts...</div>';
     return;
   }
+  
   if (FeedState.error) {
+    console.log('Mostrando erro:', FeedState.error);
     feedEl.innerHTML = `<div class="error-feed">${FeedState.error}</div>`;
     return;
   }
+  
   if (FeedState.posts.length === 0) {
+    console.log('Nenhum post encontrado');
     feedEl.innerHTML = '<div class="empty-feed">Nenhum post encontrado. Seja o primeiro a publicar!</div>';
     return;
   }
-  FeedState.posts.forEach(post => {
-    feedEl.appendChild(createPostCardWeb(post));
+  
+  console.log(`Renderizando ${FeedState.posts.length} posts`);
+  FeedState.posts.forEach((post, index) => {
+    console.log(`Criando card para post ${index + 1}:`, post.id);
+    const card = createPostCardWeb(post);
+    if (card) {
+      feedEl.appendChild(card);
+    } else {
+      console.error('Erro ao criar card para post:', post.id);
+    }
   });
+  
   if (FeedState.loadingMore) {
     const loadingMore = document.createElement('div');
     loadingMore.className = 'loading-more-feed';
@@ -244,6 +346,7 @@ function renderFeedUI() {
 }
 
 function createPostCardWeb(post) {
+  console.log('Criando card para post:', post);
   const user = getCurrentUserFeed();
   const isOwner = user && (user.uid === post.userId);
   const card = document.createElement('div');
@@ -264,14 +367,21 @@ function createPostCardWeb(post) {
       <button class="comment-btn"><i class="fas fa-comment"></i> <span class="comment-count">${typeof post.commentsCount === 'number' ? post.commentsCount : 0}</span></button>
     </div>
   `;
+  console.log('Card criado com HTML:', card.innerHTML);
   // Like post
   card.querySelector('.like-btn').onclick = async () => {
     await handleLike(post.id, post.likes && user && post.likes.includes(user.uid));
   };
   // Comentários
-  card.querySelector('.comment-btn').onclick = () => {
-    handleComment(post);
-  };
+  const commentBtn = card.querySelector('.comment-btn');
+  if (commentBtn) {
+    commentBtn.onclick = () => {
+      console.log('Botão de comentário clicado para post:', post.id);
+      handleComment(post);
+    };
+  } else {
+    console.error('Botão de comentário não encontrado no card do post');
+  }
   // Abrir imagem em tela cheia
   if (post.imageUrl) {
     card.querySelector('.post-image').onclick = () => openImageModal(post.imageUrl);
@@ -283,6 +393,8 @@ function createPostCardWeb(post) {
       showPostMenuWeb(card, post);
     };
   }
+  
+  console.log('Card final criado:', card);
   return card;
 }
 
@@ -354,23 +466,37 @@ function getRelativeDate(date) {
 
 // --- Comentários ---
 async function handleComment(post) {
+  console.log('Abrindo comentários para post:', post);
+  
+  if (!post || !post.id) {
+    console.error('Post inválido para comentários:', post);
+    return;
+  }
+  
   FeedState.selectedPost = post;
   FeedState.commentsLoading = true;
   renderCommentsModalWeb();
+  
   try {
     let fetched = await fetchCommentsWeb(post.id);
+    console.log('Comentários buscados do Firebase:', fetched);
+    
     // Migração de comentários antigos (se necessário)
     if ((!fetched || fetched.length === 0) && Array.isArray(post.comments) && post.comments.length > 0) {
+      console.log('Migrando comentários antigos:', post.comments);
       for (const c of post.comments) {
         await addCommentWeb(post.id, c.text);
       }
       fetched = await fetchCommentsWeb(post.id);
     }
     if ((!fetched || fetched.length === 0) && Array.isArray(post.comments) && post.comments.length > 0) {
+      console.log('Usando comentários locais como fallback');
       fetched = post.comments.map((c, idx) => ({ ...c, id: c.createdAt || String(idx), likes: [] }));
     }
-    FeedState.comments = fetched;
+    FeedState.comments = fetched || [];
+    console.log('Comentários finais no estado:', FeedState.comments);
   } catch (e) {
+    console.error('Erro ao carregar comentários:', e);
     FeedState.comments = [];
   }
   FeedState.commentsLoading = false;
@@ -378,9 +504,14 @@ async function handleComment(post) {
 }
 
 function renderCommentsModalWeb() {
+  console.log('Renderizando modal de comentários...');
   let modal = document.querySelector('.comments-modal');
   if (modal) modal.remove();
-  if (!FeedState.selectedPost) return;
+  if (!FeedState.selectedPost) {
+    console.error('Nenhum post selecionado para comentários');
+    return;
+  }
+  console.log('Post selecionado para comentários:', FeedState.selectedPost.id);
   modal = document.createElement('div');
   modal.className = 'comments-modal';
   modal.innerHTML = `
@@ -398,16 +529,31 @@ function renderCommentsModalWeb() {
     </div>
   `;
   document.body.appendChild(modal);
-  modal.querySelector('.close-comments-btn').onclick = () => {
+  console.log('Modal de comentários adicionado ao DOM');
+  
+  // Verificar se os elementos foram criados corretamente
+  const closeBtn = modal.querySelector('.close-comments-btn');
+  const commentsList = modal.querySelector('.comments-list');
+  const sendBtn = modal.querySelector('.send-comment-btn');
+  
+  if (!closeBtn || !commentsList || !sendBtn) {
+    console.error('Elementos do modal não foram criados corretamente');
+    return;
+  }
+  
+  closeBtn.onclick = () => {
     FeedState.selectedPost = null;
     modal.remove();
   };
+  
   // Renderizar lista de comentários
   if (!FeedState.commentsLoading) {
-    renderCommentsListWeb(modal.querySelector('.comments-list'));
+    console.log('Renderizando lista de comentários no modal');
+    renderCommentsListWeb(commentsList);
   }
+  
   // Enviar comentário
-  modal.querySelector('.send-comment-btn').onclick = async () => {
+  sendBtn.onclick = async () => {
     const input = modal.querySelector('.comments-input');
     const text = input.value.trim();
     if (!text) return;
@@ -417,12 +563,26 @@ function renderCommentsModalWeb() {
 }
 
 function renderCommentsListWeb(listEl) {
+  console.log('Renderizando lista de comentários:', FeedState.comments);
+  
+  if (!listEl) {
+    console.error('Elemento da lista de comentários não encontrado');
+    return;
+  }
+  
+  // Always clear the list first
+  listEl.innerHTML = '';
+  
   if (!FeedState.comments || FeedState.comments.length === 0) {
+    console.log('Nenhum comentário encontrado, mostrando mensagem vazia');
     listEl.innerHTML = '<div class="no-comments">Nenhum comentário ainda.</div>';
     return;
   }
-  FeedState.comments.forEach(comment => {
-    const user = getCurrentUser();
+  
+  console.log(`Renderizando ${FeedState.comments.length} comentários`);
+  FeedState.comments.forEach((comment, index) => {
+    console.log(`Renderizando comentário ${index + 1}:`, comment);
+    const user = getCurrentUserFeed();
     const isOwner = user && (user.uid === comment.userId);
     const item = document.createElement('div');
     item.className = 'comment-item';
@@ -430,12 +590,12 @@ function renderCommentsListWeb(listEl) {
       <img src="${comment.userPhoto || resolveDefaultAvatar()}" class="comment-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
       <div class="comment-content">
         <div class="comment-header">
-          <span class="comment-user">${comment.userName}</span>
+          <span class="comment-user">${comment.userName || 'Usuário'}</span>
           <span class="comment-date">${getRelativeDate(comment.createdAt)}</span>
           <button class="like-comment-btn${comment.likes && user && comment.likes.includes(user.uid) ? ' liked' : ''}"><i class="fas fa-heart"></i> <span class="like-count">${comment.likes ? comment.likes.length : 0}</span></button>
           ${isOwner ? `<button class="delete-comment-btn"><i class="fas fa-trash"></i></button>` : ''}
         </div>
-        <div class="comment-text">${comment.text}</div>
+        <div class="comment-text">${comment.text || ''}</div>
       </div>
     `;
     // Like comentário
@@ -453,39 +613,39 @@ function renderCommentsListWeb(listEl) {
 }
 
 async function handleAddComment(text) {
-  if (!FeedState.selectedPost) return;
+  if (!FeedState.selectedPost) {
+    console.error('Nenhum post selecionado para adicionar comentário');
+    return;
+  }
+  
+  console.log('Adicionando comentário:', text, 'para post:', FeedState.selectedPost.id);
   FeedState.commentsLoading = true;
   renderCommentsModalWeb();
+  
   try {
-    const firebase = initializeFirebaseFeed();
-    if (!firebase) throw new Error('Firebase não inicializado');
-    const db = firebase.firestore();
-    const user = getCurrentUserFeed();
-    if (!user) throw new Error('Usuário não autenticado');
-    const commentData = {
-      userId: user.uid,
-      userName: user.displayName,
-      userPhoto: user.photoURL,
-      text,
-      createdAt: new Date().toISOString(),
-      likes: [],
-    };
-    await db.collection('posts').doc(FeedState.selectedPost.id).collection('comments').add(commentData);
-    await db.collection('posts').doc(FeedState.selectedPost.id).update({
-      commentsCount: firebase.firestore.FieldValue.increment(1)
-    });
+    // Use the existing addCommentWeb function to avoid duplication
+    await addCommentWeb(FeedState.selectedPost.id, text);
+    console.log('Comentário adicionado com sucesso via addCommentWeb');
+    
+    // Refresh comments list
     const updated = await fetchCommentsWeb(FeedState.selectedPost.id);
-    FeedState.comments = updated;
+    FeedState.comments = Array.isArray(updated) ? updated : [];
+    console.log('Lista de comentários atualizada:', FeedState.comments.length);
+    
+    // Update post's comment count in local state
     FeedState.posts = FeedState.posts.map(post =>
       post.id === FeedState.selectedPost.id
         ? { ...post, commentsCount: (typeof post.commentsCount === 'number' ? post.commentsCount + 1 : 1) }
         : post
     );
+    
     showToast('success', 'Comentário adicionado!');
     renderFeedUI();
   } catch (e) {
-    showToast('error', 'Erro ao comentar.');
+    console.error('Erro ao adicionar comentário:', e);
+    showToast('error', 'Erro ao comentar: ' + (e?.message || ''));
   }
+  
   FeedState.commentsLoading = false;
   renderCommentsModalWeb();
 }
@@ -634,6 +794,26 @@ function setupInfiniteScrollWeb() {
 
 // --- Inicialização ---
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM carregado, inicializando feed da comunidade...');
+  
+  // Verificar se o Firebase está disponível
+  if (typeof firebase === 'undefined') {
+    console.error('Firebase não está carregado. Aguardando...');
+    // Tentar novamente após um delay
+    setTimeout(() => {
+      if (typeof firebase !== 'undefined') {
+        console.log('Firebase carregado após delay, inicializando...');
+        setupPostInputWeb();
+        setupInfiniteScrollWeb();
+        loadPosts();
+      } else {
+        console.error('Firebase ainda não está disponível após delay');
+      }
+    }, 1000);
+    return;
+  }
+  
+  console.log('Firebase disponível, inicializando componentes...');
   setupPostInputWeb();
   setupInfiniteScrollWeb();
   loadPosts();
