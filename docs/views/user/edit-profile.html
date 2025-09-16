@@ -277,6 +277,14 @@
             .avatar-upload, .avatar-upload img { width: 72px; height: 72px; }
             .avatar-upload-btn { width: 28px; height: 28px; font-size: 1em; }
         }
+        
+        /* Garantir que o botão seja clicável */
+        #saveButton {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            z-index: 10 !important;
+            position: relative !important;
+        }
     </style>
 </head>
 <body class="fade-in">
@@ -354,7 +362,7 @@
             <h2>Editar Perfil</h2>
             <p>Atualize suas informações de perfil e senha.</p>
             <div class="profile-edit-card">
-                <form id="editProfileForm" autocomplete="off">
+                <form id="editProfileForm" autocomplete="off" novalidate>
                     <!-- Foto de Perfil -->
                     <div class="form-group" style="display: flex; flex-direction: column; align-items: center;">
                         <label for="profilePic">Foto de Perfil</label>
@@ -455,7 +463,7 @@
                         </div>
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-gradient">Salvar Alterações</button>
+                        <button type="submit" class="btn btn-gradient" id="saveButton">Salvar Alterações</button>
                         <button type="button" class="btn btn-outline-gradient" onclick="window.history.back();">Cancelar</button>
                     </div>
                 </form>
@@ -507,6 +515,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
     <script src="../../public/js/env-config.js"></script>
     <script src="../../public/js/auth-check.js"></script>
     <script src="../../public/js/script.js"></script>
@@ -834,6 +843,18 @@
     // Requer que auth-check.js já tenha inicializado o Firebase
 
     document.addEventListener('DOMContentLoaded', function() {
+        // Debug: Adicionar listener direto no botão
+        const saveButton = document.getElementById('saveButton');
+        if (saveButton) {
+            console.log('Botão encontrado:', saveButton); // Debug
+            saveButton.addEventListener('click', function(e) {
+                console.log('Botão Salvar clicado!'); // Debug
+                // Não prevenir o comportamento padrão, deixar o formulário ser submetido naturalmente
+            });
+        } else {
+            console.error('Botão saveButton não encontrado!'); // Debug
+        }
+
         // Referências dos campos do formulário
         const profilePicPreview = document.getElementById('profilePicPreview');
         const userNameInput = document.getElementById('userName');
@@ -875,6 +896,8 @@
             userEmailInput.value = user.email || '';
             if (user.photoURL) {
                 profilePicPreview.src = user.photoURL;
+            } else if (typeof getDefaultAvatarPath === 'function') {
+                profilePicPreview.src = getDefaultAvatarPath();
             }
             // Busca dados adicionais do Firestore
             try {
@@ -905,10 +928,16 @@
 
     // Atualizar dados do usuário ao submeter o formulário
     const editProfileForm = document.getElementById('editProfileForm');
-    editProfileForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
+    if (editProfileForm) {
+        editProfileForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log('Formulário submetido!'); // Debug
         if (!auth.currentUser) {
-            showFlashMessage('Usuário não autenticado.', 'error');
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('Usuário não autenticado.', 'error');
+            } else {
+                alert('Usuário não autenticado.');
+            }
             return;
         }
         const user = auth.currentUser;
@@ -932,15 +961,27 @@
 
         // Validação básica
         if (!displayName || !fullName || !birthdate || !uf || !cidade || !region || !mobilityType) {
-            showFlashMessage('Preencha todos os campos obrigatórios.', 'error');
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('Preencha todos os campos obrigatórios.', 'error');
+            } else {
+                alert('Preencha todos os campos obrigatórios.');
+            }
             return;
         }
         if ((newPassword || confirmNewPassword) && newPassword !== confirmNewPassword) {
-            showFlashMessage('As senhas não coincidem.', 'error');
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('As senhas não coincidem.', 'error');
+            } else {
+                alert('As senhas não coincidem.');
+            }
             return;
         }
         if (newPassword && newPassword.length < 6) {
-            showFlashMessage('A nova senha deve ter pelo menos 6 caracteres.', 'error');
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('A nova senha deve ter pelo menos 6 caracteres.', 'error');
+            } else {
+                alert('A nova senha deve ter pelo menos 6 caracteres.');
+            }
             return;
         }
 
@@ -962,7 +1003,11 @@
             // Atualizar senha se necessário
             if (newPassword) {
                 if (!currentPassword) {
-                    showFlashMessage('Informe a senha atual para alterar a senha.', 'error');
+                    if (typeof showFlashMessage === 'function') {
+                        showFlashMessage('Informe a senha atual para alterar a senha.', 'error');
+                    } else {
+                        alert('Informe a senha atual para alterar a senha.');
+                    }
                     return;
                 }
                 const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
@@ -991,16 +1036,29 @@
             const existingDoc = await window.getUserDocument(user.uid);
             const docId = existingDoc ? existingDoc.id : (displayName || fullName);
             await window.saveUserDocument(docId, userData);
-            showFlashMessage('Perfil atualizado com sucesso!', 'success');
+            
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('Perfil atualizado com sucesso!', 'success');
+            } else {
+                alert('Perfil atualizado com sucesso!');
+            }
+            
             // Limpar campos de senha
             document.getElementById('currentPassword').value = '';
             document.getElementById('newPassword').value = '';
             document.getElementById('confirmNewPassword').value = '';
         } catch (error) {
-            console.error(error);
-            showFlashMessage('Erro ao atualizar perfil: ' + (error.message || error), 'error');
+            console.error('Erro ao atualizar perfil:', error);
+            if (typeof showFlashMessage === 'function') {
+                showFlashMessage('Erro ao atualizar perfil: ' + (error.message || error), 'error');
+            } else {
+                alert('Erro ao atualizar perfil: ' + (error.message || error));
+            }
         }
-    });
+        });
+    } else {
+        console.error('Formulário editProfileForm não encontrado!');
+    }
     </script>
 </body>
 </html> 

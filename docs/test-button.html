@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste Botão</title>
+    <style>
+        .btn {
+            padding: 15px 30px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-gradient {
+            background: linear-gradient(90deg, #2196f3 0%, #21cbf3 100%);
+            color: white;
+        }
+        .btn-gradient:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <h1>Teste do Botão</h1>
+    <form id="testForm">
+        <input type="text" id="testInput" placeholder="Digite algo" required>
+        <br><br>
+        <button type="submit" class="btn btn-gradient" id="testButton">Testar Botão</button>
+    </form>
+    
+    <div id="result"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('testForm');
+            const button = document.getElementById('testButton');
+            const result = document.getElementById('result');
+            
+            console.log('Form encontrado:', form);
+            console.log('Botão encontrado:', button);
+            
+            button.addEventListener('click', function(e) {
+                console.log('Botão clicado!');
+                e.preventDefault();
+                result.innerHTML = '<p style="color: green;">Botão funcionando! Valor: ' + document.getElementById('testInput').value + '</p>';
+            });
+            
+            form.addEventListener('submit', function(e) {
+                console.log('Formulário submetido!');
+                e.preventDefault();
+                result.innerHTML = '<p style="color: blue;">Formulário submetido! Valor: ' + document.getElementById('testInput').value + '</p>';
+            });
+        });
+    </script>
+</body>
+</html>
+
