@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Usuários</title>
+    <link rel="icon" href="../public/images/logos-wacs/logo_azul_nova.png" type="image/png">
+    <link rel="stylesheet" href="../public/css/main.css">
+    <link rel="stylesheet" href="../public/css/navbar.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/community.css">
+    <link rel="stylesheet" href="../public/css/transitions.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body class="fade-in">
+    <div class="main-container">
+        <nav class="navbar">
+            <button class="menu-toggle-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="navbar-logo">
+                <a href="../index.html">
+                    <img src="../public/images/logos-wacs/logo_azul_nova.png" alt="WACS Logo" style="height: 32px; width: auto; margin-right: 8px;">
+                    <span>WACS</span>
+                </a>
+            </div>
+            <ul class="navbar-menu">
+                <li data-page="home"><a href="../index.html">Home</a></li>
+                <li data-page="recursos"><a href="recursos.html">Recursos</a></li>
+                <li data-page="comunidade"><a href="comunidade.html">Comunidade</a></li>
+                <li data-page="mapa"><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                <li data-page="about"><a href="about.html">Sobre</a></li>
+            </ul>
+            <div class="navbar-actions">
+                <button class="theme-toggle-btn">
+                    <i class="fas fa-sun"></i>
+                </button>
+                <div class="logged-out-actions">
+                    <button class="btn btn-gradient" onclick="location.href='user/login.html'">Acessar Plataforma</button>
+                </div>
+                <div class="logged-in-actions hidden">
+                    <div class="user-profile">
+                        <img src="" alt="Foto de Perfil" class="profile-pic">
+                        <span class="user-name"></span>
+                    </div>
+                    <button class="btn btn-outline-gradient logout-btn">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <section class="page-content" style="max-width: 1100px; margin: 24px auto;">
+            <div style="display:flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+                <h2 style="margin: 0;">Todos os Usuários</h2>
+                <div style="display:flex; gap: 8px;">
+                    <a class="btn btn-outline-gradient" href="comunidade.html"><i class="fas fa-arrow-left"></i> Voltar</a>
+                </div>
+            </div>
+
+            <div class="search-container" style="margin-top: 16px;">
+                <div class="search-input-wrapper">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" placeholder="Buscar por nome ou email" id="users-search-input">
+                    <button class="search-clear-btn" id="users-search-clear" style="display: none;">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div id="users-list" class="suggestion-list" style="margin-top: 12px;"></div>
+            <div id="users-empty" class="no-suggestions-message" style="display:none;">
+                <p>Nenhum usuário encontrado.</p>
+            </div>
+        </section>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <i class="fas fa-wheelchair"></i>
+                <span>WACS</span>
+                <p>Inovando na mobilidade acessível.</p>
+            </div>
+            <div class="footer-links">
+                <h3>Links Rápidos</h3>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../index.html#recursos">Recursos</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                    <li><a href="../index.html#contato">Contato</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h3>Contato</h3>
+                <p>Email: contato@wacs.com</p>
+                <p>Telefone: (XX) XXXX-XXXX</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 WACS. Todos os direitos reservados.</p>
+            <p class="alpha-footer-notice">Esta é uma versão Alpha. Para feedback, entre em contato.</p>
+        </div>
+    </footer>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js" defer></script>
+
+    <script src="../public/js/env-config.js" defer></script>
+    <script src="../public/js/auth-check.js" defer></script>
+    <script src="../public/js/script.js" defer></script>
+    <script src="../public/js/users-list.js" defer></script>
+    <div class="theme-transition-overlay"></div>
+</body>
+</html>
+
+
+
+
+

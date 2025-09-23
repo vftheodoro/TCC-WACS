@@ -1,0 +1,192 @@
+/* Estilos do Carrossel */
+.carousel-section {
+    width: 100%;
+    margin: 0 auto;
+    position: relative;
+    overflow: hidden;
+}
+
+.carousel {
+    width: 100%;
+    position: relative;
+}
+
+.carousel-slide {
+    position: relative;
+    height: 500px; /* Altura padrão do carrossel em páginas fora da hero */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Carrossel dentro da hero-section: mais compacto */
+.hero-carousel {
+    margin: 16px 0 24px;
+}
+
+.hero-carousel .carousel-slide {
+    height: 320px; /* altura menor para integrar com a hero */
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    background: var(--card-background);
+}
+
+.carousel-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: var(--text-color);
+    padding: 0 20px;
+    background-size: cover;
+    background-position: center;
+    /* overlay sutil para legibilidade sem pesar visual */
+    background-blend-mode: multiply;
+    background-color: rgba(0, 0, 0, 0.22);
+}
+
+.carousel-content h2 {
+    font-size: 2.4rem;
+    margin-bottom: 0.6rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+    font-weight: 700;
+}
+
+.carousel-content p {
+    font-size: 1.1rem;
+    max-width: 820px;
+    margin: 0 auto 0;
+    opacity: 0.9;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos dos botões de navegação */
+.slick-prev,
+.slick-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    background: rgba(0, 0, 0, 0.12);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.slick-prev {
+    left: 20px;
+}
+
+.slick-next {
+    right: 20px;
+}
+
+.slick-prev:hover,
+.slick-next:hover {
+    background: var(--background-color-hover);
+    transform: translateY(-50%) scale(1.04);
+}
+
+/* Estilos dos indicadores de página */
+.slick-dots {
+    position: absolute;
+    bottom: 16px;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    text-align: center;
+    z-index: 10;
+}
+
+.slick-dots li {
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.slick-dots li button {
+    font-size: 0;
+    line-height: 0;
+    display: block;
+    width: 12px;
+    height: 12px;
+    padding: 5px;
+    cursor: pointer;
+    color: transparent;
+    border: 0;
+    outline: none;
+    background: transparent;
+    position: relative;
+}
+
+.slick-dots li button:before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    background: var(--border-color);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.slick-dots li.slick-active button:before {
+    background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+    transform: scale(1.15);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .carousel-slide {
+        height: 400px;
+    }
+    .hero-carousel .carousel-slide {
+        height: 200px;
+        border-radius: 12px;
+    }
+    
+    .carousel-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    .carousel-content p {
+        font-size: 1.2rem;
+    }
+    
+    .slick-prev,
+    .slick-next {
+        width: 36px;
+        height: 36px;
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .carousel-slide {
+        height: 300px;
+    }
+    .hero-carousel .carousel-slide {
+        height: 180px;
+    }
+    
+    .carousel-content h2 {
+        font-size: 1.4rem;
+    }
+
+    .carousel-content p {
+        font-size: 0.95rem;
+    }
+}

@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick-theme.css"/>
+    <link rel="stylesheet" href="public/css/carousel.css">
 </head>
 <body class="fade-in">
     <div class="main-container">
@@ -96,6 +100,36 @@
                     <span class="gradient-text">C</span>ontrol<br>
                     <span class="gradient-text">S</span>ystem
                 </h1>
+                
+                <!-- Carrossel abaixo do título e acima da descrição e dos botões -->
+                <div class="hero-carousel">
+                    <div class="carousel">
+                        <div class="carousel-slide">
+                            <div class="carousel-content" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('https://images.unsplash.com/photo-1512070666437-e1ed151f7106?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80');">
+                                <h2>Mobilidade Inteligente</h2>
+                                <p>Controle sua cadeira de rodas com facilidade através do seu smartphone</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-content" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./public/images/carrossel/mapa_colaborativo.png');">
+                                <h2>Mapa Colaborativo</h2>
+                                <p>Descubra e compartilhe locais acessíveis na sua cidade</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-content" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./public/images/carrossel/comunidade_inclusiva.png');">
+                                <h2>Comunidade Inclusiva</h2>
+                                <p>Conecte-se com outras pessoas e compartilhe experiências</p>
+                            </div>
+                        </div>
+                        <div class="carousel-slide">
+                            <div class="carousel-content" style="background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./public/images/carrossel/kit_automacao.png');">
+                                <h2>Kit de Automação</h2>
+                                <p>Com nosso kit, conseguimos automatizar praticamente qualquer cadeira de rodas com segurança e praticidade.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <p class="hero-description">
                     Inovando na mobilidade acessível através da tecnologia.<br>
                     Controle sua cadeira, encontre locais acessíveis e converse com a comunidade!
@@ -206,9 +240,31 @@
     <script src="public/js/env-config.js"></script>
     <script src="public/js/auth-check.js"></script>
     <script src="public/js/script.js"></script>
+    <script src="public/js/main.js"></script>
+    <script src="public/js/theme.js"></script>
+    <script src="public/js/navbar.js"></script>
+    <!-- Slick Carousel JS -->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/slick-carousel@1.8.1/slick/slick.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            $('.carousel').slick({
+                dots: true,
+                infinite: true,
+                speed: 500,
+                fade: true,
+                cssEase: 'linear',
+                autoplay: true,
+                autoplaySpeed: 5000,
+                arrows: true,
+                prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+                nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>'
+            });
+        });
+    </script>
     <div class="theme-transition-overlay"></div>
     <div class="loading-overlay hidden">
         <div class="loading-spinner"></div>
     </div>
 </body>
-</html> 
+</html>
