@@ -78,8 +78,16 @@
             }
             const users = [];
             snap.forEach(doc => users.push(doc.data()));
-            window.__ALL_USERS = users;
-            renderUsers(users);
+            
+            // Ordenar usuários alfabeticamente
+            const sortedUsers = users.sort((a, b) => {
+                const nameA = (a.displayName || a.name || a.email || '').toLowerCase();
+                const nameB = (b.displayName || b.name || b.email || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
+            window.__ALL_USERS = sortedUsers;
+            renderUsers(sortedUsers);
         } catch (e) {
             console.error('Erro ao carregar usuários:', e);
             if (empty) empty.style.display = '';
@@ -97,33 +105,33 @@
         }
         if (empty) empty.style.display = 'none';
 
-        // 3x3 grid (até 9 usuários)
-        const visible = users.slice(0, 9);
+        // Ordenar usuários alfabeticamente por nome
+        const sortedUsers = [...users].sort((a, b) => {
+            const nameA = (a.displayName || a.name || a.email || '').toLowerCase();
+            const nameB = (b.displayName || b.name || b.email || '').toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
         const table = document.createElement('table');
         table.style.width = '100%';
         table.style.borderCollapse = 'separate';
         table.style.borderSpacing = '8px';
 
-        for (let r = 0; r < 3; r++) {
+        // Calcular número de linhas necessárias para 3 colunas
+        const totalUsers = sortedUsers.length;
+        const numRows = Math.ceil(totalUsers / 3);
+
+        for (let r = 0; r < numRows; r++) {
             const tr = document.createElement('tr');
             for (let c = 0; c < 3; c++) {
                 const idx = r * 3 + c;
-                const user = visible[idx];
+                const user = sortedUsers[idx];
                 tr.appendChild(createUserCell(user));
             }
             table.appendChild(tr);
         }
 
+        // Removida mensagem de limitação - agora mostra todos os usuários
         container.appendChild(table);
-
-        if (users.length > 9) {
-            const info = document.createElement('div');
-            info.style.marginTop = '8px';
-            info.style.fontSize = '.9em';
-            info.style.color = '#6b7280';
-            info.textContent = `Mostrando 9 de ${users.length} usuários.`;
-            container.appendChild(info);
-        }
     }
 
     function setupSearch() {
@@ -135,11 +143,19 @@
             const term = (input.value || '').toLowerCase().trim();
             if (clearBtn) clearBtn.style.display = term ? '' : 'none';
             const base = window.__ALL_USERS || [];
-            const filtered = term ? base.filter(u => {
+            let filtered = term ? base.filter(u => {
                 const name = (u.displayName || u.name || '').toLowerCase();
                 const email = (u.email || '').toLowerCase();
                 return name.includes(term) || email.includes(term);
             }) : base;
+            
+            // Ordenar alfabeticamente os resultados da busca
+            filtered = filtered.sort((a, b) => {
+                const nameA = (a.displayName || a.name || a.email || '').toLowerCase();
+                const nameB = (b.displayName || b.name || b.email || '').toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            
             renderUsers(filtered);
         }
 
