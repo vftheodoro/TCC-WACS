@@ -16,6 +16,53 @@ const FeedState = {
   PAGE_SIZE: 10,
 };
 
+// Cache simples de nomes completos por UID
+const FullNameCache = {};
+
+// Busca o nome completo do usuário no Firestore com fallbacks
+async function getUserFullName(uid) {
+  if (!uid) return null;
+  if (FullNameCache[uid]) return FullNameCache[uid];
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) return null;
+    const db = firebase.firestore();
+    // 1) tenta doc com id = uid
+    const byId = await db.collection('users').doc(uid).get();
+    if (byId.exists) {
+      const d = byId.data() || {};
+      const full = d.fullName || d.name || d.displayName || d.username || null;
+      if (full) FullNameCache[uid] = full;
+      return full;
+    }
+    // 2) tenta query por campo uid
+    const q = await db.collection('users').where('uid', '==', uid).limit(1).get();
+    if (!q.empty) {
+      const d = q.docs[0].data() || {};
+      const full = d.fullName || d.name || d.displayName || d.username || null;
+      if (full) FullNameCache[uid] = full;
+      return full;
+    }
+  } catch (e) {
+    console.warn('Falha ao obter fullName para UID:', uid, e);
+  }
+  return null;
+}
+
+// Enriquecer posts com userFullName
+async function enrichPostsWithFullName(posts) {
+  const uids = new Set();
+  (posts || []).forEach(p => { if (p && p.userId) uids.add(p.userId); });
+  for (const uid of uids) {
+    await getUserFullName(uid);
+  }
+  (posts || []).forEach(p => {
+    if (p && p.userId && !p.userFullName) {
+      p.userFullName = FullNameCache[p.userId] || null;
+    }
+  });
+}
+
 // Utilitário para obter caminho correto do avatar padrão considerando /views/
 function resolveDefaultAvatar() {
   try {
@@ -171,6 +218,7 @@ async function loadPosts() {
         await updateCommentsCountIfNeeded(post);
       }
     }
+    await enrichPostsWithFullName(posts);
     FeedState.posts = posts;
     FeedState.lastDoc = lastDoc;
     console.log('Posts processados e adicionados ao estado');
@@ -252,6 +300,7 @@ async function addCommentWeb(postId, text) {
   const commentData = {
     userId: user.uid,
     userName: user.displayName,
+    userFullName: (await getUserFullName(user.uid)) || null,
     userPhoto: user.photoURL,
     text,
     createdAt: new Date().toISOString(),
@@ -355,7 +404,7 @@ function createPostCardWeb(post) {
     <div class="post-header">
       <img src="${post.userPhoto || resolveDefaultAvatar()}" class="post-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
       <div class="post-header-info">
-        <span class="post-user">${post.userName || 'Usuário'}</span>
+        <span class="post-user">${post.userFullName || post.userName || 'Usuário'}</span>
         <span class="post-date">${getRelativeDate(post.createdAt)}</span>
       </div>
       ${isOwner ? `<button class="post-menu-btn"><i class="fas fa-ellipsis-v"></i></button>` : ''}
