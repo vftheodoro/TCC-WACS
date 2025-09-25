@@ -163,7 +163,8 @@
     }
     
     .carousel-content p {
-        font-size: 1.2rem;
+        font-size: 1.05rem;
+        max-width: 90%;
     }
     
     .slick-prev,
@@ -171,6 +172,12 @@
         width: 36px;
         height: 36px;
         border-radius: 10px;
+    }
+
+    /* Em telas pequenas, as setas podem sobrepor o conteúdo: ocultar para focar no swipe */
+    .slick-prev,
+    .slick-next {
+        display: none !important;
     }
 }
 
@@ -183,10 +190,19 @@
     }
     
     .carousel-content h2 {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     .carousel-content p {
-        font-size: 0.95rem;
+        font-size: 0.9rem;
+        line-height: 1.35;
+        max-width: 92%;
     }
+}
+
+/* Melhorias gerais para textos muito longos em telas estreitas */
+.hero-carousel .carousel-content {
+    padding-left: 16px;
+    padding-right: 16px;
+    word-break: break-word;
 }

@@ -24,8 +24,7 @@
 </head>
 <body class="fade-in">
     <div class="main-container">
-        <nav class="navbar">
-        
+        <nav class="navbar">        
             <button class="menu-toggle-btn">
                 <i class="fas fa-bars"></i>
             </button>
@@ -254,11 +253,27 @@
                 speed: 500,
                 fade: true,
                 cssEase: 'linear',
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                adaptiveHeight: true,
+                mobileFirst: true,
+                swipe: true,
+                touchThreshold: 10,
                 autoplay: true,
                 autoplaySpeed: 5000,
-                arrows: true,
-                prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
-                nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>'
+                pauseOnHover: false,
+                pauseOnFocus: false,
+                arrows: false,
+                responsive: [
+                    {
+                        breakpoint: 769,
+                        settings: {
+                            arrows: true,
+                            prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+                            nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>'
+                        }
+                    }
+                ]
             });
         });
     </script>

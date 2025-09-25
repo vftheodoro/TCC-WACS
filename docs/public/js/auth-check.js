@@ -192,12 +192,14 @@ auth.onAuthStateChanged((user) => {
 document.addEventListener('click', (e) => {
     // Helper to navigate to community with correct relative path
     function navigateToCommunity() {
-        const currentPath = window.location.pathname;
-        let redirectPath = 'views/comunidade.html'; // Padrão para páginas na raiz
-        if (currentPath.includes('/views/')) {
-            redirectPath = 'comunidade.html'; // Se já estiver em views/
-        }
-        window.location.href = redirectPath;
+        const currentPath = window.location.pathname || '';
+        // Força caminho relativo explícito para evitar reescritas de rota sem extensão
+        // Se estiver na raiz (não em /views/), usamos './views/comunidade.html'
+        // Se já estiver em /views/, usamos './comunidade.html'
+        const redirectPath = currentPath.includes('/views/')
+            ? './comunidade.html'
+            : './views/comunidade.html';
+        window.location.assign(redirectPath);
     }
 
     if (e.target.closest('.logout-btn')) {
