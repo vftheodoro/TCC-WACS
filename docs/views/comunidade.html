@@ -15,6 +15,19 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Canonical redirect: garante .html mesmo se rota vier sem extensão -->
+    <script>
+        (function(){
+            try {
+                var p = window.location.pathname || '';
+                if (/(^|\/)views\/comunidade$/.test(p) || /(^|\/)comunidade$/.test(p)) {
+                    var search = window.location.search || '';
+                    var hash = window.location.hash || '';
+                    window.location.replace('/views/comunidade.html' + search + hash);
+                }
+            } catch (e) {}
+        })();
+    </script>
 </head>
 <body class="fade-in">
     <div class="main-container">
@@ -249,17 +262,17 @@
     </footer>
 
     <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js" defer></script>
-    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js?v=20250925-1" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js?v=20250925-1" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js?v=20250925-1" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js?v=20250925-1" defer></script>
 
-    <script src="../public/js/env-config.js" defer></script>
-    <script src="../public/js/auth-check.js" defer></script>
-    <script src="../public/js/script.js" defer></script>
+    <script src="../public/js/env-config.js?v=20250925-1" defer></script>
+    <script src="../public/js/auth-check.js?v=20250925-1" defer></script>
+    <script src="../public/js/script.js?v=20250925-1" defer></script>
     <!-- Novo sistema de feed, inspirado no app mobile -->
-    <script src="../public/js/communityFeed.js" defer></script>
-    <script src="../public/js/community.js" defer></script>
+    <script src="../public/js/communityFeed.js?v=20250925-1" defer></script>
+    <script src="../public/js/community.js?v=20250925-1" defer></script>
     <div class="theme-transition-overlay"></div>
 </body>
 </html> 

@@ -91,6 +91,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Lógica para destacar a página ativa na navbar e gerenciar transições de tela
     const currentEffectiveFileName = getFileNameFromPath(window.location.pathname);
+    const isCommunityPath = () => {
+        const p = window.location.pathname || '';
+        return /(^|\/)comunidade(\.html)?$/.test(p) || /(^|\/)views\/comunidade(\.html)?$/.test(p);
+    };
 
     // Lógica de Login/Logout e Estado da Navbar
     const loggedOutActions = document.querySelector('.logged-out-actions');
@@ -135,7 +139,7 @@ document.addEventListener('DOMContentLoaded', () => {
             localStorage.setItem('userData', JSON.stringify(userData));
 
             // Popula o perfil da comunidade se estiver na página de comunidade
-            if (currentEffectiveFileName === 'comunidade.html') {
+            if (isCommunityPath()) {
                 const profileCardPic = document.querySelector('.profile-card-pic');
                 const profileCardName = document.querySelector('.profile-card-name');
                 const userContributions = document.getElementById('user-contributions');
@@ -413,7 +417,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Lógica para exibir posts na página de comunidade (apenas um exemplo simulado)
     const communityContentWrapper = document.getElementById('community-content-wrapper');
-    if (currentEffectiveFileName === 'comunidade.html' && communityContentWrapper) {
+    if (isCommunityPath() && communityContentWrapper) {
+
         const postsContainer = document.querySelector('.posts-feed');
         const chatContainer = document.querySelector('.community-chat');
         const suggestionsContainer = document.querySelector('.community-suggestions');

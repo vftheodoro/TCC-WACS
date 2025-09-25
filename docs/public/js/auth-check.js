@@ -1,5 +1,22 @@
 // public/js/auth-check.js
 
+// Redirect canonicalization: garanta que a URL da comunidade sempre use .html
+// Isso cobre acessos diretos e reescritas do servidor para 
+// /comunidade ou /views/comunidade (sem extensão), que quebram paths relativos.
+(() => {
+    try {
+        const path = window.location.pathname || '';
+        // Normaliza múltiplas variantes sem extensão
+        const isCommunityNoExt = /(^|\/)comunidade$/.test(path);
+        const isViewsCommunityNoExt = /(^|\/)views\/comunidade$/.test(path);
+        if (isCommunityNoExt || isViewsCommunityNoExt) {
+            const search = window.location.search || '';
+            const hash = window.location.hash || '';
+            window.location.replace('/views/comunidade.html' + search + hash);
+        }
+    } catch (_) { /* no-op */ }
+})();
+
 // Initialize Firebase (if not already initialized by env-config.js or login.js)
 // Ensure this block runs only once if Firebase is initialized elsewhere
 if (!firebase.apps.length) {
@@ -83,6 +100,10 @@ function updateUIForAuthState(user) {
     const loginRequiredMessage = document.querySelector('.login-required-message');
 
     const currentEffectiveFileName = getFileNameFromPath(window.location.pathname);
+    const isCommunityPath = () => {
+        const p = window.location.pathname || '';
+        return /(^|\/)comunidade(\.html)?$/.test(p) || /(^|\/)views\/comunidade(\.html)?$/.test(p);
+    };
 
     if (user) {
         // User is signed in
@@ -115,7 +136,7 @@ function updateUIForAuthState(user) {
         if (mobileMenuUserNameElement) mobileMenuUserNameElement.textContent = user.displayName || user.email;
 
         // Community page specific logic
-        if (currentEffectiveFileName === 'comunidade.html') {
+        if (isCommunityPath()) {
             if (communityContentWrapper) communityContentWrapper.classList.remove('hidden');
             if (loginRequiredMessage) loginRequiredMessage.classList.add('hidden');
             
@@ -192,14 +213,8 @@ auth.onAuthStateChanged((user) => {
 document.addEventListener('click', (e) => {
     // Helper to navigate to community with correct relative path
     function navigateToCommunity() {
-        const currentPath = window.location.pathname || '';
-        // Força caminho relativo explícito para evitar reescritas de rota sem extensão
-        // Se estiver na raiz (não em /views/), usamos './views/comunidade.html'
-        // Se já estiver em /views/, usamos './comunidade.html'
-        const redirectPath = currentPath.includes('/views/')
-            ? './comunidade.html'
-            : './views/comunidade.html';
-        window.location.assign(redirectPath);
+        // Usa caminho absoluto a partir da raiz do site para evitar qualquer ambiguidade
+        window.location.assign('/views/comunidade.html');
     }
 
     if (e.target.closest('.logout-btn')) {
