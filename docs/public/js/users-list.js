@@ -31,33 +31,83 @@
         return '/public/images/fotos-perfil/default-avatar.png';
     }
 
-    function createUserCell(userData) {
-        const td = document.createElement('td');
-        td.style.verticalAlign = 'top';
-        td.style.padding = '10px';
-        td.style.width = '33.3333%';
+    function createUserCard(userData) {
+        const card = document.createElement('div');
+        card.className = 'user-card';
+        card.style.cssText = `
+            background: var(--card-background);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 12px;
+        `;
 
         if (!userData) {
-            td.innerHTML = '<div style="height:100%;width:100%"></div>';
-            return td;
+            card.innerHTML = '<div style="height:100%;width:100%"></div>';
+            return card;
         }
 
         const photo = userData.photoURL || userData.photo || resolveDefaultAvatar();
         const name = userData.displayName || userData.name || userData.email || 'Usuário';
-        const role = userData.userRole || userData.profession || userData.mobilityType || 'Membro da Comunidade';
         const email = userData.email || '';
+        
+        // Verificar se o usuário é administrador
+        const isAdmin = userData.ADM === 1 || userData.ADM === '1' || userData.ADM === true;
+        
+        // Definir role baseado no status de administrador
+        const role = isAdmin ? 'ADM' : 'User';
 
-        td.innerHTML = `
-            <div class="suggestion-item" style="display:flex; align-items:center; gap:10px;">
-                <img src="${photo}" alt="Foto de ${name}" class="suggestion-pic" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'" style="flex:0 0 auto;">
-                <div class="suggestion-info" style="min-width:0;">
-                    <span class="suggestion-name" title="${name}">${name}</span>
-                    <span class="suggestion-role" title="${role}">${role}</span>
-                    ${email ? `<span style="font-size:.85em;color:#6b7280;">${email}</span>` : ''}
-                </div>
+        card.innerHTML = `
+            <img src="${photo}" alt="Foto de ${name}" class="user-card-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'" style="
+                width: 80px;
+                height: 80px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 3px solid var(--gradient-start);
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            ">
+            <div class="user-card-info" style="flex: 1; min-width: 0;">
+                <h3 class="user-card-name" style="
+                    margin: 0 0 8px 0;
+                    font-size: 1.1em;
+                    font-weight: 600;
+                    color: var(--text-color);
+                    word-break: break-word;
+                " title="${name}">${name}</h3>
+                <p class="user-card-role" style="
+                    margin: 0 0 8px 0;
+                    font-size: 0.9em;
+                    color: var(--gradient-start);
+                    font-weight: 500;
+                " title="${role}">${role}</p>
+                ${email ? `<p class="user-card-email" style="
+                    margin: 0;
+                    font-size: 0.8em;
+                    color: var(--text-color);
+                    opacity: 0.7;
+                    word-break: break-word;
+                " title="${email}">${email}</p>` : ''}
             </div>
         `;
-        return td;
+
+        // Adicionar hover effect
+        card.addEventListener('mouseenter', () => {
+            card.style.transform = 'translateY(-4px)';
+            card.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.15)';
+        });
+
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = 'translateY(0)';
+            card.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.1)';
+        });
+
+        return card;
     }
 
     async function loadAllUsers() {
@@ -111,27 +161,26 @@
             const nameB = (b.displayName || b.name || b.email || '').toLowerCase();
             return nameA.localeCompare(nameB);
         });
-        const table = document.createElement('table');
-        table.style.width = '100%';
-        table.style.borderCollapse = 'separate';
-        table.style.borderSpacing = '8px';
 
-        // Calcular número de linhas necessárias para 3 colunas
-        const totalUsers = sortedUsers.length;
-        const numRows = Math.ceil(totalUsers / 3);
+        // Criar container de grid com 3 colunas fixas
+        const gridContainer = document.createElement('div');
+        gridContainer.className = 'users-grid';
+        gridContainer.style.cssText = `
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            width: 100%;
+        `;
 
-        for (let r = 0; r < numRows; r++) {
-            const tr = document.createElement('tr');
-            for (let c = 0; c < 3; c++) {
-                const idx = r * 3 + c;
-                const user = sortedUsers[idx];
-                tr.appendChild(createUserCell(user));
+        // Criar cards para cada usuário
+        sortedUsers.forEach(user => {
+            if (user) {
+                const userCard = createUserCard(user);
+                gridContainer.appendChild(userCard);
             }
-            table.appendChild(tr);
-        }
+        });
 
-        // Removida mensagem de limitação - agora mostra todos os usuários
-        container.appendChild(table);
+        container.appendChild(gridContainer);
     }
 
     function setupSearch() {
