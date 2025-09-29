@@ -18,6 +18,8 @@ const FeedState = {
 
 // Cache simples de nomes completos por UID
 const FullNameCache = {};
+// Cache simples de fotos por UID
+const PhotoUrlCache = {};
 
 // Busca o nome completo do usuário no Firestore com fallbacks
 async function getUserFullName(uid) {
@@ -49,6 +51,36 @@ async function getUserFullName(uid) {
   return null;
 }
 
+// Busca a foto de perfil atual do usuário no Firestore com cache
+async function getUserPhotoUrl(uid) {
+  if (!uid) return null;
+  if (PhotoUrlCache[uid]) return PhotoUrlCache[uid];
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) return null;
+    const db = firebase.firestore();
+    // 1) tenta doc com id = uid
+    const byId = await db.collection('users').doc(uid).get();
+    if (byId.exists) {
+      const d = byId.data() || {};
+      const url = d.photoURL || d.avatarUrl || d.avatar || d.profilePhotoUrl || null;
+      if (url) PhotoUrlCache[uid] = url;
+      return url;
+    }
+    // 2) tenta query por campo uid
+    const q = await db.collection('users').where('uid', '==', uid).limit(1).get();
+    if (!q.empty) {
+      const d = q.docs[0].data() || {};
+      const url = d.photoURL || d.avatarUrl || d.avatar || d.profilePhotoUrl || null;
+      if (url) PhotoUrlCache[uid] = url;
+      return url;
+    }
+  } catch (e) {
+    console.warn('Falha ao obter photoURL para UID:', uid, e);
+  }
+  return null;
+}
+
 // Enriquecer posts com userFullName
 async function enrichPostsWithFullName(posts) {
   const uids = new Set();
@@ -59,6 +91,24 @@ async function enrichPostsWithFullName(posts) {
   (posts || []).forEach(p => {
     if (p && p.userId && !p.userFullName) {
       p.userFullName = FullNameCache[p.userId] || null;
+    }
+  });
+}
+
+// Enriquecer posts com a foto atual do usuário
+async function enrichPostsWithPhoto(posts) {
+  const uids = new Set();
+  posts.forEach(p => { if (p.userId) uids.add(p.userId); });
+  const tasks = Array.from(uids).map(async uid => {
+    const url = await getUserPhotoUrl(uid);
+    return { uid, url };
+  });
+  const results = await Promise.all(tasks);
+  const map = {};
+  results.forEach(({ uid, url }) => { if (url) map[uid] = url; });
+  posts.forEach(p => {
+    if (p.userId && map[p.userId]) {
+      p.userPhoto = map[p.userId];
     }
   });
 }
@@ -219,6 +269,7 @@ async function loadPosts() {
       }
     }
     await enrichPostsWithFullName(posts);
+    await enrichPostsWithPhoto(posts);
     FeedState.posts = posts;
     FeedState.lastDoc = lastDoc;
     console.log('Posts processados e adicionados ao estado');
@@ -237,6 +288,8 @@ async function loadMorePosts() {
   renderFeedUI();
   try {
     const { posts, lastDoc } = await fetchPostsPaginated({ pageSize: FeedState.PAGE_SIZE, lastDoc: FeedState.lastDoc });
+    await enrichPostsWithFullName(posts);
+    await enrichPostsWithPhoto(posts);
     FeedState.posts = [...FeedState.posts, ...posts];
     FeedState.lastDoc = lastDoc;
   } catch (e) {
