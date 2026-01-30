@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS - Login</title>
+    <link rel="icon" href="../../public/images/logos-wacs/logo_padrao.png" type="image/png">
+    <link rel="stylesheet" href="../../public/css/main.css">
+    <link rel="stylesheet" href="../../public/css/login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <img src="../../public/images/logos-wacs/logo_padrao.png" alt="WACS Logo" style="height: 48px; width: auto; margin-right: 12px;">
+                <span class="login-logo-text">WACS</span>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form" id="login-form">
+                <div id="error-message" class="error-message"></div>
+                <div class="form-group">
+                    <label for="login-email">Email ou Usuário</label>
+                    <input type="text" id="login-email" placeholder="seu.email@exemplo.com ou usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Senha</label>
+                    <div class="password-input-container">
+                        <input type="password" id="login-password" placeholder="********" required>
+                        <span class="password-toggle" id="toggle-login-password"><i class="fas fa-eye"></i></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-gradient login-btn">Entrar</button>
+                <div class="social-login-divider">
+                    <span>ou</span>
+                </div>
+                <button type="button" class="btn btn-outline-gradient google-login-btn" id="google-login-btn">
+                    <i class="fab fa-google"></i> Logar com o Google
+                </button>
+                <p class="switch-form-text">Não tem uma conta? <a href="register.html" class="link-blue">Cadastre-se</a></p>
+                <p class="switch-form-text" style="margin-top: 18px; font-size: 0.95em; text-align: center;">
+                    <a href="termos.html" class="link-blue">Termos de Uso</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+
+    <!-- Scripts da aplicação -->
+    <script src="../../public/js/env-config.js"></script>
+    <script src="../../public/js/auth-check.js"></script>
+    <script src="../../public/js/login.js"></script>
+    <script src="../../public/js/script.js"></script>
+
+    <div class="loading-overlay hidden">
+        <div class="loading-spinner"></div>
+    </div>
+</body>
+</html> 

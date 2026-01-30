@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS • Recursos Inovadores</title>
+    <link rel="icon" href="../public/images/logos-wacs/logo_azul.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../public/css/modern-system.css">
+    <script src="../public/js/env-config.js"></script>
+    <style>
+        .page-container {
+            padding-top: 5rem;
+        }
+
+        .hero-page {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+        }
+
+        .hero-page h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-page p {
+            font-size: 1.3rem;
+            color: var(--color-text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .resources-section {
+            padding: 4rem 2rem;
+        }
+
+        .features-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .resources-section .card {
+            background: rgba(19, 24, 50, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            transition: var(--transition-smooth);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resources-section .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .resources-section .card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .resources-section .card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2);
+        }
+
+        .feature-showcase {
+            padding: 4rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .showcase-item {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-bottom: 8rem;
+        }
+
+        .showcase-item:nth-child(even) {
+            direction: rtl;
+        }
+
+        .showcase-item:nth-child(even) > * {
+            direction: ltr;
+        }
+
+        .showcase-content h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .showcase-content p {
+            color: var(--color-text-muted);
+            line-height: 1.8;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .showcase-image {
+            background: rgba(19, 24, 50, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+
+        .showcase-image i {
+            font-size: 8rem;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .feature-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 12px;
+            border-left: 3px solid var(--color-primary);
+        }
+
+        .feature-list i {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            margin-top: 0.2rem;
+        }
+
+        .cta-section {
+            background: rgba(19, 24, 50, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 4rem;
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .cta-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-section p {
+            color: var(--color-text-muted);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 768px) {
+            .showcase-item {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+                margin-bottom: 4rem;
+            }
+
+            .showcase-item:nth-child(even) {
+                direction: ltr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .showcase-image {
+                min-height: 300px;
+            }
+
+            .showcase-image i {
+                font-size: 5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-wheelchair"></i>
+                WACS
+            </a>
+
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="recursos.html">Recursos</a></li>
+                <li><a href="comunidade.html">Comunidade</a></li>
+                <li><a href="mapa-acessivel.html">Mapa</a></li>
+                <li><a href="about.html">Sobre</a></li>
+            </ul>
+
+            <button class="nav-cta" onclick="location.href='user/login.html'">
+                Começar Agora
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="recursos.html">Recursos</a></li>
+            <li><a href="comunidade.html">Comunidade</a></li>
+            <li><a href="mapa-acessivel.html">Mapa</a></li>
+            <li><a href="about.html">Sobre</a></li>
+            <li><a href="user/login.html" style="margin-top: 2rem; display: inline-block;" class="btn btn-primary">Começar Agora</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-page">
+        <div>
+            <h1>
+                Recursos <span class="gradient-text">Poderosos</span><br>
+                Para Sua <span class="gradient-text">Liberdade</span>
+            </h1>
+            <p>
+                Descubra todas as funcionalidades inovadoras que tornam o WACS a plataforma mais completa para mobilidade acessível
+            </p>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="resources-section">
+        <div class="features-grid">
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-mobile-alt"></i>
+                </div>
+                <h3 class="card-title">Controle Inteligente</h3>
+                <p class="card-description">
+                    Conecte seu smartphone e controle sua cadeira de rodas com precisão. Interface otimizada para acessibilidade e facilidade de uso.
+                </p>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3 class="card-title">Navegação Assistida</h3>
+                <p class="card-description">
+                    Sistema de navegação com rotas otimizadas para acessibilidade. Evite obstáculos e encontre os melhores caminhos automaticamente.
+                </p>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h3 class="card-title">Modo de Segurança</h3>
+                <p class="card-description">
+                    Sensores inteligentes detectam obstáculos e acionam freios automáticos. Sua segurança é nossa prioridade máxima.
+                </p>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-battery-full"></i>
+                </div>
+                <h3 class="card-title">Gestão de Bateria</h3>
+                <p class="card-description">
+                    Monitore o nível de bateria em tempo real, receba alertas de baixa carga e otimize o consumo de energia com modos econômicos.
+                </p>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-sliders-h"></i>
+                </div>
+                <h3 class="card-title">Personalização Total</h3>
+                <p class="card-description">
+                    Ajuste velocidade, aceleração, sensibilidade dos controles e muito mais. Configure tudo do seu jeito para máximo conforto.
+                </p>
+            </div>
+
+            <div class="card reveal">
+                <div class="card-icon">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <h3 class="card-title">Notificações Inteligentes</h3>
+                <p class="card-description">
+                    Receba alertas sobre manutenção, novos locais acessíveis próximos, eventos da comunidade e atualizações do sistema.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Feature Showcase -->
+    <section class="feature-showcase">
+        <div class="showcase-item reveal">
+            <div class="showcase-content">
+                <h3><span class="gradient-text">Mapa</span> Colaborativo</h3>
+                <p>
+                    Nossa plataforma conta com um mapa colaborativo onde toda a comunidade pode contribuir. Marque locais acessíveis, adicione fotos, avaliações e compartilhe experiências.
+                </p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Marcação de locais acessíveis com fotos e descrições detalhadas</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Sistema de avaliações e comentários da comunidade</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Filtros por tipo de acessibilidade e estabelecimento</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Rotas otimizadas para cadeiras de rodas</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="showcase-image">
+                <i class="fas fa-map-marked-alt"></i>
+            </div>
+        </div>
+
+        <div class="showcase-item reveal">
+            <div class="showcase-content">
+                <h3><span class="gradient-text">Comunidade</span> Ativa</h3>
+                <p>
+                    Conecte-se com milhares de pessoas que compartilham experiências similares. Uma rede de apoio, informação e amizade.
+                </p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Feed de publicações com fotos, textos e compartilhamentos</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Grupos de interesse e discussão temática</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Mensagens diretas e chat em grupo</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Eventos presenciais e virtuais organizados pela comunidade</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="showcase-image">
+                <i class="fas fa-users"></i>
+            </div>
+        </div>
+
+        <div class="showcase-item reveal">
+            <div class="showcase-content">
+                <h3><span class="gradient-text">Assistente</span> Virtual</h3>
+                <p>
+                    Inteligência artificial que aprende seus padrões de uso e oferece sugestões personalizadas para melhorar sua experiência diária.
+                </p>
+                <ul class="feature-list">
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Sugestões de rotas baseadas em seu histórico</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Recomendações de locais de interesse próximos</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Alertas de manutenção preventiva personalizados</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-check-circle"></i>
+                        <span>Comandos de voz para controle hands-free</span>
+                    </li>
+                </ul>
+            </div>
+            <div class="showcase-image">
+                <i class="fas fa-robot"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="resources-section">
+        <div class="cta-section reveal">
+            <h2>Pronto para começar?</h2>
+            <p>Junte-se a centenas de usuários que já estão transformando sua mobilidade com WACS</p>
+            <div class="cta-buttons">
+                <a href="user/login.html" class="btn btn-primary">
+                    Criar Conta Gratuita
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="about.html" class="btn btn-secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Saiba Mais
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>WACS</h3>
+                <p>Wheelchair Automation Control System</p>
+                <p>Inovando na mobilidade acessível através da tecnologia.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Produto</h4>
+                <ul class="footer-links">
+                    <li><a href="recursos.html">Recursos</a></li>
+                    <li><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="#">Preços</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Empresa</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">Sobre Nós</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Suporte</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Central de Ajuda</a></li>
+                    <li><a href="#">Documentação</a></li>
+                    <li><a href="user/termos.html">Termos de Uso</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 WACS. Todos os direitos reservados. • Versão Alpha</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="../public/js/env-config.js"></script>
+    <script src="../public/js/auth-check.js"></script>
+    
+    <script>
+        // Highlight active page in navbar
+        const currentPage = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-links a');
+        
+        navLinks.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+            if (currentPage.includes('recursos.html') && linkPath.includes('recursos.html')) {
+                link.classList.add('active');
+            }
+        });
+
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal animation
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        reveals.forEach(reveal => {
+            revealObserver.observe(reveal);
+        });
+
+        // Mobile menu toggle
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                
+                const icon = menuToggle.querySelector('i');
+                if (mobileMenu.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            mobileOverlay.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    mobileOverlay.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

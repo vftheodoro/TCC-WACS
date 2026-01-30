@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WACS • Sobre o Projeto</title>
+    <link rel="icon" href="../public/images/logos-wacs/logo_azul.png" type="image/png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../public/css/modern-system.css">
+    <script src="../public/js/env-config.js"></script>
+    <style>
+        .hero-page {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 10rem 2rem 6rem;
+        }
+
+        .hero-page h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 7vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-page p {
+            font-size: 1.3rem;
+            color: var(--color-text-muted);
+            max-width: 700px;
+            margin: 0 auto 3rem;
+        }
+
+        .mission-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 3rem;
+        }
+
+        .mission-item {
+            text-align: center;
+        }
+
+        .mission-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: var(--color-darker);
+        }
+
+        .mission-item h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mission-item p {
+            color: var(--color-text-muted);
+            line-height: 1.7;
+        }
+
+        .story-section {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .story-section h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .story-section p {
+            font-size: 1.15rem;
+            color: var(--color-text-muted);
+            line-height: 1.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            margin: 3rem 0;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2);
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .team-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .team-member {
+            background: rgba(19, 24, 50, 0.4);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .team-member:hover {
+            transform: translateY(-10px);
+            border-color: rgba(0, 217, 255, 0.5);
+            box-shadow: 0 20px 60px rgba(0, 217, 255, 0.2);
+        }
+
+        .team-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            border: 4px solid var(--color-primary);
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            color: var(--color-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .team-bio {
+            color: var(--color-text-muted);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        .achievements-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .achievement-card {
+            background: rgba(19, 24, 50, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .achievement-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-accent);
+        }
+
+        .achievement-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .achievement-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .achievement-description {
+            color: var(--color-text-muted);
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .mission-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg"></div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">
+                <i class="fas fa-wheelchair"></i>
+                WACS
+            </a>
+
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="recursos.html">Recursos</a></li>
+                <li><a href="comunidade.html">Comunidade</a></li>
+                <li><a href="mapa-acessivel.html">Mapa</a></li>
+                <li><a href="about.html">Sobre</a></li>
+            </ul>
+
+            <button class="nav-cta" onclick="location.href='user/login.html'">
+                Começar Agora
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-overlay" id="mobileOverlay"></div>
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="recursos.html">Recursos</a></li>
+            <li><a href="comunidade.html">Comunidade</a></li>
+            <li><a href="mapa-acessivel.html">Mapa</a></li>
+            <li><a href="about.html">Sobre</a></li>
+            <li><a href="user/login.html" style="margin-top: 2rem; display: inline-block;" class="btn btn-primary">Começar Agora</a></li>
+        </ul>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-page">
+        <div>
+            <h1>
+                Transformando <span class="gradient-text">Vidas</span><br>
+                Através da <span class="gradient-text">Tecnologia</span>
+            </h1>
+            <p>
+                Conheça a história por trás do WACS e nossa missão de promover inclusão, autonomia e acessibilidade para todos
+            </p>
+        </div>
+    </section>
+
+    <!-- Mission Section -->
+    <section class="section">
+        <div class="mission-grid">
+            <div class="mission-item reveal">
+                <div class="mission-icon">
+                    <i class="fas fa-bullseye"></i>
+                </div>
+                <h3>Nossa Missão</h3>
+                <p>Promover a inclusão e autonomia de pessoas com deficiência através de tecnologia inovadora e acessível</p>
+            </div>
+
+            <div class="mission-item reveal">
+                <div class="mission-icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Nossa Visão</h3>
+                <p>Um mundo onde tecnologia e acessibilidade andam juntas, eliminando barreiras e promovendo igualdade</p>
+            </div>
+
+            <div class="mission-item reveal">
+                <div class="mission-icon">
+                    <i class="fas fa-heart"></i>
+                </div>
+                <h3>Nossos Valores</h3>
+                <p>Inovação, inclusão, empatia e compromisso com a transformação social através da tecnologia</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Story Section -->
+    <section class="story-section">
+        <h2 class="reveal"><span class="gradient-text">Nossa História</span></h2>
+        <p class="reveal">
+            O WACS (Wheelchair Automation Control System) nasceu como um projeto de TCC do curso de Desenvolvimento de Sistemas na Etec de Registro. O que começou como uma ideia de automatizar cadeiras de rodas evoluiu para uma plataforma completa de mobilidade acessível.
+        </p>
+        <p class="reveal">
+            Percebemos que não bastava apenas criar uma cadeira automatizada - era necessário construir um ecossistema que conectasse pessoas, compartilhasse informações sobre acessibilidade e criasse uma rede de apoio. Assim surgiu o mapa colaborativo e a comunidade WACS.
+        </p>
+
+        <div class="video-container reveal">
+            <iframe 
+                src="https://www.youtube.com/embed/ycuClDTIFHM" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+
+        <p class="reveal">
+            Hoje, o WACS é muito mais que um projeto acadêmico. É uma iniciativa reconhecida por instituições, mídia e, principalmente, pelas pessoas que utilizam nossa plataforma diariamente para melhorar sua qualidade de vida.
+        </p>
+    </section>
+
+    <!-- Achievements Section -->
+    <section class="section">
+        <div class="section-header reveal">
+            <span class="section-badge">Reconhecimento</span>
+            <h2 class="section-title">Nossos Conquistas</h2>
+            <p class="section-description">
+                O impacto social e a inovação do WACS têm sido reconhecidos em diversos eventos e instituições
+            </p>
+        </div>
+
+        <div class="achievements-grid">
+            <div class="achievement-card reveal">
+                <div class="achievement-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+                <h3 class="achievement-title">7º Lugar na FETEPS 2025</h3>
+                <p class="achievement-description">
+                    Projeto reconhecido entre as melhores iniciativas tecnológicas estudantis do estado de São Paulo
+                </p>
+            </div>
+
+            <div class="achievement-card reveal">
+                <div class="achievement-icon">
+                    <i class="fas fa-award"></i>
+                </div>
+                <h3 class="achievement-title">Moção de Aplauso</h3>
+                <p class="achievement-description">
+                    Homenagem oficial pela contribuição social e inovação em acessibilidade
+                </p>
+            </div>
+
+            <div class="achievement-card reveal">
+                <div class="achievement-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3 class="achievement-title">Menção Especial</h3>
+                <p class="achievement-description">
+                    Reconhecimento na Câmara Municipal por promover autonomia e inclusão
+                </p>
+            </div>
+
+            <div class="achievement-card reveal">
+                <div class="achievement-icon">
+                    <i class="fas fa-newspaper"></i>
+                </div>
+                <h3 class="achievement-title">Destaque na Mídia</h3>
+                <p class="achievement-description">
+                    Cobertura em veículos como CNN Brasil e Estadão, ampliando o alcance do projeto
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="section">
+        <div class="section-header reveal">
+            <span class="section-badge">Equipe</span>
+            <h2 class="section-title">Quem Somos</h2>
+            <p class="section-description">
+                Conheça os desenvolvedores por trás do WACS
+            </p>
+        </div>
+
+        <div class="team-grid">
+            <div class="team-member reveal">
+                <img src="../public/images/fotos-desenvolvedores/foto-victor.jpg" alt="Victor" class="team-photo">
+                <h3 class="team-name">Victor Hugo</h3>
+                <p class="team-role">Full Stack Developer</p>
+                <p class="team-bio">
+                    Especialista em desenvolvimento web e mobile, responsável pela arquitetura e implementação da plataforma WACS.
+                </p>
+            </div>
+
+            <div class="team-member reveal">
+                <img src="../public/images/fotos-desenvolvedores/foto-igor.jpg" alt="Igor" class="team-photo">
+                <h3 class="team-name">Igor Martins</h3>
+                <p class="team-role">Hardware & IoT Specialist</p>
+                <p class="team-bio">
+                    Responsável pelo desenvolvimento do sistema de automação da cadeira de rodas e integração com sensores.
+                </p>
+            </div>
+
+            <div class="team-member reveal">
+                <img src="../public/images/fotos-desenvolvedores/foto-kaue.jpg" alt="Kaue" class="team-photo">
+                <h3 class="team-name">Kaue Santos</h3>
+                <p class="team-role">UX/UI Designer & Frontend</p>
+                <p class="team-bio">
+                    Designer de interfaces e experiência do usuário, focado em criar produtos acessíveis e intuitivos.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="section">
+        <div class="cta-section reveal" style="background: rgba(19, 24, 50, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 24px; padding: 4rem; text-align: center; max-width: 800px; margin: 4rem auto;">
+            <h2 style="font-family: 'Space Grotesk', sans-serif; font-size: 2.5rem; margin-bottom: 1.5rem;">Faça Parte da Mudança</h2>
+            <p style="color: var(--color-text-muted); font-size: 1.2rem; margin-bottom: 2rem;">Junte-se a nós e ajude a construir um mundo mais acessível e inclusivo</p>
+            <div style="display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
+                <a href="user/login.html" class="btn btn-primary">
+                    Começar Agora
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="comunidade.html" class="btn btn-secondary">
+                    <i class="fas fa-users"></i>
+                    Ver Comunidade
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <h3>WACS</h3>
+                <p>Wheelchair Automation Control System</p>
+                <p>Inovando na mobilidade acessível através da tecnologia.</p>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Produto</h4>
+                <ul class="footer-links">
+                    <li><a href="recursos.html">Recursos</a></li>
+                    <li><a href="mapa-acessivel.html">Mapa Acessível</a></li>
+                    <li><a href="comunidade.html">Comunidade</a></li>
+                    <li><a href="#">Preços</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Empresa</h4>
+                <ul class="footer-links">
+                    <li><a href="about.html">Sobre Nós</a></li>
+                    <li><a href="#">Blog</a></li>
+                    <li><a href="#">Carreiras</a></li>
+                    <li><a href="#">Contato</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Suporte</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Central de Ajuda</a></li>
+                    <li><a href="#">Documentação</a></li>
+                    <li><a href="user/termos.html">Termos de Uso</a></li>
+                    <li><a href="#">Privacidade</a></li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2026 WACS. Todos os direitos reservados. • Versão Alpha</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-auth-compat.js"></script>
+    <script src="../public/js/env-config.js"></script>
+    <script src="../public/js/auth-check.js"></script>
+    
+    <script>
+        // Highlight active page in navbar
+        const currentPage = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-links a');
+        
+        navLinks.forEach(link => {
+            const linkPath = new URL(link.href).pathname;
+            if (currentPage.includes('about.html') && linkPath.includes('about.html')) {
+                link.classList.add('active');
+            }
+        });
+
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 100) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        const reveals = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, {
+            threshold: 0.1
+        });
+
+        reveals.forEach(reveal => {
+            revealObserver.observe(reveal);
+        });
+
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        
+        if (menuToggle) {
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                
+                const icon = menuToggle.querySelector('i');
+                if (mobileMenu.classList.contains('active')) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-times');
+                } else {
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                }
+            });
+
+            mobileOverlay.addEventListener('click', () => {
+                mobileMenu.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                const icon = menuToggle.querySelector('i');
+                icon.classList.remove('fa-times');
+                icon.classList.add('fa-bars');
+            });
+
+            const mobileLinks = mobileMenu.querySelectorAll('a');
+            mobileLinks.forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.remove('active');
+                    mobileOverlay.classList.remove('active');
+                    const icon = menuToggle.querySelector('i');
+                    icon.classList.remove('fa-times');
+                    icon.classList.add('fa-bars');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

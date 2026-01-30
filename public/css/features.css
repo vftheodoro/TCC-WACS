@@ -1,0 +1,91 @@
+.features-intro {
+    text-align: center;
+    padding: 80px 24px 60px;
+    background: linear-gradient(120deg, rgba(34, 211, 238, 0.12), rgba(37, 99, 235, 0.16));
+    border-radius: var(--radius-xl);
+    margin: 50px auto 30px;
+    max-width: 1000px;
+    box-shadow: var(--shadow-small);
+    border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.features-intro h1 {
+    font-size: clamp(2.2rem, 4vw, 3.2rem);
+    color: var(--text-color);
+    margin-bottom: 15px;
+    font-weight: 800;
+}
+
+.features-intro p {
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 0 auto;
+    line-height: 1.8;
+}
+
+.feature-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+    padding: 50px 20px 80px;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.feature-card {
+    background: var(--surface-2);
+    border-radius: var(--border-radius-large);
+    padding: 32px 26px;
+    text-align: center;
+    box-shadow: var(--shadow-medium);
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
+}
+
+.feature-card i {
+    font-size: 3rem;
+    color: var(--brand-500);
+    margin-bottom: 18px;
+}
+
+.feature-card h3 {
+    font-size: 1.25rem;
+    color: var(--text-color);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.feature-card p {
+    font-size: 0.98rem;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+
+/* Estilos para o botão desabilitado e tag 'Em breve' */
+.disabled-button {
+    position: relative;
+    opacity: 0.7;
+    cursor: not-allowed;
+    pointer-events: none; /* Garante que o botão não seja clicável */
+}
+
+.soon-tag {
+    position: absolute;
+    top: -10px;
+    right: -8px;
+    background-color: var(--brand-700);
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+    transform: rotate(4deg);
+    box-shadow: var(--shadow-sm);
+} 

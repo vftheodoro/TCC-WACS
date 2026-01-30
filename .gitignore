@@ -1,36 +1,28 @@
-# Ignorar arquivos com configurações sensíveis
-docs/public/js/env-config.js
+# Arquivos de ambiente e configuração
+# Ignore environment config
+env-config.js
+/public/js/env-config.js
+/public/js/env-config.js
 
-# Ignorar arquivos .env
-.env
-*.env
-.env.*
-!.env.example
+# Dependências
+node_modules/
 
-# Arquivos de configuração local
-*.local
+# Arquivos de build
+/build
+/dist
+
+# Arquivos do sistema
+.DS_Store
+Thumbs.db
 
 # Logs
-logs
 *.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Dependências
-node_modules/
-
-# Arquivos temporários
-.DS_Store
-Thumbs.db
-
-# Ignore environment variables
-docs/.env
-
-# Ignore node_modules directory
-node_modules/
-
-# Ignore build directories
-dist/
-build/
-.next/ 
+# IDEs e editores
+.idea/
+.vscode/
+*.swp
+*.swo 

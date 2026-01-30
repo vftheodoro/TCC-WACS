@@ -1,0 +1,143 @@
+/* public/css/hero.css */
+
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centraliza os filhos horizontalmente por padrão */
+    justify-content: center;
+    padding: 80px 40px;
+    min-height: calc(100vh - 100px); /* Adjusts for navbar height */
+    background-color: var(--background-dark);
+    position: relative;
+    overflow: hidden;
+    text-align: center; /* Centraliza o texto de elementos não flex */
+}
+
+.hero-title {
+    font-size: 5.5rem;
+    font-weight: 900;
+    margin-bottom: 20px;
+    line-height: 1.1;
+    align-self: flex-start; /* Alinha o título à esquerda dentro do flex container */
+    text-align: left; /* Garante que o texto dentro do título seja alinhado à esquerda */
+}
+
+.hero-title .gradient-text-light {
+    /* Apply the light gradient for specific words */
+    font-weight: 800; /* Pode ser ajustado para mais leve ou mais pesado */
+}
+
+.hero-subtitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-centered-content {
+    max-width: 900px; /* Mesma largura do conteúdo anterior */
+    text-align: center; /* Centraliza o texto da descrição */
+    margin-left: auto; /* Centraliza o bloco da div */
+    margin-right: auto; /* Centraliza o bloco da div */
+    color: var(--text-light);
+    z-index: 2; /* Garante que esteja acima do background */
+}
+
+.hero-description {
+    font-size: 1.2rem;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 700px;
+    opacity: 0.8;
+    /* Agora o text-align: center vem do pai .hero-centered-content */
+    /* As margens auto para centralizar o bloco virão do pai também se necessário */
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center; /* Centralizar os botões */
+    margin-bottom: 60px;
+}
+
+.hero-buttons .btn {
+    padding: 18px 35px;
+    font-size: 1.1rem;
+    border-radius: 50px; /* Mais arredondado */
+}
+
+.hero-buttons .btn-outline-gradient {
+    border-radius: 50px; /* Mais arredondado */
+}
+
+.hero-3d-graphic {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-image: url('https://via.placeholder.com/1200x800/0A0A0A/00C6FF?text=WACS+Technology+Element'); /* Imagem de placeholder para o elemento 3D do WACS */
+    background-size: cover; /* Ou 'cover' dependendo da imagem */
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.2;
+    filter: blur(8px); /* Efeito de profundidade e brilho */
+    pointer-events: none; /* Make sure it doesn't block interactions */
+}
+
+/* Remove social sidebar as it's not in the new design */
+.social-sidebar {
+    display: none !important;
+}
+
+/* Responsividade para a seção Hero */
+@media (max-width: 1200px) {
+    .hero-title {
+        font-size: 4.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 60px 20px;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-buttons .btn {
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .hero-buttons .btn-outline-gradient {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+} 

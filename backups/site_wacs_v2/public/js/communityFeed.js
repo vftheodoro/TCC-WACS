@@ -1,0 +1,1078 @@
+// communityFeed.js - Novo sistema de feed da comunidade (100% inspirado no app)
+// ATENÇÃO: Toda publicação, edição e exclusão de post deve ser feita exclusivamente via handlePublish, handleEditPost e handleDeletePost. Não use funções duplicadas ou antigas.
+
+// --- Estado global do feed ---
+const FeedState = {
+  posts: [],
+  lastDoc: null,
+  loading: false,
+  loadingMore: false,
+  error: null,
+  refreshing: false,
+  selectedPost: null,
+  comments: [],
+  commentsLoading: false,
+  toast: { visible: false, type: 'info', message: '' },
+  PAGE_SIZE: 10,
+};
+
+// Cache simples de nomes completos por UID
+const FullNameCache = {};
+// Cache simples de fotos por UID
+const PhotoUrlCache = {};
+
+// Busca o nome completo do usuário no Firestore com fallbacks
+async function getUserFullName(uid) {
+  if (!uid) return null;
+  if (FullNameCache[uid]) return FullNameCache[uid];
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) return null;
+    const db = firebase.firestore();
+    // 1) tenta doc com id = uid
+    const byId = await db.collection('users').doc(uid).get();
+    if (byId.exists) {
+      const d = byId.data() || {};
+      const full = d.fullName || d.name || d.displayName || d.username || null;
+      if (full) FullNameCache[uid] = full;
+      return full;
+    }
+    // 2) tenta query por campo uid
+    const q = await db.collection('users').where('uid', '==', uid).limit(1).get();
+    if (!q.empty) {
+      const d = q.docs[0].data() || {};
+      const full = d.fullName || d.name || d.displayName || d.username || null;
+      if (full) FullNameCache[uid] = full;
+      return full;
+    }
+  } catch (e) {
+    console.warn('Falha ao obter fullName para UID:', uid, e);
+  }
+  return null;
+}
+
+// Busca a foto de perfil atual do usuário no Firestore com cache
+async function getUserPhotoUrl(uid) {
+  if (!uid) return null;
+  if (PhotoUrlCache[uid]) return PhotoUrlCache[uid];
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) return null;
+    const db = firebase.firestore();
+    // 1) tenta doc com id = uid
+    const byId = await db.collection('users').doc(uid).get();
+    if (byId.exists) {
+      const d = byId.data() || {};
+      const url = d.photoURL || d.avatarUrl || d.avatar || d.profilePhotoUrl || null;
+      if (url) PhotoUrlCache[uid] = url;
+      return url;
+    }
+    // 2) tenta query por campo uid
+    const q = await db.collection('users').where('uid', '==', uid).limit(1).get();
+    if (!q.empty) {
+      const d = q.docs[0].data() || {};
+      const url = d.photoURL || d.avatarUrl || d.avatar || d.profilePhotoUrl || null;
+      if (url) PhotoUrlCache[uid] = url;
+      return url;
+    }
+  } catch (e) {
+    console.warn('Falha ao obter photoURL para UID:', uid, e);
+  }
+  return null;
+}
+
+// Enriquecer posts com userFullName
+async function enrichPostsWithFullName(posts) {
+  const uids = new Set();
+  (posts || []).forEach(p => { if (p && p.userId) uids.add(p.userId); });
+  for (const uid of uids) {
+    await getUserFullName(uid);
+  }
+  (posts || []).forEach(p => {
+    if (p && p.userId && !p.userFullName) {
+      p.userFullName = FullNameCache[p.userId] || null;
+    }
+  });
+}
+
+// Enriquecer posts com a foto atual do usuário
+async function enrichPostsWithPhoto(posts) {
+  const uids = new Set();
+  posts.forEach(p => { if (p.userId) uids.add(p.userId); });
+  const tasks = Array.from(uids).map(async uid => {
+    const url = await getUserPhotoUrl(uid);
+    return { uid, url };
+  });
+  const results = await Promise.all(tasks);
+  const map = {};
+  results.forEach(({ uid, url }) => { if (url) map[uid] = url; });
+  posts.forEach(p => {
+    if (p.userId && map[p.userId]) {
+      p.userPhoto = map[p.userId];
+    }
+  });
+}
+
+// Utilitário para obter caminho correto do avatar padrão considerando /views/
+function resolveDefaultAvatar() {
+  try {
+    if (typeof getDefaultAvatarPath === 'function') {
+      return getDefaultAvatarPath();
+    }
+  } catch {}
+  return '/public/images/fotos-perfil/default-avatar.png';
+}
+
+// --- Utilitários Firebase ---
+function getFirebaseApp() {
+  if (typeof firebase === 'undefined') {
+    console.error('Firebase não está carregado');
+    return null;
+  }
+  console.log('Firebase disponível:', firebase);
+  return firebase;
+}
+
+function initializeFirebaseFeed() {
+  console.log('Inicializando Firebase Feed...');
+  const firebase = getFirebaseApp();
+  if (!firebase) {
+    console.error('Firebase não está disponível');
+    return null;
+  }
+  
+  // Verificar se as variáveis de ambiente estão disponíveis
+  if (!window.ENV) {
+    console.error('Variáveis de ambiente não estão disponíveis');
+    return null;
+  }
+  
+  if (!firebase.apps.length) {
+    console.log('Configurando Firebase com as credenciais...');
+    const firebaseConfig = {
+      apiKey: window.ENV.FIREBASE_API_KEY,
+      authDomain: window.ENV.FIREBASE_AUTH_DOMAIN,
+      projectId: window.ENV.FIREBASE_PROJECT_ID,
+      storageBucket: window.ENV.FIREBASE_STORAGE_BUCKET,
+      messagingSenderId: window.ENV.FIREBASE_MESSAGING_SENDER_ID,
+      appId: window.ENV.FIREBASE_APP_ID,
+      measurementId: window.ENV.FIREBASE_MEASUREMENT_ID
+    };
+    console.log('Configuração do Firebase:', firebaseConfig);
+    
+    try {
+      firebase.initializeApp(firebaseConfig);
+      console.log('Firebase inicializado com sucesso');
+    } catch (error) {
+      console.error('Erro ao inicializar Firebase:', error);
+      return null;
+    }
+  } else {
+    console.log('Firebase já inicializado');
+  }
+  return firebase;
+}
+
+function getCurrentUserFeed() {
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) {
+    console.error('Firebase não inicializado para obter usuário');
+    return null;
+  }
+  const user = firebase.auth().currentUser;
+  console.log('Usuário atual:', user ? user.uid : 'Não autenticado');
+  return user;
+}
+
+function getCurrentUserIdFeed() {
+  const user = getCurrentUserFeed();
+  return user ? user.uid : null;
+}
+
+// --- Toasts ---
+function showToast(type, message) {
+  FeedState.toast = { visible: true, type, message };
+  renderToast();
+  setTimeout(() => {
+    FeedState.toast.visible = false;
+    renderToast();
+  }, 3500);
+}
+
+function renderToast() {
+  let toastContainer = document.getElementById('toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toast-container';
+    document.body.appendChild(toastContainer);
+  }
+  toastContainer.innerHTML = FeedState.toast.visible ? `
+    <div class="toast toast-${FeedState.toast.type}">${FeedState.toast.message}</div>
+  ` : '';
+}
+
+// --- Funções de Feed ---
+async function fetchPostsPaginated({ pageSize, lastDoc }) {
+  console.log('Buscando posts paginados...');
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) throw new Error('Firebase não inicializado');
+  const db = firebase.firestore();
+  let query = db.collection('posts').orderBy('createdAt', 'desc').limit(pageSize);
+  if (lastDoc) query = query.startAfter(lastDoc);
+  const snap = await query.get();
+  const posts = [];
+  snap.forEach(doc => {
+    posts.push({ id: doc.id, ...doc.data() });
+  });
+  console.log('Posts buscados do Firebase:', posts.length, posts);
+  return { posts, lastDoc: snap.docs[snap.docs.length - 1] || null };
+}
+
+async function updateCommentsCountIfNeeded(post) {
+  console.log('Atualizando contagem de comentários para post:', post.id);
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) return;
+  const db = firebase.firestore();
+  if (typeof post.commentsCount === 'number' && post.commentsCount > 0) {
+    console.log('Post já tem contagem de comentários:', post.commentsCount);
+    return;
+  }
+  let count = 0;
+  try {
+    const commentsSnap = await db.collection('posts').doc(post.id).collection('comments').get();
+    count = commentsSnap.size;
+    console.log('Contagem de comentários do Firebase:', count);
+  } catch (error) {
+    console.error('Erro ao buscar comentários para contagem:', error);
+    if (Array.isArray(post.comments)) count = post.comments.length;
+  }
+  try {
+    await db.collection('posts').doc(post.id).update({ commentsCount: count });
+    console.log('Contagem de comentários atualizada para:', count);
+  } catch (error) {
+    console.error('Erro ao atualizar contagem de comentários:', error);
+  }
+}
+
+async function loadPosts() {
+  console.log('Carregando posts...');
+  FeedState.loading = true;
+  FeedState.error = null;
+  renderFeedUI();
+  try {
+    const { posts, lastDoc } = await fetchPostsPaginated({ pageSize: FeedState.PAGE_SIZE });
+    console.log('Posts carregados:', posts.length, posts);
+    
+    for (const post of posts) {
+      if (typeof post.commentsCount !== 'number' || post.commentsCount === 0) {
+        await updateCommentsCountIfNeeded(post);
+      }
+    }
+    await enrichPostsWithFullName(posts);
+    await enrichPostsWithPhoto(posts);
+    FeedState.posts = posts;
+    FeedState.lastDoc = lastDoc;
+    console.log('Posts processados e adicionados ao estado');
+  } catch (e) {
+    console.error('Erro ao carregar posts:', e);
+    FeedState.error = 'Não foi possível carregar o feed. ' + (e?.message || '');
+  } finally {
+    FeedState.loading = false;
+    renderFeedUI();
+  }
+}
+
+async function loadMorePosts() {
+  if (!FeedState.lastDoc || FeedState.loadingMore) return;
+  FeedState.loadingMore = true;
+  renderFeedUI();
+  try {
+    const { posts, lastDoc } = await fetchPostsPaginated({ pageSize: FeedState.PAGE_SIZE, lastDoc: FeedState.lastDoc });
+    await enrichPostsWithFullName(posts);
+    await enrichPostsWithPhoto(posts);
+    FeedState.posts = [...FeedState.posts, ...posts];
+    FeedState.lastDoc = lastDoc;
+  } catch (e) {
+    FeedState.error = 'Erro ao carregar mais posts. ' + (e?.message || '');
+  } finally {
+    FeedState.loadingMore = false;
+    renderFeedUI();
+  }
+}
+
+async function toggleLikePostWeb(postId, liked) {
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) throw new Error('Firebase não inicializado');
+  const db = firebase.firestore();
+  const userId = getCurrentUserIdFeed();
+  if (!userId) throw new Error('Usuário não autenticado');
+  const postRef = db.collection('posts').doc(postId);
+  await postRef.update({
+    likes: liked ? firebase.firestore.FieldValue.arrayRemove(userId) : firebase.firestore.FieldValue.arrayUnion(userId)
+  });
+}
+
+async function fetchCommentsWeb(postId) {
+  try {
+    if (!postId) {
+      console.error('ID do post não fornecido para buscar comentários');
+      return [];
+    }
+    
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) {
+      console.error('Firebase não inicializado para buscar comentários');
+      return [];
+    }
+    
+    const db = firebase.firestore();
+    console.log(`Buscando comentários para post: ${postId}`);
+    
+    const snap = await db.collection('posts').doc(postId).collection('comments').orderBy('createdAt', 'desc').limit(50).get();
+    const comments = snap.docs.map(doc => ({ id: doc.id, ...doc.data(), likes: Array.isArray(doc.data().likes) ? doc.data().likes : [] }));
+    console.log(`Comentários carregados para post ${postId}:`, comments.length, comments);
+    return comments;
+  } catch (error) {
+    console.error('Erro ao buscar comentários:', error);
+    return [];
+  }
+}
+
+async function addCommentWeb(postId, text) {
+  console.log('addCommentWeb chamada com:', { postId, text });
+  
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) throw new Error('Firebase não inicializado');
+  
+  const db = firebase.firestore();
+  const user = getCurrentUserFeed();
+  if (!user) throw new Error('Usuário não autenticado');
+  
+  console.log('Usuário autenticado:', { uid: user.uid, displayName: user.displayName });
+  
+  const commentData = {
+    userId: user.uid,
+    userName: user.displayName,
+    userFullName: (await getUserFullName(user.uid)) || null,
+    userPhoto: user.photoURL,
+    text,
+    createdAt: new Date().toISOString(),
+    likes: [],
+  };
+  
+  console.log('Dados do comentário a serem salvos:', commentData);
+  
+  try {
+    const docRef = await db.collection('posts').doc(postId).collection('comments').add(commentData);
+    console.log('Comentário salvo no Firebase com ID:', docRef.id);
+    
+    await db.collection('posts').doc(postId).update({
+      commentsCount: firebase.firestore.FieldValue.increment(1)
+    });
+    console.log('Contador de comentários incrementado para post:', postId);
+    
+  } catch (error) {
+    console.error('Erro ao salvar comentário no Firebase:', error);
+    throw error;
+  }
+}
+
+async function deleteCommentWeb(postId, commentId) {
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) throw new Error('Firebase não inicializado');
+  const db = firebase.firestore();
+  await db.collection('posts').doc(postId).collection('comments').doc(commentId).delete();
+  await db.collection('posts').doc(postId).update({
+    commentsCount: firebase.firestore.FieldValue.increment(-1)
+  });
+}
+
+async function toggleLikeCommentWeb(postId, commentId, liked) {
+  const firebase = initializeFirebaseFeed();
+  if (!firebase) throw new Error('Firebase não inicializado');
+  const db = firebase.firestore();
+  const userId = getCurrentUserIdFeed();
+  if (!userId) throw new Error('Usuário não autenticado');
+  const commentRef = db.collection('posts').doc(postId).collection('comments').doc(commentId);
+  await commentRef.update({
+    likes: liked ? firebase.firestore.FieldValue.arrayRemove(userId) : firebase.firestore.FieldValue.arrayUnion(userId)
+  });
+}
+
+// --- Renderização do Feed ---
+function renderFeedUI() {
+  console.log('Renderizando UI do feed...');
+  const feedEl = document.querySelector('.community-feed');
+  if (!feedEl) {
+    console.error('Elemento .community-feed não encontrado');
+    return;
+  }
+  
+  feedEl.innerHTML = '';
+  
+  if (FeedState.loading) {
+    console.log('Mostrando estado de carregamento');
+    feedEl.innerHTML = '<div class="loading-feed">Carregando posts...</div>';
+    return;
+  }
+  
+  if (FeedState.error) {
+    console.log('Mostrando erro:', FeedState.error);
+    feedEl.innerHTML = `<div class="error-feed">${FeedState.error}</div>`;
+    return;
+  }
+  
+  if (FeedState.posts.length === 0) {
+    console.log('Nenhum post encontrado');
+    feedEl.innerHTML = '<div class="empty-feed">Nenhum post encontrado. Seja o primeiro a publicar!</div>';
+    return;
+  }
+  
+  console.log(`Renderizando ${FeedState.posts.length} posts`);
+  FeedState.posts.forEach((post, index) => {
+    console.log(`Criando card para post ${index + 1}:`, post.id);
+    const card = createPostCardWeb(post);
+    if (card) {
+      feedEl.appendChild(card);
+    } else {
+      console.error('Erro ao criar card para post:', post.id);
+    }
+  });
+  
+  if (FeedState.loadingMore) {
+    const loadingMore = document.createElement('div');
+    loadingMore.className = 'loading-more-feed';
+    loadingMore.innerText = 'Carregando mais posts...';
+    feedEl.appendChild(loadingMore);
+  }
+}
+
+function createPostCardWeb(post) {
+  console.log('Criando card para post:', post);
+  const user = getCurrentUserFeed();
+  const isOwner = user && (user.uid === post.userId);
+  const card = document.createElement('div');
+  card.className = 'post-card' + (isOwner ? ' post-card-owner' : '');
+  card.innerHTML = `
+    <div class="post-header">
+      <img src="${post.userPhoto || resolveDefaultAvatar()}" class="post-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
+      <div class="post-header-info">
+        <span class="post-user">${post.userFullName || post.userName || 'Usuário'}</span>
+        <span class="post-date">${getRelativeDate(post.createdAt)}</span>
+      </div>
+      ${isOwner ? `<button class="post-menu-btn"><i class="fas fa-ellipsis-v"></i></button>` : ''}
+    </div>
+    <div class="post-text">${post.text || ''}</div>
+    ${post.imageUrl ? `<img src="${post.imageUrl}" class="post-image" style="cursor:zoom-in" alt="Imagem do post">` : ''}
+    <div class="post-actions">
+      <button class="like-btn${post.likes && user && post.likes.includes(user.uid) ? ' liked' : ''}"><i class="fas fa-heart"></i> <span class="like-count">${post.likes ? post.likes.length : 0}</span></button>
+      <button class="comment-btn"><i class="fas fa-comment"></i> <span class="comment-count">${typeof post.commentsCount === 'number' ? post.commentsCount : 0}</span></button>
+    </div>
+  `;
+  console.log('Card criado com HTML:', card.innerHTML);
+  // Like post
+  card.querySelector('.like-btn').onclick = async () => {
+    await handleLike(post.id, post.likes && user && post.likes.includes(user.uid));
+  };
+  // Comentários
+  const commentBtn = card.querySelector('.comment-btn');
+  if (commentBtn) {
+    commentBtn.onclick = () => {
+      console.log('Botão de comentário clicado para post:', post.id);
+      handleComment(post);
+    };
+  } else {
+    console.error('Botão de comentário não encontrado no card do post');
+  }
+  // Abrir imagem em tela cheia
+  if (post.imageUrl) {
+    card.querySelector('.post-image').onclick = () => openImageModal(post.imageUrl);
+  }
+  // Menu de 3 pontos
+  if (isOwner) {
+    card.querySelector('.post-menu-btn').onclick = (e) => {
+      e.stopPropagation();
+      showPostMenuWeb(card, post);
+    };
+  }
+  
+  console.log('Card final criado:', card);
+  return card;
+}
+
+function showPostMenuWeb(card, post) {
+  let menu = card.querySelector('.post-menu');
+  if (menu) menu.remove();
+  menu = document.createElement('div');
+  menu.className = 'post-menu';
+  menu.innerHTML = `
+    <button class="edit-post-btn">Editar</button>
+    <button class="delete-post-btn">Apagar</button>
+  `;
+  card.appendChild(menu);
+  menu.querySelector('.edit-post-btn').onclick = () => {
+    menu.remove();
+    showEditPostModalWeb(post);
+  };
+  menu.querySelector('.delete-post-btn').onclick = async () => {
+    menu.remove();
+    if (confirm('Tem certeza que deseja apagar este post? Esta ação não pode ser desfeita.')) {
+      await handleDeletePost(post);
+    }
+  };
+  document.addEventListener('click', function hideMenu(e) {
+    if (!menu.contains(e.target)) {
+      menu.remove();
+      document.removeEventListener('click', hideMenu);
+    }
+  });
+}
+
+function showEditPostModalWeb(post) {
+  let modal = document.querySelector('.edit-post-modal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.className = 'edit-post-modal';
+  modal.innerHTML = `
+    <div class="edit-post-content">
+      <h3>Editar post</h3>
+      <textarea class="edit-post-textarea">${post.text || ''}</textarea>
+      <div class="edit-post-actions">
+        <button class="cancel-edit-btn">Cancelar</button>
+        <button class="save-edit-btn">Salvar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  modal.querySelector('.cancel-edit-btn').onclick = () => modal.remove();
+  modal.querySelector('.save-edit-btn').onclick = async () => {
+    const newText = modal.querySelector('.edit-post-textarea').value.trim();
+    if (!newText) return;
+    await handleEditPost(post, newText);
+    modal.remove();
+  };
+}
+
+function getRelativeDate(date) {
+  if (!date) return '';
+  let d = typeof date === 'object' && date.seconds ? new Date(date.seconds * 1000) : new Date(date);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const postDay = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+  const diffDays = Math.floor((today - postDay) / (1000 * 60 * 60 * 24));
+  if (diffDays === 0) return `Hoje, ${d.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
+  if (diffDays === 1) return 'Ontem';
+  if (diffDays < 7) return `${diffDays} dias atrás`;
+  return d.toLocaleDateString('pt-BR', { dateStyle: 'short' });
+}
+
+// --- Comentários ---
+async function handleComment(post) {
+  console.log('Abrindo comentários para post:', post);
+  
+  if (!post || !post.id) {
+    console.error('Post inválido para comentários:', post);
+    return;
+  }
+  
+  FeedState.selectedPost = post;
+  FeedState.commentsLoading = true;
+  renderCommentsModalWeb();
+  
+  try {
+    let fetched = await fetchCommentsWeb(post.id);
+    console.log('Comentários buscados do Firebase:', fetched);
+    
+    // Migração de comentários antigos (se necessário)
+    if ((!fetched || fetched.length === 0) && Array.isArray(post.comments) && post.comments.length > 0) {
+      console.log('Migrando comentários antigos:', post.comments);
+      for (const c of post.comments) {
+        await addCommentWeb(post.id, c.text);
+      }
+      fetched = await fetchCommentsWeb(post.id);
+    }
+    if ((!fetched || fetched.length === 0) && Array.isArray(post.comments) && post.comments.length > 0) {
+      console.log('Usando comentários locais como fallback');
+      fetched = post.comments.map((c, idx) => ({ ...c, id: c.createdAt || String(idx), likes: [] }));
+    }
+    FeedState.comments = fetched || [];
+    console.log('Comentários finais no estado:', FeedState.comments);
+  } catch (e) {
+    console.error('Erro ao carregar comentários:', e);
+    FeedState.comments = [];
+  }
+  FeedState.commentsLoading = false;
+  renderCommentsModalWeb();
+}
+
+function renderCommentsModalWeb() {
+  console.log('Renderizando modal de comentários...');
+  let modal = document.querySelector('.comments-modal');
+  if (modal) modal.remove();
+  if (!FeedState.selectedPost) {
+    console.error('Nenhum post selecionado para comentários');
+    return;
+  }
+  console.log('Post selecionado para comentários:', FeedState.selectedPost.id);
+  modal = document.createElement('div');
+  modal.className = 'comments-modal';
+  modal.innerHTML = `
+    <div class="comments-content">
+      <div class="comments-header">
+        <span>Comentários</span>
+        <button class="close-comments-btn"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="comments-list">${FeedState.commentsLoading ? 'Carregando...' : ''}</div>
+      <div class="comments-input-row">
+        <img src="${getCurrentUserFeed()?.photoURL || resolveDefaultAvatar()}" class="comments-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
+        <input type="text" class="comments-input" placeholder="Adicionar um comentário...">
+        <button class="send-comment-btn"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  console.log('Modal de comentários adicionado ao DOM');
+  
+  // Verificar se os elementos foram criados corretamente
+  const closeBtn = modal.querySelector('.close-comments-btn');
+  const commentsList = modal.querySelector('.comments-list');
+  const sendBtn = modal.querySelector('.send-comment-btn');
+  
+  if (!closeBtn || !commentsList || !sendBtn) {
+    console.error('Elementos do modal não foram criados corretamente');
+    return;
+  }
+  
+  closeBtn.onclick = () => {
+    FeedState.selectedPost = null;
+    modal.remove();
+  };
+  
+  // Renderizar lista de comentários
+  if (!FeedState.commentsLoading) {
+    console.log('Renderizando lista de comentários no modal');
+    renderCommentsListWeb(commentsList);
+  }
+  
+  // Enviar comentário
+  sendBtn.onclick = async () => {
+    const input = modal.querySelector('.comments-input');
+    const text = input.value.trim();
+    if (!text) return;
+    await handleAddComment(text);
+    input.value = '';
+  };
+}
+
+function renderCommentsListWeb(listEl) {
+  console.log('Renderizando lista de comentários:', FeedState.comments);
+  
+  if (!listEl) {
+    console.error('Elemento da lista de comentários não encontrado');
+    return;
+  }
+  
+  // Always clear the list first
+  listEl.innerHTML = '';
+  
+  if (!FeedState.comments || FeedState.comments.length === 0) {
+    console.log('Nenhum comentário encontrado, mostrando mensagem vazia');
+    listEl.innerHTML = '<div class="no-comments">Nenhum comentário ainda.</div>';
+    return;
+  }
+  
+  console.log(`Renderizando ${FeedState.comments.length} comentários`);
+  FeedState.comments.forEach((comment, index) => {
+    console.log(`Renderizando comentário ${index + 1}:`, comment);
+    const user = getCurrentUserFeed();
+    const isOwner = user && (user.uid === comment.userId);
+    const item = document.createElement('div');
+    item.className = 'comment-item';
+    item.innerHTML = `
+      <img src="${comment.userPhoto || resolveDefaultAvatar()}" class="comment-avatar" loading="lazy" onerror="this.onerror=null;this.src='${resolveDefaultAvatar()}'">
+      <div class="comment-content">
+        <div class="comment-header">
+          <span class="comment-user">${comment.userName || 'Usuário'}</span>
+          <span class="comment-date">${getRelativeDate(comment.createdAt)}</span>
+          <button class="like-comment-btn${comment.likes && user && comment.likes.includes(user.uid) ? ' liked' : ''}"><i class="fas fa-heart"></i> <span class="like-count">${comment.likes ? comment.likes.length : 0}</span></button>
+          ${isOwner ? `<button class="delete-comment-btn"><i class="fas fa-trash"></i></button>` : ''}
+        </div>
+        <div class="comment-text">${comment.text || ''}</div>
+      </div>
+    `;
+    // Like comentário
+    item.querySelector('.like-comment-btn').onclick = async () => {
+      await handleLikeComment(comment);
+    };
+    // Deletar comentário
+    if (isOwner) {
+      item.querySelector('.delete-comment-btn').onclick = async () => {
+        await handleDeleteComment(comment);
+      };
+    }
+    listEl.appendChild(item);
+  });
+}
+
+async function handleAddComment(text) {
+  if (!FeedState.selectedPost) {
+    console.error('Nenhum post selecionado para adicionar comentário');
+    return;
+  }
+  
+  console.log('Adicionando comentário:', text, 'para post:', FeedState.selectedPost.id);
+  FeedState.commentsLoading = true;
+  renderCommentsModalWeb();
+  
+  try {
+    // Use the existing addCommentWeb function to avoid duplication
+    await addCommentWeb(FeedState.selectedPost.id, text);
+    console.log('Comentário adicionado com sucesso via addCommentWeb');
+    
+    // Refresh comments list
+    const updated = await fetchCommentsWeb(FeedState.selectedPost.id);
+    FeedState.comments = Array.isArray(updated) ? updated : [];
+    console.log('Lista de comentários atualizada:', FeedState.comments.length);
+    
+    // Update post's comment count in local state
+    FeedState.posts = FeedState.posts.map(post =>
+      post.id === FeedState.selectedPost.id
+        ? { ...post, commentsCount: (typeof post.commentsCount === 'number' ? post.commentsCount + 1 : 1) }
+        : post
+    );
+    
+    showToast('success', 'Comentário adicionado!');
+    renderFeedUI();
+  } catch (e) {
+    console.error('Erro ao adicionar comentário:', e);
+    showToast('error', 'Erro ao comentar: ' + (e?.message || ''));
+  }
+  
+  FeedState.commentsLoading = false;
+  renderCommentsModalWeb();
+}
+
+async function handleDeleteComment(comment) {
+  if (!FeedState.selectedPost) return;
+  FeedState.commentsLoading = true;
+  renderCommentsModalWeb();
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    await db.collection('posts').doc(FeedState.selectedPost.id).collection('comments').doc(comment.id).delete();
+    await db.collection('posts').doc(FeedState.selectedPost.id).update({
+      commentsCount: firebase.firestore.FieldValue.increment(-1)
+    });
+    const updated = await fetchCommentsWeb(FeedState.selectedPost.id);
+    FeedState.comments = updated;
+    FeedState.posts = FeedState.posts.map(post =>
+      post.id === FeedState.selectedPost.id
+        ? { ...post, commentsCount: Math.max((typeof post.commentsCount === 'number' ? post.commentsCount - 1 : 0), 0) }
+        : post
+    );
+    showToast('success', 'Comentário apagado!');
+    renderFeedUI();
+  } catch (e) {
+    showToast('error', 'Erro ao apagar comentário.');
+  }
+  FeedState.commentsLoading = false;
+  renderCommentsModalWeb();
+}
+
+async function handleLikeComment(comment) {
+  if (!FeedState.selectedPost) return;
+  FeedState.commentsLoading = true;
+  renderCommentsModalWeb();
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    const userId = getCurrentUserIdFeed();
+    if (!userId) throw new Error('Usuário não autenticado');
+    const commentRef = db.collection('posts').doc(FeedState.selectedPost.id).collection('comments').doc(comment.id);
+    await commentRef.update({
+      likes: comment.likes && comment.likes.includes(userId)
+        ? firebase.firestore.FieldValue.arrayRemove(userId)
+        : firebase.firestore.FieldValue.arrayUnion(userId)
+    });
+    const updated = await fetchCommentsWeb(FeedState.selectedPost.id);
+    FeedState.comments = updated;
+  } catch (e) {}
+  FeedState.commentsLoading = false;
+  renderCommentsModalWeb();
+}
+
+async function handleDeletePost(post) {
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    // Deleta imagem do Storage se houver
+    if (post.imageUrl) {
+      try {
+        const url = new URL(post.imageUrl);
+        const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+        let storagePath = null;
+        if (pathMatch && pathMatch[1]) {
+          storagePath = decodeURIComponent(pathMatch[1].split('?')[0]);
+        } else {
+          storagePath = post.imageUrl.split('/o/')[1]?.split('?')[0];
+        }
+        if (storagePath) {
+          const imageRef = storage.ref().child(storagePath);
+          await imageRef.delete();
+        }
+      } catch (err) {
+        // Loga mas não impede a exclusão do post
+        console.warn('Erro ao deletar imagem do Storage:', err);
+      }
+    }
+    await db.collection('posts').doc(post.id).delete();
+    FeedState.posts = FeedState.posts.filter(p => p.id !== post.id);
+    showToast('success', 'Post apagado com sucesso!');
+    await loadPosts();
+  } catch (err) {
+    showToast('error', 'Erro ao apagar post: ' + (err?.message || ''));
+  }
+}
+
+async function handleEditPost(post, newText) {
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    await db.collection('posts').doc(post.id).update({ text: newText });
+    FeedState.posts = FeedState.posts.map(p => p.id === post.id ? { ...p, text: newText } : p);
+    showToast('success', 'Post atualizado!');
+    renderFeedUI();
+  } catch (e) {
+    showToast('error', 'Erro ao atualizar post.');
+  }
+}
+
+// --- Publicação de novo post ---
+function setupPostInputWeb() {
+  const postBtn = document.querySelector('.post-btn');
+  const textarea = document.querySelector('.post-textarea');
+  const imageInput = document.querySelector('.post-image-input');
+  const imageBtn = document.querySelector('.post-image-btn');
+  let selectedImageFile = null;
+  if (imageBtn && imageInput) {
+    imageBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      imageInput.click();
+    });
+  }
+  if (imageInput) {
+    imageInput.addEventListener('change', (e) => {
+      selectedImageFile = e.target.files[0];
+    });
+  }
+  if (postBtn) {
+    postBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      const text = textarea.value.trim();
+      if (!text && !selectedImageFile) return;
+      try {
+        await handlePublish({ text, imageFile: selectedImageFile });
+        textarea.value = '';
+        if (imageInput) imageInput.value = '';
+        selectedImageFile = null;
+      } catch (err) {}
+    });
+  }
+}
+
+// --- Infinite Scroll ---
+function setupInfiniteScrollWeb() {
+  window.addEventListener('scroll', () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 200) {
+      loadMorePosts();
+    }
+  });
+}
+
+// --- Inicialização ---
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM carregado, inicializando feed da comunidade...');
+  
+  // Verificar se o Firebase está disponível
+  if (typeof firebase === 'undefined') {
+    console.error('Firebase não está carregado. Aguardando...');
+    // Tentar novamente após um delay
+    setTimeout(() => {
+      if (typeof firebase !== 'undefined') {
+        console.log('Firebase carregado após delay, inicializando...');
+        setupPostInputWeb();
+        setupInfiniteScrollWeb();
+        loadPosts();
+      } else {
+        console.error('Firebase ainda não está disponível após delay');
+      }
+    }, 1000);
+    return;
+  }
+  
+  console.log('Firebase disponível, inicializando componentes...');
+  setupPostInputWeb();
+  setupInfiniteScrollWeb();
+  loadPosts();
+});
+
+// Exportar funções para debug
+window.CommunityFeed = {
+  loadPosts,
+  loadMorePosts,
+  handlePublish,
+  handleLike,
+  handleComment,
+  handleAddComment,
+  handleDeleteComment,
+  handleLikeComment,
+  handleDeletePost,
+  handleEditPost
+};
+
+async function handleLike(postId, liked) {
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    const userId = getCurrentUserIdFeed();
+    if (!userId) throw new Error('Usuário não autenticado');
+    const postRef = db.collection('posts').doc(postId);
+    await postRef.update({
+      likes: liked ? firebase.firestore.FieldValue.arrayRemove(userId) : firebase.firestore.FieldValue.arrayUnion(userId)
+    });
+    FeedState.posts = FeedState.posts.map(post => {
+      if (post.id !== postId) return post;
+      let newLikes = Array.isArray(post.likes) ? [...post.likes] : [];
+      if (liked) {
+        newLikes = newLikes.filter(uid => uid !== userId);
+      } else {
+        newLikes.push(userId);
+      }
+      return { ...post, likes: newLikes };
+    });
+    renderFeedUI();
+    showToast('success', liked ? 'Curtida removida!' : 'Post curtido!');
+  } catch (e) {
+    showToast('error', 'Erro ao curtir/descurtir post. ' + (e?.message || ''));
+  }
+}
+
+// --- Função de publicar post igual ao app ---
+async function handlePublish({ text, imageFile }) {
+  if (FeedState.loading) return; // Evita múltiplos envios
+  FeedState.loading = true;
+  renderFeedUI();
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    const user = getCurrentUserFeed();
+    if (!user) throw new Error('Usuário não autenticado');
+    let imageUrl = null;
+    if (imageFile) {
+      const fileName = `posts/${user.uid}_${Date.now()}`;
+      const postImageRef = storage.ref().child(fileName);
+      await postImageRef.put(imageFile);
+      imageUrl = await postImageRef.getDownloadURL();
+    }
+    const postData = {
+      userId: user.uid,
+      userName: user.displayName,
+      userPhoto: user.photoURL,
+      text,
+      imageUrl,
+      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+      likes: [],
+      commentsCount: 0,
+    };
+    const docRef = await db.collection('posts').add(postData);
+    // Adiciona localmente para feedback instantâneo
+    FeedState.posts = [{ id: docRef.id, ...postData }, ...FeedState.posts];
+    renderFeedUI();
+    showToast('success', 'Post publicado com sucesso!');
+    setTimeout(loadPosts, 1000);
+  } catch (e) {
+    showToast('error', 'Erro ao publicar post. ' + (e?.message || ''));
+  } finally {
+    FeedState.loading = false;
+    renderFeedUI();
+  }
+}
+
+// --- Função de editar post igual ao app ---
+async function handleEditPost(post, newText) {
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    await db.collection('posts').doc(post.id).update({ text: newText });
+    FeedState.posts = FeedState.posts.map(p => p.id === post.id ? { ...p, text: newText } : p);
+    showToast('success', 'Post atualizado!');
+    renderFeedUI();
+  } catch (e) {
+    showToast('error', 'Erro ao atualizar post.');
+  }
+}
+
+// --- Função de excluir post igual ao app ---
+async function handleDeletePost(post) {
+  try {
+    const firebase = initializeFirebaseFeed();
+    if (!firebase) throw new Error('Firebase não inicializado');
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    // Deleta imagem do Storage se houver
+    if (post.imageUrl) {
+      try {
+        const url = new URL(post.imageUrl);
+        const pathMatch = url.pathname.match(/\/o\/(.+)$/);
+        let storagePath = null;
+        if (pathMatch && pathMatch[1]) {
+          storagePath = decodeURIComponent(pathMatch[1].split('?')[0]);
+        } else {
+          storagePath = post.imageUrl.split('/o/')[1]?.split('?')[0];
+        }
+        if (storagePath) {
+          const imageRef = storage.ref().child(storagePath);
+          await imageRef.delete();
+        }
+      } catch (err) {
+        // Loga mas não impede a exclusão do post
+        console.warn('Erro ao deletar imagem do Storage:', err);
+      }
+    }
+    await db.collection('posts').doc(post.id).delete();
+    FeedState.posts = FeedState.posts.filter(p => p.id !== post.id);
+    showToast('success', 'Post apagado com sucesso!');
+    await loadPosts();
+  } catch (err) {
+    showToast('error', 'Erro ao apagar post: ' + (err?.message || ''));
+  }
+}
+
+// --- Abrir imagem em tela cheia ---
+function openImageModal(imageUrl) {
+  let modal = document.createElement('div');
+  modal.className = 'image-fullscreen-modal';
+  modal.innerHTML = `
+    <div class="image-fullscreen-overlay"></div>
+    <img src="${imageUrl}" class="image-fullscreen-content" alt="Imagem do post" />
+    <button class="image-fullscreen-close" aria-label="Fechar imagem"><i class="fas fa-times"></i></button>
+  `;
+  document.body.appendChild(modal);
+  // Fechar ao clicar fora ou no botão
+  modal.querySelector('.image-fullscreen-overlay').onclick = close;
+  modal.querySelector('.image-fullscreen-close').onclick = close;
+  function close() { modal.remove(); }
+  // Fechar ao pressionar ESC
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') { close(); document.removeEventListener('keydown', esc); }
+  });
+} 

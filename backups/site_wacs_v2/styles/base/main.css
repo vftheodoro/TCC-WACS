@@ -1,0 +1,104 @@
+/* public/css/main.css */
+
+:root {
+    --background-dark: #0A0A0A;
+    --text-light: #FFFFFF;
+    --gradient-start: #00C6FF;
+    --gradient-end: #0072FF;
+    --gradient-text-start: #00C6FF;
+    --gradient-text-end: #9200FF;
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --border-radius-large: 20px;
+    --border-radius-medium: 10px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    line-height: 1.6;
+    color: var(--text-light);
+    background-color: var(--background-dark);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+a {
+    color: var(--text-light);
+    text-decoration: none;
+}
+
+a:hover {
+    opacity: 0.8;
+}
+
+button, input {
+    font-family: 'Poppins', sans-serif;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn {
+    padding: 15px 30px;
+    font-weight: 600;
+    border-radius: var(--border-radius-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.btn-gradient {
+    background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    color: var(--text-light);
+}
+
+.btn-gradient:hover {
+    opacity: 0.9;
+    transform: translateY(-2px);
+}
+
+.btn-outline-gradient {
+    background: transparent;
+    color: var(--gradient-start);
+    border: 2px solid var(--gradient-start);
+    padding: 13px 28px;
+}
+
+.btn-outline-gradient:hover {
+    background: linear-gradient(90deg, var(--gradient-start) 0%, var(--gradient-end) 100%);
+    color: var(--text-light);
+    border-color: transparent;
+    transform: translateY(-2px);
+}
+
+.main-container {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--background-dark);
+}
+
+.gradient-text {
+    background: linear-gradient(90deg, var(--gradient-text-start), var(--gradient-text-end));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.gradient-text-light {
+    background: linear-gradient(90deg, #3C91E6, #63B8F4); /* Novo gradiente azul mais claro */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Utility classes */
+.highlight {
+    color: var(--primary-color);
+} 

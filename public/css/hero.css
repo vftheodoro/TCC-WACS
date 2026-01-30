@@ -1,0 +1,141 @@
+/* public/css/hero.css */
+
+.hero-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 120px 40px 90px;
+    background: radial-gradient(circle at 20% 10%, rgba(34, 211, 238, 0.18), transparent 45%),
+        radial-gradient(circle at 80% 0%, rgba(37, 99, 235, 0.22), transparent 50%);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+}
+
+.hero-content {
+    max-width: 980px;
+    color: var(--text-color);
+    z-index: 2;
+    text-align: center;
+}
+
+.hero-title {
+    font-size: clamp(2.6rem, 6vw, 5.2rem);
+    font-weight: 800;
+    margin-bottom: 18px;
+    line-height: 1.05;
+    text-align: center;
+    letter-spacing: -0.5px;
+}
+
+.hero-title .gradient-text-light {
+    /* Apply the light gradient for specific words */
+    font-weight: 800; /* Pode ser ajustado para mais leve ou mais pesado */
+}
+
+.hero-subtitle {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    margin-bottom: 36px;
+    max-width: 680px;
+    color: var(--text-muted);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    margin-bottom: 50px;
+    flex-wrap: wrap;
+}
+
+.hero-buttons .btn {
+    padding: 16px 32px;
+    font-size: 1rem;
+}
+
+.hero-buttons .btn-outline-gradient {
+    border-radius: 50px; /* Mais arredondado */
+}
+
+.hero-3d-graphic {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.18;
+    filter: blur(10px);
+    pointer-events: none;
+}
+
+/* Remove social sidebar as it's not in the new design */
+.social-sidebar {
+    display: none !important;
+}
+
+/* Responsividade para a seção Hero */
+@media (max-width: 1200px) {
+    .hero-title {
+        font-size: 4.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .hero-section {
+        padding: 90px 20px 70px;
+    }
+
+    .hero-title {
+        font-size: clamp(2.4rem, 7vw, 3.5rem);
+        text-align: center;
+    }
+
+    .hero-subtitle {
+        font-size: 2rem;
+    }
+
+    .hero-description {
+        font-size: 1rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .hero-buttons .btn {
+        width: 80%;
+        max-width: 300px;
+    }
+
+    .hero-buttons .btn-outline-gradient {
+        width: 80%;
+        max-width: 300px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+} 
